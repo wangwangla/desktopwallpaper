@@ -8,6 +8,8 @@ import static com.sun.jna.platform.win32.WinUser.WS_MINIMIZEBOX;
 import static com.sun.jna.platform.win32.WinUser.WS_SYSMENU;
 import static com.sun.jna.platform.win32.WinUser.WS_THICKFRAME;
 
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.system.windows.User32.WS_EX_APPWINDOW;
 import static org.lwjgl.system.windows.User32.WS_EX_CLIENTEDGE;
 import static org.lwjgl.system.windows.User32.WS_EX_DLGMODALFRAME;
@@ -15,6 +17,7 @@ import static org.lwjgl.system.windows.User32.WS_EX_STATICEDGE;
 import static org.lwjgl.system.windows.User32.WS_EX_TOOLWINDOW;
 import static org.lwjgl.system.windows.User32.WS_EX_WINDOWEDGE;
 
+import com.badlogic.gdx.Gdx;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
@@ -70,6 +73,19 @@ public class Utils {
 
         User32.INSTANCE.SetParent(thisWindow, workerW);
         User32.INSTANCE.ShowWindow(thisWindow, User32.SW_SHOW);
+
+        WinDef.RECT rect = new WinDef.RECT();
+        User32.INSTANCE.GetWindowRect(thisWindow, rect);
+
+        // not sure wtf we do here, but it seems to work (not really well, but idk)
+        User32.INSTANCE.MoveWindow(thisWindow, 0, rect.top, rect.right,
+                rect.bottom+10, false);
+        rect.clear();
+
+
+
+        glfwSetWindowPos(window, 0, 0);
+        glfwSetWindowSize(window, 1200, 1200);
     }
 
     private static WinDef.HWND getWorkerW() {
