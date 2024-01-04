@@ -412,9 +412,16 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		return window;
 	}
 
+	private long windowHandle;
+
+	public long getWindowHandle() {
+		return windowHandle;
+	}
+
 	void createWindow(Lwjgl3Window window, Lwjgl3ApplicationConfiguration config, long sharedContext) {
 		long windowHandle = createGlfwWindow(config, sharedContext);
 		window.create(windowHandle);
+		this.windowHandle = windowHandle;
 		window.setVisible(config.initialVisible);
 
 		for (int i = 0; i < 2; i++) {

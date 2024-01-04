@@ -16,6 +16,10 @@ dependencies {
     implementation files('libs/lwjgl.jar')
 
 
+    implementation "net.java.dev.jna:jna:5.12.1"
+    implementation "net.java.dev.jna:jna-platform:5.12.1"
+
+    implementation project (':core')
     implementation project (':libGdx')
     implementation 'junit:junit:4.12'
     implementation "org.lwjgl:lwjgl:3.3.3"
