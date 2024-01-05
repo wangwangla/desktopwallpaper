@@ -1,21 +1,17 @@
 package wk.com.test;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import kw.learn.core.WindowGame;
+import kw.learn.core.base.BaseGame;
 import kw.learn.core.listener.WindowListener;
-import kw.test.Utils;
+import kw.test.DynamicUtils;
 
 /**
  * @Auther jian xian si qi
@@ -65,7 +61,7 @@ class App {
                 int windowY[] = new int[1];
                 GLFW.glfwGetWindowPos(windowHandle,windowX,windowY);
 
-                Utils.makeWallpaper(windowHandle);
+                DynamicUtils.makeWallpaper(windowHandle);
 
 
 
