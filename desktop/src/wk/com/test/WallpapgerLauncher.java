@@ -5,19 +5,15 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.system.MemoryUtil;
 
-import kw.learn.core.WindowGame;
-import kw.learn.core.base.BaseGame;
-import kw.learn.core.listener.WindowListener;
-import kw.test.DynamicUtils;
+import kw.manager.core.WindowManagerGame;
+import kw.manager.core.listener.ManagerListener;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/18 21:14
  */
-class App {
+class WallpapgerLauncher {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // Configure FPS
@@ -34,20 +30,9 @@ class App {
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(true);
         config.setInitialBackgroundColor(new Color(0,0,0,0));
-//            User32.INSTANCE.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, null, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
-        // Handle GLFW error
-        GLFW.glfwSetErrorCallback(new GLFWErrorCallback() {
-            @Override
-            public void invoke(int error, long description) {
-                if (error != GLFW.GLFW_NO_ERROR) {
-                    String descriptionString = MemoryUtil.memUTF8(description);
-//                    Logger.error("System", "Detected a GLFW error: (Code " + error + ") " + descriptionString);
-                }
-            }
-        });
         // Instantiate the App
         Lwjgl3Application app = new Lwjgl3Application();
-        app.init(new WindowGame(new WindowListener(){
+        app.init(new WindowManagerGame(new ManagerListener(){
             @Override
             public void windowForward() {
 //                long windowHandle = app.getWindowHandle();
@@ -61,7 +46,7 @@ class App {
                 int windowY[] = new int[1];
                 GLFW.glfwGetWindowPos(windowHandle,windowX,windowY);
 
-                DynamicUtils.makeWallpaper(windowHandle);
+//                DynamicUtils.makeWallpaper(windowHandle);
 
 
 

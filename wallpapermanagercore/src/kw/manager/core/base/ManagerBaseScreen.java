@@ -1,4 +1,4 @@
-package kw.learn.core.base;
+package kw.manager.core.base;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,14 +17,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import kw.learn.core.Constant;
+import kw.manager.core.ManagerConstant;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/16 12:10
  */
 
-public class BaseScreen implements Screen {
+public class ManagerBaseScreen implements Screen {
     protected boolean dispose;
     protected final Stage stage;
     protected Group rootView;
@@ -32,7 +32,7 @@ public class BaseScreen implements Screen {
     protected float offsetY;
     protected float offsetX;
     protected boolean back;
-    protected BaseGame game;
+    protected ManagerBaseGame game;
     protected float centerX;
     protected float centerY;
     private InputMultiplexer multiplexer;
@@ -40,13 +40,13 @@ public class BaseScreen implements Screen {
     protected boolean activeScreen;
     protected Vector2 screenSize;
 
-    public BaseScreen(BaseGame game){
+    public ManagerBaseScreen(ManagerBaseGame game){
         this.activeScreen = true;
-        this.screenSize = new Vector2(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
+        this.screenSize = new Vector2(ManagerConstant.GAMEWIDTH, ManagerConstant.GAMEHIGHT);
         this.game = game;
         this.stage = new Stage(getStageViewport(), getBatch());
-        this.offsetY = (Constant.GAMEHIGHT - Constant.HIGHT)/2;
-        this.offsetX = (Constant.GAMEWIDTH - Constant.WIDTH)/2;
+        this.offsetY = (ManagerConstant.GAMEHIGHT - ManagerConstant.HIGHT)/2;
+        this.offsetX = (ManagerConstant.GAMEWIDTH - ManagerConstant.WIDTH)/2;
         stage.addListener(new InputListener(){
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
@@ -56,8 +56,8 @@ public class BaseScreen implements Screen {
                 return super.keyUp(event, keycode);
             }
         });
-        this.centerX = Constant.GAMEWIDTH / 2;
-        this.centerY = Constant.GAMEHIGHT / 2;
+        this.centerX = ManagerConstant.GAMEWIDTH / 2;
+        this.centerY = ManagerConstant.GAMEHIGHT / 2;
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         Gdx.input.setInputProcessor(multiplexer);
@@ -163,14 +163,14 @@ public class BaseScreen implements Screen {
         stage.addActor(addActor);
     }
 
-    public void setScreen(BaseScreen screen) {
+    public void setScreen(ManagerBaseScreen screen) {
         game.setScreen(screen);
     }
 
-    public void setScreen(Class<? extends BaseScreen> t) {
+    public void setScreen(Class<? extends ManagerBaseScreen> t) {
         Constructor<?> constructor = t.getConstructors()[0];
         try {
-            BaseScreen baseScreen = (BaseScreen) constructor.newInstance(game);
+            ManagerBaseScreen baseScreen = (ManagerBaseScreen) constructor.newInstance(game);
             game.setScreen(baseScreen);
         } catch (InstantiationException e) {
             e.printStackTrace();

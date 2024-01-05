@@ -1,16 +1,16 @@
-package kw.learn.core;
+package kw.manager.core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kw.learn.core.listener.WindowListener;
+import kw.manager.core.listener.ManagerListener;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/16 12:09
  */
 
-public class Constant {
+public class ManagerConstant {
     public static boolean DEBUG = false;
     //    viewport
     public static final int EXTENDVIEWPORT = 0;
@@ -21,7 +21,7 @@ public class Constant {
     public static float GAMEHIGHT = 1920;
     public static final float STDWIDTH = 1920;
     public static final float STDHIGHT = 1920;
-    public static WindowListener windowListener;
+    public static ManagerListener windowListener;
 
     public static Color viewColor = new Color(1,1,1,0.5f);
     /**
@@ -40,8 +40,8 @@ public class Constant {
 
     public static void updateSize(Viewport stageViewport) {
         if (stageViewport == null)return;
-        Constant.GAMEWIDTH = stageViewport.getWorldWidth();
-        Constant.GAMEHIGHT = stageViewport.getWorldHeight();
+        ManagerConstant.GAMEWIDTH = stageViewport.getWorldWidth();
+        ManagerConstant.GAMEHIGHT = stageViewport.getWorldHeight();
     }
 
     public static int jishu = 0;

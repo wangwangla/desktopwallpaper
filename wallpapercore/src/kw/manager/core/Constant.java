@@ -1,9 +1,9 @@
-package kw.learn.core;
+package kw.manager.core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kw.learn.core.listener.WindowListener;
+import kw.manager.core.listener.WindowListener;
 
 /**
  * @Auther jian xian si qi

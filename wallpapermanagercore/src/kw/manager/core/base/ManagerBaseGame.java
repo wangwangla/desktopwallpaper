@@ -1,4 +1,4 @@
-package kw.learn.core.base;
+package kw.manager.core.base;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -6,23 +6,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
-import kw.learn.core.Constant;
-import kw.learn.core.listener.WindowListener;
+import kw.manager.core.ManagerConstant;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/18 21:36
  */
-public class BaseGame extends Game {
+public class ManagerBaseGame extends Game {
      private Batch batch;
      private Viewport stageViewport;
 
@@ -52,10 +46,10 @@ public class BaseGame extends Game {
     }
 
     private void initViewport() {
-        if (Constant.viewportType == Constant.EXTENDVIEWPORT) {
-            stageViewport = new ExtendViewport(Constant.WIDTH, Constant.HIGHT);
-        }else if (Constant.viewportType == Constant.FITVIEWPORT){
-            stageViewport = new FitViewport(Constant.WIDTH, Constant.HIGHT);
+        if (ManagerConstant.viewportType == ManagerConstant.EXTENDVIEWPORT) {
+            stageViewport = new ExtendViewport(ManagerConstant.WIDTH, ManagerConstant.HIGHT);
+        }else if (ManagerConstant.viewportType == ManagerConstant.FITVIEWPORT){
+            stageViewport = new FitViewport(ManagerConstant.WIDTH, ManagerConstant.HIGHT);
         }
     }
 
@@ -67,17 +61,17 @@ public class BaseGame extends Game {
 
     private void viewPortResize(int width, int height) {
         stageViewport.update(width,height);
-        Constant.updateSize(stageViewport);
+        ManagerConstant.updateSize(stageViewport);
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(Constant.viewColor.r,Constant.viewColor.g,Constant.viewColor.b,Constant.viewColor.a);
+        Gdx.gl.glClearColor(ManagerConstant.viewColor.r, ManagerConstant.viewColor.g, ManagerConstant.viewColor.b, ManagerConstant.viewColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 //        extendInfo.setText(Gdx.app.getGraphics().getFramesPerSecond());
         super.render();
         try {
-            if (Constant.DEBUG) {
+            if (ManagerConstant.DEBUG) {
                 if (batch != null) {
                     batch.begin();
 //                    extendInfo.draw(batch, 1);

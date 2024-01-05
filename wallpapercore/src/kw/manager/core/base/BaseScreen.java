@@ -1,4 +1,4 @@
-package kw.learn.core.base;
+package kw.manager.core.base;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import kw.learn.core.Constant;
+import kw.manager.core.Constant;
 
 /**
  * @Auther jian xian si qi

@@ -1,4 +1,4 @@
-package kw.learn.core;
+package kw.manager.core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import kw.learn.core.asset.Asset;
-import kw.learn.core.base.BaseGame;
-import kw.learn.core.base.BaseScreen;
+import kw.manager.core.asset.Asset;
+import kw.manager.core.base.BaseGame;
+import kw.manager.core.base.BaseScreen;
 
 /**
  * @Auther jian xian si qi

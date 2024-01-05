@@ -1,7 +1,7 @@
-package kw.learn.core;
+package kw.manager.core;
 
-import kw.learn.core.base.BaseGame;
-import kw.learn.core.listener.WindowListener;
+import kw.manager.core.base.BaseGame;
+import kw.manager.core.listener.WindowListener;
 
 /**
  * @Auther jian xian si qi

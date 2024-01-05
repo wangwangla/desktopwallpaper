@@ -60,7 +60,7 @@ public class DynamicUtils {
             {
                 if(User32.INSTANCE.FindWindowEx(hWnd, null, "SHELLDLL_DefView", null)==null)
                     return true;
-                WinDef.HWND hwnd = User32.INSTANCE.FindWindowEx(hWnd, null, "SHELLDLL_DefView", null);
+
                 WinDef.HWND worker = User32.INSTANCE.FindWindowEx(null, hWnd, "WorkerW", null);
                 if(worker != null)
                 {

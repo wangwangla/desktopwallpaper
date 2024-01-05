@@ -1,36 +1,29 @@
-package kw.learn.core.asset;
+package kw.manager.core.asset;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.LocalFileHandleResolver;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.I18NBundle;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import kw.learn.core.Constant;
+import kw.manager.core.ManagerConstant;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/16 12:18
  */
 
-public class Asset implements Disposable {
-    private static Asset asset;
+public class ManagerAsset implements Disposable {
+    private static ManagerAsset asset;
     public static AssetManager assetManager;
     public static AssetManager localAssetManager;
     private int i=0;
@@ -137,7 +130,7 @@ public class Asset implements Disposable {
         }
     }
 
-    private Asset(){
+    private ManagerAsset(){
         i++;
         if (i>=2){
             throw new RuntimeException("gun");
@@ -164,9 +157,9 @@ public class Asset implements Disposable {
         return localAssetManager;
     }
 
-    public static Asset getAsset() {
+    public static ManagerAsset getAsset() {
         if (asset==null){
-            asset = new Asset();
+            asset = new ManagerAsset();
         }
         return asset;
     }
@@ -234,11 +227,11 @@ public class Asset implements Disposable {
     }
 
     public float getProcess(){
-        return Asset.assetManager.getProgress();
+        return ManagerAsset.assetManager.getProgress();
     }
 
     public boolean update(){
-        return Asset.assetManager.update();
+        return ManagerAsset.assetManager.update();
     }
 
     public FrameBuffer mainBuffer(){
@@ -249,21 +242,21 @@ public class Asset implements Disposable {
         if(format.r < 8){
             mainBufferTemp = new FrameBuffer(
                     Pixmap.Format.RGB565,
-                    (int) Constant.GAMEWIDTH,
-                    (int) Constant.GAMEHIGHT,
+                    (int) ManagerConstant.GAMEWIDTH,
+                    (int) ManagerConstant.GAMEHIGHT,
                     false);
         }else{
             try {
                 mainBufferTemp = new FrameBuffer(
                         Pixmap.Format.RGB888,
-                        (int) Constant.GAMEWIDTH,
-                        (int) Constant.GAMEHIGHT,
+                        (int) ManagerConstant.GAMEWIDTH,
+                        (int) ManagerConstant.GAMEHIGHT,
                         false);
             }catch (Exception e){
                 mainBufferTemp = new FrameBuffer(
                         Pixmap.Format.RGB565,
-                        (int) Constant.GAMEWIDTH,
-                        (int) Constant.GAMEHIGHT,
+                        (int) ManagerConstant.GAMEWIDTH,
+                        (int) ManagerConstant.GAMEHIGHT,
                         false);
             }
         }
@@ -283,21 +276,21 @@ public class Asset implements Disposable {
             if(format.r < 8){
                 dialogBuffer = new FrameBuffer(
                         Pixmap.Format.RGB565,
-                        (int) Constant.GAMEWIDTH,
-                        (int) Constant.GAMEHIGHT,
+                        (int) ManagerConstant.GAMEWIDTH,
+                        (int) ManagerConstant.GAMEHIGHT,
                         false);
             }else{
                 try {
                     dialogBuffer = new FrameBuffer(
                             Pixmap.Format.RGB888,
-                            (int) Constant.GAMEWIDTH,
-                            (int) Constant.GAMEHIGHT,
+                            (int) ManagerConstant.GAMEWIDTH,
+                            (int) ManagerConstant.GAMEHIGHT,
                             false);
                 }catch (Exception e){
                     dialogBuffer = new FrameBuffer(
                             Pixmap.Format.RGB565,
-                            (int) Constant.GAMEWIDTH,
-                            (int) Constant.GAMEHIGHT,
+                            (int) ManagerConstant.GAMEWIDTH,
+                            (int) ManagerConstant.GAMEHIGHT,
                             false);
                 }
             }
@@ -314,21 +307,21 @@ public class Asset implements Disposable {
             if(format.r < 8){
                 frameBuffer = new FrameBuffer(
                         Pixmap.Format.RGB565,
-                        (int) Constant.GAMEWIDTH,
-                        (int) Constant.GAMEHIGHT,
+                        (int) ManagerConstant.GAMEWIDTH,
+                        (int) ManagerConstant.GAMEHIGHT,
                         false);
             }else{
                 try {
                     frameBuffer = new FrameBuffer(
                             Pixmap.Format.RGB888,
-                            (int) Constant.GAMEWIDTH,
-                            (int) Constant.GAMEHIGHT,
+                            (int) ManagerConstant.GAMEWIDTH,
+                            (int) ManagerConstant.GAMEHIGHT,
                             false);
                 }catch (Exception e){
                     frameBuffer = new FrameBuffer(
                             Pixmap.Format.RGB565,
-                            (int) Constant.GAMEWIDTH,
-                            (int) Constant.GAMEHIGHT,
+                            (int) ManagerConstant.GAMEWIDTH,
+                            (int) ManagerConstant.GAMEHIGHT,
                             false);
                 }
             }
