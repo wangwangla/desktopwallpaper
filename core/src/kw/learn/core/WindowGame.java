@@ -22,7 +22,7 @@ public class WindowGame extends Game {
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.0f, .0f, 0.0f, 0.2f, false);
+        ScreenUtils.clear(0.4f, .4f, 0.4f, 0.0f, false);
         super.render();
 //        listener.moveWindowPosition(10,10);
     }

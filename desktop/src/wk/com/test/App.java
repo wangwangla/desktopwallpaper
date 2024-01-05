@@ -66,6 +66,10 @@ class App {
                 GLFW.glfwGetWindowPos(windowHandle,windowX,windowY);
 
                 Utils.makeWallpaper(windowHandle);
+
+
+
+
 //                double xArr[] =  new double[1];
 //                double yArr[] =  new double[1];
 //                GLFW.glfwGetCursorPos(windowHandle,xArr,yArr);

@@ -262,16 +262,7 @@ public class OpenALLwjgl3Audio implements Lwjgl3Audio {
 	}
 
 	public void dispose () {
-		if (noDevice) return;
-		for (int i = 0, n = allSources.size; i < n; i++) {
-			int sourceID = allSources.get(i);
-			int state = alGetSourcei(sourceID, AL_SOURCE_STATE);
-			if (state != AL_STOPPED) alSourceStop(sourceID);
-			alDeleteSources(sourceID);
-		}
 
-		sourceToSoundId.clear();
-		soundIdToSource.clear();
 
 	}
 
