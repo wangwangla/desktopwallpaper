@@ -3,11 +3,19 @@ package wk.com.test;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinUser;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWNativeWin32;
 
+import kw.manager.core.WindowGame;
 import kw.manager.core.WindowManagerGame;
 import kw.manager.core.listener.ManagerListener;
+import kw.manager.core.listener.WindowListener;
+import kw.test.DynamicUtils;
 
 /**
  * @Auther jian xian si qi
@@ -32,7 +40,7 @@ class WallpapgerLauncher {
         config.setInitialBackgroundColor(new Color(0,0,0,0));
         // Instantiate the App
         Lwjgl3Application app = new Lwjgl3Application();
-        app.init(new WindowManagerGame(new ManagerListener(){
+        app.init(new WindowGame(new WindowListener(){
             @Override
             public void windowForward() {
 //                long windowHandle = app.getWindowHandle();
@@ -44,55 +52,15 @@ class WallpapgerLauncher {
                 long windowHandle = app.getWindowHandle();
                 int windowX[] = new int[1];
                 int windowY[] = new int[1];
-                GLFW.glfwGetWindowPos(windowHandle,windowX,windowY);
-
-//                DynamicUtils.makeWallpaper(windowHandle);
-
-
-
-
-//                double xArr[] =  new double[1];
-//                double yArr[] =  new double[1];
-//                GLFW.glfwGetCursorPos(windowHandle,xArr,yArr);
-//                1090.0-----------1001.0
-//                1154.0-----------192.0
-//                System.out.println(windowX[0]+"-----------"+windowY[0]);
-////                GLFW.glfwSetWindowPos(windowHandle,windowX[0]+(int)x,windowY[0]+(int)y);
-////                WinDef.HWND hwnd = User32.INSTANCE.GetDesktopWindow();
-////                User32.INSTANCE.SE
-////                IntPtr hProgman = DllImports.FindWindow("Progman", "Program Manager");
-//                WinDef.HWND hProgman = User32.INSTANCE.FindWindow("Progman", "Program Manager");
-////                WinDef.HWND hProgman = User32.INSTANCE.GetDesktopWindow();
-//                //发送0x52c消息
-//                User32.INSTANCE.SendMessageTimeout(hProgman, 0x52c, new WinDef.WPARAM(0)
-//                        , new WinDef.LPARAM(0),0,100,new WinDef.DWORDByReference());
-//                WinDef.HWND workerW=null;
-//                do
-//                {
-//                    workerW = User32.INSTANCE.FindWindowEx(null, workerW, "workerW", null);
-//                    if (User32.INSTANCE.GetParent(workerW) == hProgman)
-//                    {
-//                        User32.INSTANCE.ShowWindow(workerW, 0);
-//                    }
-//                } while (workerW !=null);
-//
-//                WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, "");
-//
-//                User32.INSTANCE.SetParent(hwnd, hProgman);
-//                DllImports.SetParent(ffplay.MainWindowHandle, hProgman);
-
-
-//                WinDef.HWND hwnd1 = User32.INSTANCE.FindWindow(null, "windowswallpaper");
-//                User32.INSTANCE.ShowWindow(hwnd1,3);
-//                //将视频窗口设置为桌面窗口的子窗口
-//                User32.INSTANCE.SetParent(hwnd1, hProgman);
-//                //枚举窗口找到WorkerW-2并隐藏它
-//
-
-
-//                User32.INSTANCE.FindWindow("Progman",null);
-
+                GLFW.glfwGetWindowPos(windowHandle, windowX, windowY);
+                GLFW.glfwFocusWindow(windowHandle);
+                DynamicUtils.makeWallpaper(windowHandle);
             }
-        }), config);
+        }){
+            @Override
+            public void render() {
+                super.render();
+            }
+        }, config);
     }
 }
