@@ -49,12 +49,12 @@ class WallpapgerLauncher {
 
             @Override
             public void moveWindowPosition(float x, float y) {
-                long windowHandle = app.getWindowHandle();
-                int windowX[] = new int[1];
-                int windowY[] = new int[1];
-                GLFW.glfwGetWindowPos(windowHandle, windowX, windowY);
-                GLFW.glfwFocusWindow(windowHandle);
-                DynamicUtils.makeWallpaper(windowHandle);
+//                long windowHandle = app.getWindowHandle();
+//                int windowX[] = new int[1];
+//                int windowY[] = new int[1];
+//                GLFW.glfwGetWindowPos(windowHandle, windowX, windowY);
+//                GLFW.glfwFocusWindow(windowHandle);
+//                DynamicUtils.makeWallpaper(windowHandle);
             }
         }){
             @Override
