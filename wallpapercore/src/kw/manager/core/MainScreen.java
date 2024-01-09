@@ -2,7 +2,10 @@ package kw.manager.core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -24,36 +27,23 @@ public class MainScreen extends BaseScreen {
     @Override
     public void initView() {
         super.initView();
-        stage.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                System.out.println("--------------------------");
-            }
-        });
         Image image = new Image(Asset.getAsset().getTexture("white.png"));
         addActor(image);
-        image.setColor(Color.ROYAL);
+        image.setColor(Color.valueOf("#f0d9ac"));
         image.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
         image.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f, Align.center);
-        image.addListener(new ClickListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                image.setColor(Color.WHITE);
-                return super.touchDown(event, x, y, pointer, button);
-            }
+        Image image1 = new Image(Asset.getAsset().getTexture("baichui.png"));
+        addActor(image1);
+        image1.setPosition(image.getX(Align.center),image.getY(Align.center),Align.center);
+        image1.setOrigin(Align.top);
+        image1.addAction(Actions.forever(
+                Actions.sequence(
+                    Actions.rotateTo(-40,   1, Interpolation.fastSlow),
+                    Actions.rotateTo(0,     1, Interpolation.slowFast),
+                        Actions.rotateTo(40,1,Interpolation.fastSlow),
+                        Actions.rotateTo(0, 1,Interpolation.slowFast)
+                        )
 
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                image.setColor(Color.RED);
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                super.touchUp(event, x, y, pointer, button);
-                image.setColor(Color.ROYAL);
-            }
-        });
+        ));
     }
 }
