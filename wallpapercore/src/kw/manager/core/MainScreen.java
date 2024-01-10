@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import kw.manager.core.asset.Asset;
 import kw.manager.core.base.BaseGame;
 import kw.manager.core.base.BaseScreen;
+import kw.manager.core.group.EightDiagramGroup;
 
 /**
  * @Auther jian xian si qi
@@ -45,5 +47,11 @@ public class MainScreen extends BaseScreen {
                         )
 
         ));
+//        EightDiagramGroup group = new EightDiagramGroup();
+//        addActor(group);
+//        group.showImg();
+//        group.showGroup();
+//        group.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f,Align.center);
+
     }
 }
