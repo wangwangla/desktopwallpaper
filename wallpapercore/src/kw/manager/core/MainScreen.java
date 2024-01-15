@@ -45,7 +45,6 @@ public class MainScreen extends BaseScreen {
                         Actions.rotateTo(40,1,Interpolation.fastSlow),
                         Actions.rotateTo(0, 1,Interpolation.slowFast)
                         )
-
         ));
 //        EightDiagramGroup group = new EightDiagramGroup();
 //        addActor(group);

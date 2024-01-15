@@ -33,24 +33,14 @@ public class DisplayMonitorInfo {
             WinUser.HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(
                     byValue,
                     WinUser.MONITOR_DEFAULTTONEAREST);
-
             // 输出显示器句柄
             System.out.println("显示器句柄: " + hMonitor);
-
         }
-
-
-
-        for (WinUser.MONITORINFOEX monitor : monitors) {
-
-        }
-//        DisplayMonitors.FirstOrDefault(x => x.Index == ((int)opts.Monitor)) : displayManager.PrimaryDisplayMonitor;
-    }
+   }
 
     public static List<WinUser.MONITORINFOEX> getMonitors() {
         final List<WinUser.MONITORINFOEX> monitors = new ArrayList<>();
         User32.INSTANCE.EnumDisplayMonitors(null, null, new User32.MONITORENUMPROC() {
-
             @Override
             public int apply(WinUser.HMONITOR hMonitor, WinDef.HDC hdcMonitor, WinDef.RECT lprcMonitor, WinDef.LPARAM dwData) {
                 WinUser.MONITORINFOEX monitorInfo = new WinUser.MONITORINFOEX();
@@ -61,5 +51,4 @@ public class DisplayMonitorInfo {
         }, null);
         return monitors;
     }
-
 }

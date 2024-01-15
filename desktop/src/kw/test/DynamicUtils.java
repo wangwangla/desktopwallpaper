@@ -36,7 +36,6 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import kw.demo.Display;
 import kw.demo.DisplayMonitorInfo;
 
 /**
@@ -44,12 +43,7 @@ import kw.demo.DisplayMonitorInfo;
  * @Date 2024/1/5 0:13
  */
 public class DynamicUtils {
-    public static InputStream openURLStream(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
-        // Some servers block Java 8's HTTP client.
-        connection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0");
-        return connection.getInputStream();
-    }
+
     private static WinDef.HWND getWorkerW() {
         return getWorkerW(null);
     }
@@ -131,9 +125,6 @@ public class DynamicUtils {
         User32.INSTANCE.SetWindowLong(thisWindow, User32.GWL_EXSTYLE, (int) exStyle);
 
         for (WinUser.MONITORINFOEX monitor : DisplayMonitorInfo.getMonitors()) {
-
-//            WinDef.HWND workerW = getWorkerW();
-            Display utils = new Display();
             WinDef.HWND desktopWindow = getWorkerW(monitor.rcMonitor);
 
             User32.INSTANCE.SetParent(thisWindow, desktopWindow);

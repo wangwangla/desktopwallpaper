@@ -33,7 +33,7 @@ class WallpapgerLauncher {
         config.setWindowedMode(1920, 1200);
         config.setWindowPosition(0, 100);
         // Configure window title
-        final String TITLE = "xxxxxxxxx";
+        final String TITLE = "xx";
         config.setTitle(TITLE);
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(true);
@@ -54,13 +54,13 @@ class WallpapgerLauncher {
 //                int windowY[] = new int[1];
 //                GLFW.glfwGetWindowPos(windowHandle, windowX, windowY);
 //                GLFW.glfwFocusWindow(windowHandle);
+            }
+
+            @Override
+            public void setWallpaper() {
+                long windowHandle = app.getWindowHandle();
                 DynamicUtils.makeWallpaper(windowHandle);
             }
-        }){
-            @Override
-            public void render() {
-                super.render();
-            }
-        }, config);
+        }), config);
     }
 }
