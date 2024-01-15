@@ -30,7 +30,7 @@ class WallpapgerLauncher {
         // Configure window layout
         config.setDecorated(false);
         config.setResizable(false);
-        config.setWindowedMode(500, 500);
+        config.setWindowedMode(1920, 1200);
         config.setWindowPosition(0, 100);
         // Configure window title
         final String TITLE = "xxxxxxxxx";
