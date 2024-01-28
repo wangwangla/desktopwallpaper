@@ -21,6 +21,7 @@ public class WindowGame extends BaseGame {
         super.loadingView();
         setScreen(new MainScreen(this));
         Constant.windowListener.moveWindowPosition(0,0);
+        Constant.windowListener.setWallpaper();
     }
 
     @Override

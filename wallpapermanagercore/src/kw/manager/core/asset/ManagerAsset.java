@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
+import com.esotericsoftware.spine.SkeletonData;
+import com.esotericsoftware.spine.loader.SkeletonDataLoader;
 
 import java.util.ArrayList;
 
@@ -135,10 +137,9 @@ public class ManagerAsset implements Disposable {
         if (i>=2){
             throw new RuntimeException("gun");
         }
-
         mainBuffer = new ArrayList<>();
-
         assetManager = getAssetManager();
+        assetManager.setLoader(SkeletonData.class,new SkeletonDataLoader(assetManager.getFileHandleResolver()));
         localAssetManager = getLocalAssetManager();
     }
 

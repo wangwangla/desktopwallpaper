@@ -6,4 +6,6 @@ sourceCompatibility = 1.8
 dependencies {
 
     implementation project (':libGdx')
+    implementation project (':libSpine')
+
 }

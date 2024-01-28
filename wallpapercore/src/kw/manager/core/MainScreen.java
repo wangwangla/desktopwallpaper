@@ -15,6 +15,7 @@ import kw.manager.core.asset.Asset;
 import kw.manager.core.base.BaseGame;
 import kw.manager.core.base.BaseScreen;
 import kw.manager.core.group.EightDiagramGroup;
+import kw.manager.core.spine.SpineActor;
 
 /**
  * @Auther jian xian si qi
@@ -34,18 +35,24 @@ public class MainScreen extends BaseScreen {
         image.setColor(Color.valueOf("#f0d9ac"));
         image.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
         image.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f, Align.center);
-        Image image1 = new Image(Asset.getAsset().getTexture("baichui.png"));
-        addActor(image1);
-        image1.setPosition(image.getX(Align.center),image.getY(Align.center),Align.center);
-        image1.setOrigin(Align.top);
-        image1.addAction(Actions.forever(
-                Actions.sequence(
-                    Actions.rotateTo(-40,   1, Interpolation.fastSlow),
-                    Actions.rotateTo(0,     1, Interpolation.slowFast),
-                        Actions.rotateTo(40,1,Interpolation.fastSlow),
-                        Actions.rotateTo(0, 1,Interpolation.slowFast)
-                        )
-        ));
+
+        SpineActor spineActor = new SpineActor("3_75_32");
+        addActor(spineActor);
+        spineActor.setAnimation("animation",true);
+        spineActor.setPosition(Constant.GAMEWIDTH/2,Constant.GAMEHIGHT/2.0f,Align.center);
+
+//        Image image1 = new Image(Asset.getAsset().getTexture("baichui.png"));
+//        addActor(image1);
+//        image1.setPosition(image.getX(Align.center),image.getY(Align.center),Align.center);
+//        image1.setOrigin(Align.top);
+//        image1.addAction(Actions.forever(
+//                Actions.sequence(
+//                    Actions.rotateTo(-40,   1, Interpolation.fastSlow),
+//                    Actions.rotateTo(0,     1, Interpolation.slowFast),
+//                        Actions.rotateTo(40,1,Interpolation.fastSlow),
+//                        Actions.rotateTo(0, 1,Interpolation.slowFast)
+//                        )
+//        ));
 //        EightDiagramGroup group = new EightDiagramGroup();
 //        addActor(group);
 //        group.showImg();

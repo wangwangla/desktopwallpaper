@@ -15,8 +15,8 @@ public class Constant {
     //    viewport
     public static final int EXTENDVIEWPORT = 0;
     public static final int FITVIEWPORT = 1;
-    public static float WIDTH = 1920/2.0f;
-    public static float HIGHT = 1200/2.0f;
+    public static float WIDTH = 916;
+    public static float HIGHT = 680;
     public static float GAMEWIDTH = 1080;
     public static float GAMEHIGHT = 1920;
     public static final float STDWIDTH = 1920;

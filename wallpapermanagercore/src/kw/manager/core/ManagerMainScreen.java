@@ -25,15 +25,15 @@ public class ManagerMainScreen extends ManagerBaseScreen {
         super.initView();
         Image bg = new Image(ManagerAsset.getAsset().getTexture("white.png"));
         addActor(bg);
-        bg.setColor(Color.ROYAL);
+        bg.setColor(Color.valueOf("#11555555"));
         bg.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT);
         bg.setPosition(ManagerConstant.GAMEWIDTH/2.0f, ManagerConstant.GAMEHIGHT/2.0f, Align.center);
         bg.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                System.out.println("---------------");
             }
         });
+
     }
 }

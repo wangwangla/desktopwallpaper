@@ -12,6 +12,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
+import com.esotericsoftware.spine.SkeletonData;
+import com.esotericsoftware.spine.SkeletonRenderer;
+import com.esotericsoftware.spine.loader.SkeletonDataLoader;
 
 import java.util.ArrayList;
 
@@ -145,6 +148,7 @@ public class Asset implements Disposable {
     private AssetManager getAssetManager(){
         if (assetManager == null){
             assetManager = new AssetManager();
+            assetManager.setLoader(SkeletonData.class,new SkeletonDataLoader(assetManager.getFileHandleResolver()));
             assetManager.clear();
         }
         return assetManager;
@@ -153,6 +157,7 @@ public class Asset implements Disposable {
     public AssetManager getLocalAssetManager(){
         if (localAssetManager == null){
             localAssetManager = new AssetManager(new LocalFileHandleResolver());
+            localAssetManager.setLoader(SkeletonData.class,new SkeletonDataLoader(localAssetManager.getFileHandleResolver()));
         }
         return localAssetManager;
     }
@@ -348,5 +353,15 @@ public class Asset implements Disposable {
 
     public void assetManagerLoad(String loadFilePath) {
         assetManager.load(loadFilePath,Texture.class);
+    }
+
+
+    private SkeletonRenderer renderer;
+
+    public SkeletonRenderer getRenderer() {
+        if (renderer == null){
+            renderer = new SkeletonRenderer();
+        }
+        return renderer;
     }
 }
