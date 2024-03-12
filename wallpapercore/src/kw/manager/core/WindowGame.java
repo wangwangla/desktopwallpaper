@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 
 import kw.manager.core.base.BaseGame;
 import kw.manager.core.listener.WindowListener;
+import kw.mulitplay.game.screen.LoadingScreen;
 
 /**
  * @Auther jian xian si qi
@@ -19,9 +20,10 @@ public class WindowGame extends BaseGame {
     @Override
     protected void loadingView() {
         super.loadingView();
-        setScreen(new MainScreen(this));
-        Constant.windowListener.moveWindowPosition(0,0);
-        Constant.windowListener.setWallpaper();
+//        setScreen(new MainScreen(this));
+        setScreen(new LoadingScreen(this));
+//        Constant.windowListener.moveWindowPosition(0,0);
+//        Constant.windowListener.setWallpaper();
     }
 
     @Override

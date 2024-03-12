@@ -15,6 +15,8 @@ import kw.manager.core.asset.Asset;
 import kw.manager.core.base.BaseGame;
 import kw.manager.core.base.BaseScreen;
 import kw.manager.core.group.EightDiagramGroup;
+import kw.manager.core.group.PicGroup;
+import kw.manager.core.progress.Progress;
 import kw.manager.core.spine.SpineActor;
 
 /**
@@ -35,11 +37,20 @@ public class MainScreen extends BaseScreen {
         image.setColor(Color.valueOf("#f0d9ac"));
         image.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
         image.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f, Align.center);
+//        PicGroup group = new PicGroup();
+//        group.addPic();
+//        addActor(group);
+//        SpineActor spineActor = new SpineActor("3_75_32");
+////        addActor(spineActor);
+//        spineActor.setAnimation("animation",true);
+//        spineActor.setPosition(Constant.GAMEWIDTH/2,Constant.GAMEHIGHT/2.0f,Align.center);
+        Progress progress = new Progress();
+        addActor(progress);
+        progress.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f,Align.center);
+        Image moyu = new Image(Asset.getAsset().getTexture("moyu.png"));
+        addActor(moyu);
+        moyu.setPosition(progress.getWidth()/2.0f,progress.getY(Align.top)+20,Align.bottom);
 
-        SpineActor spineActor = new SpineActor("3_75_32");
-        addActor(spineActor);
-        spineActor.setAnimation("animation",true);
-        spineActor.setPosition(Constant.GAMEWIDTH/2,Constant.GAMEHIGHT/2.0f,Align.center);
 
 //        Image image1 = new Image(Asset.getAsset().getTexture("baichui.png"));
 //        addActor(image1);
