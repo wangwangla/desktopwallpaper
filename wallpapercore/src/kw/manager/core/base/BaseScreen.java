@@ -28,7 +28,6 @@ public class BaseScreen implements Screen {
     protected boolean dispose;
     protected final Stage stage;
     protected Group rootView;
-    protected String viewpath;
     protected float offsetY;
     protected float offsetX;
     protected boolean back;

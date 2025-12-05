@@ -95,8 +95,10 @@ public class WallManagerLauncher {
                         throw new RuntimeException(e);
                     }
                     System.out.println("Original main end");
-                }else {
+                }else if (startEnum == StartEnum.NEW_PROCESS){
                     WallpapgerLauncher.main(new String[]{});
+                }else {
+
                 }
             }
 

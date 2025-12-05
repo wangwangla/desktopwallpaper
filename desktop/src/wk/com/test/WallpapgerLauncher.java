@@ -43,7 +43,7 @@ class WallpapgerLauncher {
         config.setForegroundFPS(30);
         config.setIdleFPS(30);
         // Configure window layout
-        config.setDecorated(false);
+        config.setDecorated(true);
         config.setResizable(false);
         config.setWindowedMode((int) (1920 * 0.5f), (int) (1200 * 0.5f));
         config.setWindowPosition(0, 100);
