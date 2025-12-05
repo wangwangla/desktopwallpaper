@@ -10,6 +10,7 @@ import java.awt.TrayIcon;
 
 public class TrayItem {
     private TrayIcon trayIcon;
+    private Process process;
     public void showTray(){
         if (!SystemTray.isSupported()) {
             System.out.println("System tray not supported!");
@@ -34,6 +35,9 @@ public class TrayItem {
         MenuItem exitItem = new MenuItem("退出");
         exitItem.addActionListener(e -> {
             System.out.println("退出应用");
+            if (process!=null){
+                TrayItemManager.getTrayItemManager().closeProcess(process);
+            }
             System.exit(0);
         });
         popup.add(exitItem);
@@ -52,4 +56,9 @@ public class TrayItem {
         SystemTray tray = SystemTray.getSystemTray();
         tray.remove(trayIcon);
     }
+
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+
 }

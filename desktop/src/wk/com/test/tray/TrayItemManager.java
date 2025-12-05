@@ -32,7 +32,7 @@ public class TrayItemManager {
         }
     }
 
-    private void closeProcess(Process runningProcess){
+    public void closeProcess(Process runningProcess){
         if (runningProcess!=null && runningProcess.isAlive()){
             System.out.println("old process exsit!");
             OutputStream os = runningProcess.getOutputStream();

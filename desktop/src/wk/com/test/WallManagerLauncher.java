@@ -90,6 +90,7 @@ public class WallManagerLauncher {
                         TrayItem trayItem = new TrayItem();
                         trayItem.showTray();
                         trayData.setItem(trayItem);
+                        trayItem.setProcess(start);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
