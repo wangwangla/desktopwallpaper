@@ -1,9 +1,7 @@
 package kw.test;
 
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 /**
  * @Auther jian xian si qi
@@ -24,8 +21,7 @@ import javax.swing.JFrame;
  */
 public class WallpaperChanger {
     // main
-    public static void main(String... args)
-    {
+    public static void main(String... args) {
 
     }
 
@@ -37,7 +33,7 @@ public class WallpaperChanger {
         long SPIF_UPDATEINIFILE = 0x01;
         long SPIF_SENDWININICHANGE = 0x02;
 
-        SPI INSTANCE = (SPI) Native.loadLibrary("user32", SPI.class, new HashMap<String,Object>() {
+        SPI INSTANCE = (SPI) Native.loadLibrary("user32", SPI.class, new HashMap<String, Object>() {
             {
                 put(OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
                 put(OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
@@ -53,10 +49,8 @@ public class WallpaperChanger {
     }
 
 
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
+    public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
 
@@ -76,7 +70,7 @@ public class WallpaperChanger {
     public void setWall() {
         try {
             String USER = System.getProperty("user.home");
-            String pathToWrite = USER+"\\Pictures\\";
+            String pathToWrite = USER + "\\Pictures\\";
             File create = new File(pathToWrite + "DesktopWallpaper.jpg");
             create.createNewFile();
             ImageIO.write(ImageIO.read(new File("./ad_progress.png")), "png", new File(pathToWrite + "DesktopWallpaper.jpg"));

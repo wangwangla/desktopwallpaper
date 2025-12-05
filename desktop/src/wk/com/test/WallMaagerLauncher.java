@@ -25,7 +25,7 @@ public class WallMaagerLauncher {
         config.setTitle(TITLE);
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(true);
-        config.setInitialBackgroundColor(new Color(0,0,0,0));
+        config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
         // Instantiate the App
         Lwjgl3Application app = new Lwjgl3Application();
         app.init(new WindowManagerGame(new ManagerListener() {

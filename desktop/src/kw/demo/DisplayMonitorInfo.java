@@ -11,9 +11,8 @@ import java.util.List;
 
 /**
  * 获取两个屏幕
- *
+ * <p>
  * 打印信息， 并获取句柄
- *
  *
  * @Auther jian xian si qi
  * @Date 2024/1/5 23:25
@@ -36,7 +35,7 @@ public class DisplayMonitorInfo {
             // 输出显示器句柄
             System.out.println("显示器句柄: " + hMonitor);
         }
-   }
+    }
 
     public static List<WinUser.MONITORINFOEX> getMonitors() {
         final List<WinUser.MONITORINFOEX> monitors = new ArrayList<>();
