@@ -129,12 +129,6 @@ public class DynamicUtils {
 
             User32.INSTANCE.SetParent(thisWindow, desktopWindow);
             User32.INSTANCE.ShowWindow(thisWindow, User32.SW_SHOW);
-
-
-
-//            User32.INSTANCE.MoveWindow(thisWindow, 0, rect.top, rect.right,
-//                    rect.bottom+10, false);
-//            rect.clear();
             GLFWVidMode glfwVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
             WinDef.RECT rect2 = new WinDef.RECT();
@@ -172,12 +166,4 @@ public class DynamicUtils {
 
         getWorkerW();
     }
-
-//    public static String read(String path) throws IOException
-//    {
-//        try(InputStream in = DynamicWallpaper.class.getResourceAsStream(path))
-//        {
-//            return IOUtils.toString(in, StandardCharsets.UTF_8);
-//        }
-//    }
 }

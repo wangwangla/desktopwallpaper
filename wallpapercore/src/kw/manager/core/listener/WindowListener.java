@@ -8,4 +8,5 @@ public interface WindowListener {
     void windowForward();
     void moveWindowPosition(float x,float y);
     void setWallpaper();
+
 }

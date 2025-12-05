@@ -33,12 +33,12 @@ public class EightDiagramGroup extends Group {
             for (int i = 0; i < str.length(); i++) {
                 char c = str.charAt(i);
                 if (c == '0'){
-                    Image img = new Image(Asset.getAsset().getTexture("0.png"));
+                    Image img = new Image(Asset.getAsset().getTexture("bagua/0.png"));
                     group.addActor(img);
                     img.setX(group.getWidth()/2.0f, Align.center);
                     img.setY(group.getHeight() - i * 24 - i * 31,Align.top);
                 }else {
-                    Image img = new Image(Asset.getAsset().getTexture("1.png"));
+                    Image img = new Image(Asset.getAsset().getTexture("bagua/1.png"));
                     group.addActor(img);
                     img.setX(group.getWidth()/2.0f, Align.center);
                     img.setY(group.getHeight() - i * 24 - i * 31,Align.top);
