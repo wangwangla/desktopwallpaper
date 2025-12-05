@@ -38,7 +38,7 @@ public class TrayItem {
             if (process!=null){
                 TrayItemManager.getTrayItemManager().closeProcess(process);
             }
-            System.exit(0);
+            close();
         });
         popup.add(exitItem);
         trayIcon.setPopupMenu(popup);
