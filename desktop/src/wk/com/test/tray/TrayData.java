@@ -6,9 +6,9 @@ public class TrayData {
     private TrayItem item;
     private Process process;
 
-    public TrayIcon getItem() {
+    public TrayItem getItem() {
         if (item!=null) {
-            return item.getTrayIcon();
+            return item;
         }else {
             return null;
         }

@@ -48,7 +48,8 @@ public class TrayItem {
         System.out.println("托盘图标添加成功");
     }
 
-    public TrayIcon getTrayIcon() {
-        return trayIcon;
+    public void close() {
+        SystemTray tray = SystemTray.getSystemTray();
+        tray.remove(trayIcon);
     }
 }

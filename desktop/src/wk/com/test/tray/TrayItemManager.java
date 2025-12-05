@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Array;
 
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class TrayItemManager {
     private Array<TrayData> trayDataArray;
@@ -33,7 +35,13 @@ public class TrayItemManager {
     private void closeProcess(Process runningProcess){
         if (runningProcess!=null && runningProcess.isAlive()){
             System.out.println("old process exsit!");
-            runningProcess.destroy();
+            OutputStream os = runningProcess.getOutputStream();
+            try {
+                os.write("EXIT\n".getBytes());
+                os.flush();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             try {
                 runningProcess.waitFor();
             } catch (InterruptedException e) {
@@ -42,12 +50,15 @@ public class TrayItemManager {
         }
     }
 
-    private void closeTray(TrayIcon trayIcon){
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("JVM 退出，移除托盘图标");
-            SystemTray tray = SystemTray.getSystemTray();
-            tray.remove(trayIcon);
-        }));
+    private void closeTray(TrayItem trayIcon){
+        System.out.println("JVM 退出，移除托盘图标");
+        trayIcon.close();
+
     }
 
+    public void closeTrayAndProcessAll() {
+        for (TrayData trayData : trayDataArray) {
+            closeTrayAndProcess(trayData);
+        }
+    }
 }
