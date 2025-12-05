@@ -612,4 +612,9 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		return false;
 	}
 
+	public void setVisible(boolean flag){
+		for (Lwjgl3Window window : windows) {
+			window.setVisible(flag);
+		}
+	}
 }

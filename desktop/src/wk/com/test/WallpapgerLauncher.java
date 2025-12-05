@@ -53,22 +53,14 @@ class WallpapgerLauncher {
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(true);
         config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
-        config.setWindowListener(new Lwjgl3WindowAdapter(){
-            @Override
-            public boolean closeRequested() {
-                System.out.println("---------------dddddddddddddddddddddddddddd");
-                DynamicUtils.destroyWallpaper(app.getWindowHandle());
-                return super.closeRequested();
-            }
-        });
         // Instantiate the App
         this.app = new Lwjgl3Application();
 
         new Thread(() -> {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
-                System.out.println(sc.hasNextLine());
                 if (sc.nextLine().equals("EXIT")) {
+                    app.setVisible(false);
                     DynamicUtils.destroyWallpaper(app.getWindowHandle());
                     System.out.println("Wallpaper cleaned.");
                     System.exit(0);
@@ -79,28 +71,19 @@ class WallpapgerLauncher {
         app.init(new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
-//                long windowHandle = app.getWindowHandle();
-//                GLFW.glfwSetWindowAttrib(windowHandle,GLFW.GLFW_FLOATING,GLFW.GLFW_TRUE);
             }
 
             @Override
             public void moveWindowPosition(float x, float y) {
-//                long windowHandle = app.getWindowHandle();
-//                int windowX[] = new int[1];
-//                int windowY[] = new int[1];
-//                GLFW.glfwGetWindowPos(windowHandle, windowX, windowY);
-//                GLFW.glfwFocusWindow(windowHandle);
+
             }
 
             @Override
             public void setWallpaper() {
                 long windowHandle = app.getWindowHandle();
                 DynamicUtils.makeWallpaper(windowHandle);
-                System.out.println("-0-0-0-0-0-0-0-0-0-0");
             }
         }), config);
-
-        System.out.println("00000000000000000000000sssssssssssssss");
         return app.getWindowHandle();
     }
 }

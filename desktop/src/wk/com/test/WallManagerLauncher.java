@@ -32,6 +32,7 @@ public class WallManagerLauncher {
     }
 
     public void run(){
+
         logConfig();
         this.startEnum = StartEnum.NEW_PROCESS;
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -110,7 +111,6 @@ public class WallManagerLauncher {
             @Override
             public boolean closeRequested() {
                 TrayItemManager.getTrayItemManager().closeTrayAndProcessAll();
-
                 NLog.i("xxxxxxxxxxx","JVM 正在退出，执行清理逻辑");
                 // 如果 LWJGL3Application 还在运行
                 if (Gdx.app != null) {
@@ -118,7 +118,7 @@ public class WallManagerLauncher {
                 }
                 System.out.println("清理完成，JVM退出");
                 System.exit(0);
-                return false;
+                return true;
             }
         };
     }
