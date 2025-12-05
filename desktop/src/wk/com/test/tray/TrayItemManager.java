@@ -44,6 +44,7 @@ public class TrayItemManager {
             }
             try {
                 runningProcess.waitFor();
+                runningProcess.destroyForcibly();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -55,12 +55,20 @@ class WallpapgerLauncher {
         config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
         // Instantiate the App
         this.app = new Lwjgl3Application();
-
+        config.setWindowListener(new Lwjgl3WindowAdapter(){
+            @Override
+            public boolean closeRequested() {
+                DynamicUtils.destroyWallpaper(app.getWindowHandle());
+                System.out.println("Wallpaper cleaned.");
+                System.exit(0);
+                return super.closeRequested();
+            }
+        });
         new Thread(() -> {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
                 if (sc.nextLine().equals("EXIT")) {
-                    app.setVisible(false);
+//                    app.setVisible(false);
                     DynamicUtils.destroyWallpaper(app.getWindowHandle());
                     System.out.println("Wallpaper cleaned.");
                     System.exit(0);
