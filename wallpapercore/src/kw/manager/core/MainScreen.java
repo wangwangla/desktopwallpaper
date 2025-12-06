@@ -43,20 +43,21 @@ public class MainScreen extends BaseScreen {
         float offsetY1 = offsetY;
 
 
-        HmBaoBao hmBaoBao = new HmBaoBao(new Rectangle(-offsetX1,-offsetY1,Constant.GAMEWIDTH,Constant.GAMEWIDTH));
-        addActor(hmBaoBao);
-        hmBaoBao.setPosition(Constant.GAMEWIDTH/2f,Constant.GAMEHIGHT/2f,Align.center);
+//        HmBaoBao hmBaoBao = new HmBaoBao(new Rectangle(-offsetX1,-offsetY1,Constant.GAMEWIDTH,Constant.GAMEWIDTH));
+//        addActor(hmBaoBao);
+//        hmBaoBao.setPosition(Constant.GAMEWIDTH/2f,Constant.GAMEHIGHT/2f,Align.center);
 
 
 
 
 
-        stage.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-            }
-        });
+//        stage.addListener(new ClickListener(){
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                super.clicked(event, x, y);
+//            }
+//        });
+
 
 //        SpineActor spineActor = new SpineActor("3_75_32");
 //        addActor(spineActor);
@@ -76,11 +77,11 @@ public class MainScreen extends BaseScreen {
 //                        )
 //        ));
 
-//        EightDiagramGroup group = new EightDiagramGroup();
-//        addActor(group);
-//        group.showImg();
-//        group.showGroup();
-//        group.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f,Align.center);
+        EightDiagramGroup group = new EightDiagramGroup();
+        addActor(group);
+        group.showImg();
+        group.showGroup();
+        group.setPosition(Constant.GAMEWIDTH/2.0f,Constant.GAMEHIGHT/2.0f,Align.center);
 
     }
 }

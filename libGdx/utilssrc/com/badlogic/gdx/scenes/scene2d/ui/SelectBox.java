@@ -128,7 +128,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		this.style = style;
 
 		if (scrollPane != null) {
-			scrollPane.setStyle(style.scrollStyle);
+
 			scrollPane.list.setStyle(style.listStyle);
 		}
 		invalidateHierarchy();
@@ -136,8 +136,8 @@ public class SelectBox<T> extends Widget implements Disableable {
 
 	/** Returns the select box's style. Modifying the returned style may not have an effect until {@link #setStyle(SelectBoxStyle)}
 	 * is called. */
-	public SelectBoxStyle getStyle () {
-		return style;
+	public static SelectBoxStyle getStyle() {
+		return null;
 	}
 
 	/** Set the backing Array that makes up the choices available in the SelectBox */

@@ -1,6 +1,7 @@
 package wk.com.test;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window;
@@ -32,14 +33,22 @@ public class WallManagerLauncher {
     }
 
     public void run(){
-
         logConfig();
         this.startEnum = StartEnum.NEW_PROCESS;
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setDecorated(true);
         config.setResizable(false);
-        config.setWindowedMode(500, 500);
-        config.setWindowPosition(0, 100);
+        Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
+        int screenWidth = displayMode.width;
+        int screenHeight = displayMode.height;
+        int windowWidth = screenWidth / 2;
+        int windowHeight = screenHeight / 2;
+        // 获取主显示器分辨率
+        config.setWindowedMode(screenWidth/2, screenHeight/2);
+        // 设置窗口居中
+        int windowX = (screenWidth - windowWidth) / 2;
+        int windowY = (screenHeight - windowHeight) / 2;
+        config.setWindowPosition(windowX, windowY);
         config.setTitle( Config.APP_TITLE);
         Lwjgl3Application app = new Lwjgl3Application();
         config.setWindowListener(windowListener());
@@ -69,37 +78,7 @@ public class WallManagerLauncher {
         return new ManagerListener() {
             @Override
             public void windowForward() {
-                if (startEnum == StartEnum.NEW_PROCESS) {
-                    TrayItemManager trayItemManager = TrayItemManager.getTrayItemManager();
-                    TrayData trayData = new TrayData();
-                    trayItemManager.addTraydata(trayData);
-                    System.out.println("Original main start");
-                    // 构建命令，启动新的 JVM
-                    String javaHome = System.getProperty("java.home");
-                    String javaBin = javaHome + "/bin/java";
-                    String classPath = System.getProperty("java.class.path");
-                    String className = "wk.com.test.WallpapgerLauncher";
-                    ProcessBuilder builder = new ProcessBuilder(
-                            javaBin, "-cp", classPath, className
-                    );
-
-//                    builder.inheritIO(); // 让新进程打印输出到当前控制台
-                    try {
-                        Process start = builder.start();
-                        trayData.setProcess(start);
-                        TrayItem trayItem = new TrayItem();
-                        trayItem.showTray();
-                        trayData.setItem(trayItem);
-                        trayItem.setProcess(start);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("Original main end");
-                }else if (startEnum == StartEnum.NEW_PROCESS){
-                    WallpapgerLauncher.main(new String[]{});
-                }else {
-
-                }
+//                setWallPaper();
             }
 
             @Override
@@ -107,6 +86,40 @@ public class WallManagerLauncher {
 
             }
         };
+    }
+
+    private void setWallPaper() {
+        if (startEnum == StartEnum.NEW_PROCESS) {
+            TrayItemManager trayItemManager = TrayItemManager.getTrayItemManager();
+            TrayData trayData = new TrayData();
+            trayItemManager.addTraydata(trayData);
+            System.out.println("Original main start");
+            // 构建命令，启动新的 JVM
+            String javaHome = System.getProperty("java.home");
+            String javaBin = javaHome + "/bin/java";
+            String classPath = System.getProperty("java.class.path");
+            String className = "wk.com.test.WallpapgerLauncher";
+            ProcessBuilder builder = new ProcessBuilder(
+                    javaBin, "-cp", classPath, className
+            );
+
+//                    builder.inheritIO(); // 让新进程打印输出到当前控制台
+            try {
+                Process start = builder.start();
+                trayData.setProcess(start);
+                TrayItem trayItem = new TrayItem();
+                trayItem.showTray();
+                trayData.setItem(trayItem);
+                trayItem.setProcess(start);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Original main end");
+        }else if (startEnum == StartEnum.NEW_PROCESS){
+            WallpapgerLauncher.main(new String[]{});
+        }else {
+
+        }
     }
 
     public Lwjgl3WindowListener windowListener(){
