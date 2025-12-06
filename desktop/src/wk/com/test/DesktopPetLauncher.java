@@ -26,6 +26,7 @@ import com.sun.jna.ptr.IntByReference;
 import org.lwjgl.glfw.GLFW;
 
 import kw.manager.core.PetPetGame;
+import kw.manager.core.listener.MoveListener;
 
 public class DesktopPetLauncher {
     private Lwjgl3Application app;
@@ -74,16 +75,34 @@ public class DesktopPetLauncher {
 
 
 
-                    System.out.println("Window handle = " + h);
+
                     //置顶
                     GLFW.glfwSetWindowAttrib(h, GLFW.GLFW_FLOATING, GLFW.GLFW_TRUE);
                     drag();
 
-                    removeWindowShadow(new WinDef.HWND(new Pointer(h)));
+//                    removeWindowShadow(new WinDef.HWND(new Pointer(h)));
                 });
             }
         });
+        app.setMouseMoveListener(new MoveListener(){
+            @Override
+            public void movePosition(float x, float y) {
+                long window = app.getWindowHandle();
+                int[] winX = new int[1];
+                int[] winY = new int[1];
+                GLFW.glfwGetWindowPos(window, winX, winY);
+                // 新位置 = 旧窗口位置 + 鼠标移动差
+                int newX = (int)(winX[0] + x - dragOffsetX);
+                int newY = (int)(winY[0] + y - dragOffsetY);
+                GLFW.glfwSetWindowPos(window, newX, newY);
+            }
 
+            @Override
+            public void startPosition(float x, float y) {
+                dragOffsetX = x;
+                dragOffsetY = y;
+            }
+        });
         app.init(new PetPetGame(), config);
         return app.getWindowHandle();
     }
@@ -129,41 +148,41 @@ public class DesktopPetLauncher {
     public void drag(){
         long window = app.getWindowHandle();
         // 鼠标移动
-        GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
-            if (dragging) {
-                // 获取屏幕位置
-                int[] winX = new int[1];
-                int[] winY = new int[1];
-                GLFW.glfwGetWindowPos(window, winX, winY);
-
-                // 新位置 = 旧窗口位置 + 鼠标移动差
-                int newX = (int)(winX[0] + xpos - dragOffsetX);
-                int newY = (int)(winY[0] + ypos - dragOffsetY);
-
-                GLFW.glfwSetWindowPos(window, newX, newY);
-            }
-        });
+//        GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
+//            if (dragging) {
+//                // 获取屏幕位置
+//                int[] winX = new int[1];
+//                int[] winY = new int[1];
+//                GLFW.glfwGetWindowPos(window, winX, winY);
+//
+//                // 新位置 = 旧窗口位置 + 鼠标移动差
+//                int newX = (int)(winX[0] + xpos - dragOffsetX);
+//                int newY = (int)(winY[0] + ypos - dragOffsetY);
+//
+//                GLFW.glfwSetWindowPos(window, newX, newY);
+//            }
+//        });
 
         // 鼠标按下
-        GLFW.glfwSetMouseButtonCallback(window, (win, button, action, mods) -> {
-            System.out.println("========================");
-            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                if (action == GLFW.GLFW_PRESS) {
-                    dragging = true;
-                    System.out.println("========================");
-
-                    double[] xpos = new double[1];
-                    double[] ypos = new double[1];
-                    GLFW.glfwGetCursorPos(win, xpos, ypos);
-
-                    // 记录鼠标按下时窗口相对位置
-                    dragOffsetX = xpos[0];
-                    dragOffsetY = ypos[0];
-                } else if (action == GLFW.GLFW_RELEASE) {
-                    dragging = false;
-                }
-            }
-        });
+//        GLFW.glfwSetMouseButtonCallback(window, (win, button, action, mods) -> {
+//            System.out.println("========================");
+//            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+//                if (action == GLFW.GLFW_PRESS) {
+//                    dragging = true;
+//                    System.out.println("========================");
+//
+//                    double[] xpos = new double[1];
+//                    double[] ypos = new double[1];
+//                    GLFW.glfwGetCursorPos(win, xpos, ypos);
+//
+//                    // 记录鼠标按下时窗口相对位置
+//                    dragOffsetX = xpos[0];
+//                    dragOffsetY = ypos[0];
+//                } else if (action == GLFW.GLFW_RELEASE) {
+//                    dragging = false;
+//                }
+//            }
+//        });
 
     }
 }

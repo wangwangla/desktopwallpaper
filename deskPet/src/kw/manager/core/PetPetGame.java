@@ -4,12 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
 import kw.manager.core.base.BasePetGame;
+import kw.manager.core.listener.MoveListener;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/16 12:13
  */
 public class PetPetGame extends BasePetGame {
+
     public PetPetGame() {
         super();
     }

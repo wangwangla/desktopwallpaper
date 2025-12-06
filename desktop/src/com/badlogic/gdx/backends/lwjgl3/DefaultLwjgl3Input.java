@@ -29,6 +29,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputEventQueue;
 import com.badlogic.gdx.InputProcessor;
 
+import kw.manager.core.listener.MoveListener;
+
 public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	final Lwjgl3Window window;
 	private InputProcessor inputProcessor;
@@ -38,6 +40,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	int mousePressed;
 	int deltaX, deltaY;
 	boolean justTouched;
+	boolean touchDown = false;
 	final boolean[] justPressedButtons = new boolean[5];
 	char lastCharacter;
 
@@ -72,6 +75,14 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
 		@Override
 		public void invoke (long windowHandle, double x, double y) {
+		    if (touchDown) {
+				if (moveListener!=null) {
+					moveListener.movePosition((float) x,(float) y);
+				}
+            }else {
+				moveListener.startPosition((float) x,(float) y);
+			}
+
 			deltaX = (int)x - logicalMouseX;
 			deltaY = (int)y - logicalMouseY;
 			mouseX = logicalMouseX = (int)x;
@@ -106,10 +117,12 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 			if (action == GLFW.GLFW_PRESS) {
 				mousePressed++;
 				justTouched = true;
+				touchDown = true;
 				justPressedButtons[gdxButton] = true;
 				DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
 				eventQueue.touchDown(mouseX, mouseY, 0, gdxButton, time);
 			} else {
+				touchDown = false;
 				mousePressed = Math.max(0, mousePressed - 1);
 				DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
 				eventQueue.touchUp(mouseX, mouseY, 0, gdxButton, time);
@@ -708,5 +721,10 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	@Override
 	public float getGyroscopeZ () {
 		return 0;
+	}
+
+	private MoveListener moveListener;
+	public void setMoveListener(MoveListener moveListener) {
+		this.moveListener = moveListener;
 	}
 }
