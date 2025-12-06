@@ -44,8 +44,8 @@ public class PetScreen extends BasePetScreen {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 super.exit(event, x, y, pointer, toActor);
-                image.clearActions();
                 image.addAction(Actions.delay(1,Actions.run(()->{
+                    image.clearActions();
                     image.addAction(Actions.alpha(0.7f,0.2f));
                 })));
             }
