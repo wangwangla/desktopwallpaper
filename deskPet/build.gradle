@@ -1,0 +1,7 @@
+apply plugin: "java"
+sourceSets.main.java.srcDirs = [ "src/" ]
+sourceCompatibility = 1.8
+dependencies {
+    implementation project (':libGdx')
+    implementation project (':libSpine')
+}

@@ -1,4 +1,6 @@
-include 'desktop','libGdx'
+include 'desktop',
+        'libGdx',
+        'deskPet'
 include ':wallpapercore'
 include ':wallpapermanagercore'
 include ':libSpine'

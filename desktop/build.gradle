@@ -23,6 +23,7 @@ dependencies {
     implementation project (':wallpapermanagercore')
     implementation project (':wallpapercore')
     implementation project (':libGdx')
+    implementation project (':deskPet')
 
     implementation 'junit:junit:4.12'
     implementation "org.lwjgl:lwjgl:3.3.3"
