@@ -24,14 +24,14 @@ import kw.manager.core.constant.Constant;
  * @Date 2024/1/16 12:10
  */
 
-public class BaseScreen implements Screen {
+public class BasePetScreen implements Screen {
     protected boolean dispose;
     protected final Stage stage;
     protected Group rootView;
     protected float offsetY;
     protected float offsetX;
     protected boolean back;
-    protected BaseGame game;
+    protected BasePetGame game;
     protected float centerX;
     protected float centerY;
     private InputMultiplexer multiplexer;
@@ -39,7 +39,7 @@ public class BaseScreen implements Screen {
     protected boolean activeScreen;
     protected Vector2 screenSize;
 
-    public BaseScreen(BaseGame game){
+    public BasePetScreen(BasePetGame game){
         this.activeScreen = true;
         this.screenSize = new Vector2(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
         this.game = game;
@@ -162,14 +162,14 @@ public class BaseScreen implements Screen {
         stage.addActor(addActor);
     }
 
-    public void setScreen(BaseScreen screen) {
+    public void setScreen(BasePetScreen screen) {
         game.setScreen(screen);
     }
 
-    public void setScreen(Class<? extends BaseScreen> t) {
+    public void setScreen(Class<? extends BasePetScreen> t) {
         Constructor<?> constructor = t.getConstructors()[0];
         try {
-            BaseScreen baseScreen = (BaseScreen) constructor.newInstance(game);
+            BasePetScreen baseScreen = (BasePetScreen) constructor.newInstance(game);
             game.setScreen(baseScreen);
         } catch (InstantiationException e) {
             e.printStackTrace();

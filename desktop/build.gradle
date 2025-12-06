@@ -18,8 +18,8 @@ dependencies {
     implementation files('libs/jorbis.jar')
 
 
-    implementation "net.java.dev.jna:jna:5.12.1"
-    implementation "net.java.dev.jna:jna-platform:5.12.1"
+    implementation "net.java.dev.jna:jna:5.14.0"
+    implementation "net.java.dev.jna:jna-platform:5.14.0"
     implementation project (':wallpapermanagercore')
     implementation project (':wallpapercore')
     implementation project (':libGdx')

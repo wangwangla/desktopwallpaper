@@ -16,7 +16,7 @@ import kw.manager.core.constant.Constant;
  * @Auther jian xian si qi
  * @Date 2024/1/18 21:36
  */
-public class BaseGame extends Game {
+public class BasePetGame extends Game {
      private Batch batch;
      private Viewport stageViewport;
 
@@ -66,7 +66,7 @@ public class BaseGame extends Game {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(Constant.viewColor.r,Constant.viewColor.g,Constant.viewColor.b,Constant.viewColor.a);
+        Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 //        extendInfo.setText(Gdx.app.getGraphics().getFramesPerSecond());
         super.render();

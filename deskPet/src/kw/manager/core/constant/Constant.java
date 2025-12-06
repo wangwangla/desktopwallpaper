@@ -18,7 +18,7 @@ public class Constant {
     public static float HIGHT = 680;
     public static float GAMEWIDTH = 1080;
     public static float GAMEHIGHT = 1920;
-    public static Color viewColor = new Color(1,1,1,0.5f);
+    public static Color viewColor = new Color(1,1,1,0f);
     public static int viewportType = 0;
 
     public static void updateSize(Viewport stageViewport) {

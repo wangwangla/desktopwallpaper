@@ -1,15 +1,31 @@
 package wk.com.test;
 
+import static com.sun.jna.platform.win32.WinUser.GWL_EXSTYLE;
+import static com.sun.jna.platform.win32.WinUser.SWP_FRAMECHANGED;
+import static com.sun.jna.platform.win32.WinUser.SWP_NOMOVE;
+import static com.sun.jna.platform.win32.WinUser.SWP_NOSIZE;
+import static org.lwjgl.system.windows.User32.SWP_NOZORDER;
+import static org.lwjgl.system.windows.User32.WS_EX_CLIENTEDGE;
+import static org.lwjgl.system.windows.User32.WS_EX_DLGMODALFRAME;
+import static org.lwjgl.system.windows.User32.WS_EX_STATICEDGE;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.ptr.IntByReference;
 
 import org.lwjgl.glfw.GLFW;
 
-import kw.manager.core.PetGame;
+import kw.manager.core.PetPetGame;
 
 public class DesktopPetLauncher {
     private Lwjgl3Application app;
@@ -26,9 +42,15 @@ public class DesktopPetLauncher {
         config.setForegroundFPS(30);
         config.setIdleFPS(30);
         // Configure window layout
-        config.setDecorated(true);
+        config.setDecorated(false);
         config.setResizable(false);
-        config.setWindowedMode((int) (1920 * 0.5f), (int) (1200 * 0.5f));
+
+        Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
+        int screenWidth = displayMode.width;
+        int screenHeight = displayMode.height;
+
+
+        config.setWindowedMode((int) (screenWidth * 0.2f), (int) (screenWidth * 0.2f));
         config.setWindowPosition(0, 100);
         // Configure window title
         final String TITLE = "xx";
@@ -36,6 +58,7 @@ public class DesktopPetLauncher {
         config.setTitle(TITLE);
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(true);
+
         config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
 
         // Instantiate the App
@@ -48,15 +71,57 @@ public class DesktopPetLauncher {
 // ---- 关键：延迟 1 帧再绑定 (否则 handle 为 0) ----
                 Gdx.app.postRunnable(() -> {
                     long h = window.getWindowHandle();
+
+
+
                     System.out.println("Window handle = " + h);
+                    //置顶
                     GLFW.glfwSetWindowAttrib(h, GLFW.GLFW_FLOATING, GLFW.GLFW_TRUE);
                     drag();
+
+                    removeWindowShadow(new WinDef.HWND(new Pointer(h)));
                 });
             }
         });
 
-        app.init(new PetGame(), config);
+        app.init(new PetPetGame(), config);
         return app.getWindowHandle();
+    }
+
+
+
+    private static void removeWindowShadow(WinDef.HWND hwnd) {
+        // 1. 去掉 DWM 阴影
+        final int DWMWA_NCRENDERING_POLICY = 2;
+        final int DWMNCRP_DISABLED = 0;
+        Dwmapi.INSTANCE.DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, new int[]{DWMNCRP_DISABLED}, 4);
+
+        // 2. 去掉系统边框阴影
+        int style = User32.INSTANCE.GetWindowLong(hwnd, WinUser.GWL_STYLE);
+        style &= ~(WinUser.WS_CAPTION | WinUser.WS_THICKFRAME); // 去掉标题栏和可调整边框
+        User32.INSTANCE.SetWindowLong(hwnd, WinUser.GWL_STYLE, style);
+
+        int exStyle = User32.INSTANCE.GetWindowLong(hwnd, GWL_EXSTYLE);
+        exStyle &= ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE); // 去掉额外边框
+        User32.INSTANCE.SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+
+        // 更新窗口，让修改生效
+        User32.INSTANCE.SetWindowPos(hwnd, null, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+
+    // DWM API，用于取消 Aero 阴影
+    public interface Dwmapi extends com.sun.jna.Library {
+        Dwmapi INSTANCE = Native.load("dwmapi", Dwmapi.class);
+
+        int DwmSetWindowAttribute(WinDef.HWND hwnd, int dwAttribute, IntByReference pvAttribute, int cbAttribute);
+        int DwmSetWindowAttribute(WinDef.HWND hwnd, int dwAttribute, int[] pvAttribute, int cbAttribute);
+    }
+
+    public static void removeShadow(long hwndPointer) {
+        WinDef.HWND hwnd = new WinDef.HWND(Pointer.createConstant(hwndPointer));
+        User32.INSTANCE.SetWindowLong(hwnd, GWL_EXSTYLE, WinUser.WS_EX_LAYERED);
+//        Dwmapi.DwmExtendFrameIntoClientArea(hwnd, new MARGINS(-1));
     }
 
     boolean dragging = false;
