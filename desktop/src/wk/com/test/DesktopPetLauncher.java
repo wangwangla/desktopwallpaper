@@ -47,7 +47,7 @@ public class DesktopPetLauncher {
 
         Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
         int screenWidth = displayMode.width;
-        int screenHeight = displayMode.height;
+
 
 
         config.setWindowedMode((int) (screenWidth * 0.2f), (int) (screenWidth * 0.2f));
