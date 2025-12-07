@@ -4,17 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.NLog;
 
 import java.io.IOException;
 
 import kw.manager.core.WindowManagerGame;
 import kw.manager.core.listener.ManagerListener;
-import kw.test.DynamicUtils;
 import wk.com.test.gameenum.StartEnum;
 import wk.com.test.tray.TrayData;
 import wk.com.test.tray.TrayItem;
@@ -77,8 +74,8 @@ public class WallManagerLauncher {
     public ManagerListener WindowManagerListener(){
         return new ManagerListener() {
             @Override
-            public void windowForward() {
-                setWallPaper();
+            public void setWallOrPet(int type) {
+                setWallPaper(type);
             }
 
             @Override
@@ -88,7 +85,7 @@ public class WallManagerLauncher {
         };
     }
 
-    private void setWallPaper() {
+    private void setWallPaper(int type) {
         if (startEnum == StartEnum.NEW_PROCESS) {
             TrayItemManager trayItemManager = TrayItemManager.getTrayItemManager();
             TrayData trayData = new TrayData();
@@ -99,7 +96,11 @@ public class WallManagerLauncher {
             String javaBin = javaHome + "/bin/java";
             String classPath = System.getProperty("java.class.path");
             String className = "wk.com.test.WallpapgerLauncher";
-//            String className = "wk.com.test.DesktopPetLauncher";
+            if (type == 0) {
+                className = "wk.com.test.DesktopPetLauncher";
+            }else {
+                className = "wk.com.test.WallpapgerLauncher";
+            }
 
             ProcessBuilder builder = new ProcessBuilder(
                     javaBin, "-cp", classPath, className

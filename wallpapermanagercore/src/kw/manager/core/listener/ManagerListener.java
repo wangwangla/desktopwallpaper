@@ -5,6 +5,6 @@ package kw.manager.core.listener;
  * @Date 2024/1/4 22:03
  */
 public interface ManagerListener {
-    void windowForward();
+    void setWallOrPet(int type);
     void moveWindowPosition(float x,float y);
 }

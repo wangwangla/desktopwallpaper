@@ -11,11 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.wallper.asset.Asset;
 import com.wallper.constant.Constant;
 import com.wallper.screen.BasePetGame;
 import com.wallper.screen.BasePetScreen;
 
+import kw.manager.core.csv.CsvReadFile;
+import kw.manager.core.csv.DataBean;
 import kw.manager.core.group.ItemGroup;
 import kw.manager.core.group.TileGroup;
 
@@ -129,20 +134,23 @@ public class ManagerMainScreen extends BasePetScreen {
 
     public void initZc(Table table){
         Table table1 = new Table() {{
-            FileHandle local = Gdx.files.local("resource/zhuochong");
+            ArrayMap<String, Array<DataBean>> wallMap = CsvReadFile.getChongwuMap();
             int i = 1;
-            for (FileHandle fileHandle : local.list()) {
-                String name = fileHandle.name();
-                Texture localTexture = Asset.getAsset().getLocalTexture("resource/wallpaper/" + name + "/" + name + ".jpg");
-                if (localTexture == null){
-                    continue;
+            for (ObjectMap.Entry<String, Array<DataBean>> stringArrayEntry : wallMap) {
+                for (DataBean dataBean : stringArrayEntry.value) {
+                    String name = dataBean.getName();
+                    Texture localTexture = Asset.getAsset().getLocalTexture("wallResource/zhuochong/" + name + "/" + dataBean.getResourceName() + ".png");
+                    if (localTexture == null){
+                        continue;
+                    }
+                    ItemGroup itemGroup = new ItemGroup(localTexture,name);
+                    itemGroup.setWallOrPet(0);
+                    add(itemGroup).padLeft(20).padRight(20).padBottom(10).padTop(10);
+                    if (i % 3 == 0) {
+                        row();
+                    }
+                    i ++;
                 }
-                ItemGroup itemGroup = new ItemGroup(localTexture,name);
-                add(itemGroup).padLeft(20).padRight(20).padBottom(10).padTop(10);
-                if (i % 3 == 0) {
-                    row();
-                }
-                i ++;
             }
             pack();
             align(Align.top);
@@ -160,22 +168,28 @@ public class ManagerMainScreen extends BasePetScreen {
     public void initBz(Table table){
 
         Table table1 = new Table() {{
-            FileHandle local = Gdx.files.local("resource/wallpaper");
+            ArrayMap<String, Array<DataBean>> wallMap = CsvReadFile.getWallMap();
             int i = 1;
-            for (FileHandle fileHandle : local.list()) {
-                try {
-                    String name = fileHandle.name();
-                    Texture localTexture = Asset.getAsset().getLocalTexture("/resource/wallpaper/" + name + "/" + name + ".jpg");
-                    if (localTexture == null){
-                        continue;
-                    }
-                    ItemGroup itemGroup = new ItemGroup(localTexture,name);
-                    add(itemGroup).padLeft(20).padRight(20).padBottom(10).padTop(10);
-                    if (i % 3 == 0) {
-                        row();
-                    }
-                    i++;
-                }catch (Exception e){
+            for (ObjectMap.Entry<String, Array<DataBean>> stringArrayEntry : wallMap) {
+                for (DataBean dataBean : stringArrayEntry.value) {
+
+
+                        try {
+                            String name = dataBean.getName();
+                            Texture localTexture = Asset.getAsset().getLocalTexture("wallResource/wallpaper/" + name + "/" + dataBean.getResourceName() + ".png");
+                            if (localTexture == null){
+                                continue;
+                            }
+                            ItemGroup itemGroup = new ItemGroup(localTexture,name);
+                            itemGroup.setWallOrPet(1);
+                            add(itemGroup).padLeft(20).padRight(20).padBottom(10).padTop(10);
+                            if (i % 3 == 0) {
+                                row();
+                            }
+                            i++;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
                 }
             }

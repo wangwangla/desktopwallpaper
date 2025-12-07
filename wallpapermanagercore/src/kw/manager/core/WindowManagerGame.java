@@ -3,6 +3,7 @@ package kw.manager.core;
 import com.wallper.constant.Constant;
 import com.wallper.screen.BasePetGame;
 
+import kw.manager.core.csv.CsvReadFile;
 import kw.manager.core.listener.ManagerListener;
 
 /**
@@ -20,6 +21,8 @@ public class WindowManagerGame extends BasePetGame {
     @Override
     protected void loadingView() {
         super.loadingView();
+        CsvReadFile.readCw();
+        CsvReadFile.readWall();
         setScreen(new ManagerMainScreen(this));
     }
 }
