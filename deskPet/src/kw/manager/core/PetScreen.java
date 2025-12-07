@@ -7,10 +7,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.wallper.asset.Asset;
 import com.wallper.constant.Constant;
+import com.wallper.pre.GamePre;
 import com.wallper.screen.BasePetGame;
 import com.wallper.screen.BasePetScreen;
+
+import kw.manager.core.csv.CsvReadFile1;
+import kw.manager.core.csv.DataBean;
 
 /**
  * @Auther jian xian si qi
@@ -25,10 +31,24 @@ public class PetScreen extends BasePetScreen {
     public void initView() {
         super.initView();
 
-        Image image = new Image(Asset.getAsset().getTexture("wallResource/zhuochong/dog/dog.png"));
+        CsvReadFile1.readCw();
+        ArrayMap<String,DataBean> chongwuMapAll = CsvReadFile1.getChongwuMapAll();
+
+
+        String pet = GamePre.getInstance().getPet();
+        String path = "wallResource/zhuochong/dog/dog.png";
+        if ("".equals(pet)){
+
+        }else {
+            DataBean dataBean = chongwuMapAll.get(pet);
+            path  = "wallResource/zhuochong/"+dataBean.getName()+"/"+dataBean.getResourceName()+".png";
+
+        }
+
+        Image image = new Image(Asset.getAsset().getTexture(path));
         addActor(image);
         image.setOrigin(Align.center);
-        image.setScale(Math.max(Constant.GAMEWIDTH/image.getWidth(),Constant.GAMEHIGHT/image.getHeight()));
+        image.setScale(Math.min(Constant.GAMEWIDTH/image.getWidth(),Constant.GAMEHIGHT/image.getHeight()));
         image.setPosition(Constant.GAMEWIDTH/2f,Constant.GAMEHIGHT/2f,Align.center);
         image.addAction(Actions.sequence(Actions.delay(2,Actions.alpha(0.6f,0.2f))));
 

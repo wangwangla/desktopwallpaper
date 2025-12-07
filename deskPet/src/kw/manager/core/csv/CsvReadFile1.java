@@ -3,11 +3,11 @@ package kw.manager.core.csv;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
-
 import com.wallper.csv.ReadCvs;
 
-public class CsvReadFile {
-    private static ArrayMap<String,Array<DataBean>> chongwuMap;
+public class CsvReadFile1 {
+    private static ArrayMap<String, DataBean> chongwuMapAll;
+    private static ArrayMap<String, Array<DataBean>> chongwuMap;
     private static ArrayMap<String,Array<DataBean>> wallMap;
 
     public static void readWall(){
@@ -33,6 +33,11 @@ public class CsvReadFile {
 
 
     public static void readCw(){
+        if (chongwuMapAll == null) {
+            chongwuMapAll = new ArrayMap<>();
+        }
+        chongwuMapAll.clear();
+
         if (chongwuMap!=null) {
             chongwuMap.clear();
         }else {
@@ -49,6 +54,7 @@ public class CsvReadFile {
                 strings = new Array<>();
                 chongwuMap.put(dataBean.getType(),strings);
             }
+            chongwuMapAll.put(dataBean.getName(),dataBean);
             strings.add(dataBean);
         }
     }
@@ -59,5 +65,9 @@ public class CsvReadFile {
 
     public static ArrayMap<String, Array<DataBean>> getWallMap() {
         return wallMap;
+    }
+
+    public static ArrayMap<String, DataBean> getChongwuMapAll() {
+        return chongwuMapAll;
     }
 }
