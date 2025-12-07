@@ -1,14 +1,12 @@
 package kw.manager.core.hhbb;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.wallper.asset.Asset;
-
-import kw.manager.core.Constant;
+import com.wallper.constant.Constant;
 
 
 public class HmBaoBao extends ShaderBaseGroup {

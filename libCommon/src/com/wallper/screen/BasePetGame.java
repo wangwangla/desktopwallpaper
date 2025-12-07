@@ -81,10 +81,6 @@ public class BasePetGame extends Game {
         }catch (Exception e){
             e.printStackTrace();
         }
-//
-//        if (batch instanceof CpuPolygonSpriteBatch){
-//            System.out.println(((CpuPolygonSpriteBatch) (batch)).renderCalls);
-//        }
 
     }
 

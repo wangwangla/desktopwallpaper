@@ -12,11 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.wallper.asset.Asset;
+import com.wallper.constant.Constant;
+import com.wallper.screen.BasePetGame;
+import com.wallper.screen.BasePetScreen;
 
-import javax.swing.WindowConstants;
-
-import kw.manager.core.base.ManagerBaseGame;
-import kw.manager.core.base.ManagerBaseScreen;
 import kw.manager.core.group.ItemGroup;
 import kw.manager.core.group.TileGroup;
 
@@ -24,12 +23,12 @@ import kw.manager.core.group.TileGroup;
  * @Auther jian xian si qi
  * @Date 2024/1/5 10:48
  */
-public class ManagerMainScreen extends ManagerBaseScreen {
+public class ManagerMainScreen extends BasePetScreen {
     private TileGroup zhuoChongBtn;
     private TileGroup bizjiBtn;
     private ScrollPane scrollPane;
     private int currentShowIndex = -1;
-    public ManagerMainScreen(ManagerBaseGame game) {
+    public ManagerMainScreen(BasePetGame game) {
         super(game);
     }
 
@@ -40,22 +39,20 @@ public class ManagerMainScreen extends ManagerBaseScreen {
         initTopPanel();
         initContent();
         initFooter();
-
-        ManagerConstant.windowListener.windowForward();
     }
 
     private void initFooter() {
         Image footer = new Image(Asset.getAsset().getTexture("ui/viewTexture/product.png"));
         addActor(footer);
-        footer.setPosition(ManagerConstant.GAMEWIDTH/2f,50,Align.center);
+        footer.setPosition(Constant.GAMEWIDTH/2f,50,Align.center);
     }
 
     private void initBG() {
         Image managerBG = new Image(Asset.getAsset().getTexture("ui/white.png"));
         addActor(managerBG);
         managerBG.setColor(Color.valueOf("#f2e4d6"));
-        managerBG.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT);
-        managerBG.setPosition(ManagerConstant.GAMEWIDTH/2.0f, ManagerConstant.GAMEHIGHT/2.0f, Align.center);
+        managerBG.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT);
+        managerBG.setPosition(Constant.GAMEWIDTH/2.0f, Constant.GAMEHIGHT/2.0f, Align.center);
         managerBG.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -67,12 +64,12 @@ public class ManagerMainScreen extends ManagerBaseScreen {
     private void initTopPanel() {
         Group topPanel = new Group();
         addActor(topPanel);
-        topPanel.setSize(ManagerConstant.GAMEWIDTH, 200);
-        topPanel.setPosition(ManagerConstant.GAMEWIDTH / 2f, ManagerConstant.GAMEHIGHT + offsetY, Align.top);
+        topPanel.setSize(Constant.GAMEWIDTH, 200);
+        topPanel.setPosition(Constant.GAMEWIDTH / 2f, Constant.GAMEHIGHT + offsetY, Align.top);
         Image topBg = new Image(Asset.getAsset().getTexture("ui/white.png"));
         topPanel.addActor(topBg);
         topBg.setColor(187 / 255.f, 173 / 255.f, 160 / 255.f, 255 / 255.f);
-        topBg.setSize(ManagerConstant.GAMEWIDTH, topPanel.getHeight());
+        topBg.setSize(Constant.GAMEWIDTH, topPanel.getHeight());
         topBg.setPosition(topPanel.getWidth() / 2f, topPanel.getHeight() / 2f, Align.center);
         topPanel.addActor(new Table() {{
             bizjiBtn = new TileGroup("ui/viewTexture/title1.png");
@@ -107,7 +104,7 @@ public class ManagerMainScreen extends ManagerBaseScreen {
             bizjiBtn.show();
         }
         this.currentShowIndex = index;
-        scrollPane.setScrollX(currentShowIndex * ManagerConstant.GAMEWIDTH);
+        scrollPane.setScrollX(currentShowIndex * Constant.GAMEWIDTH);
         scrollPane.validate();
         scrollPane.updateVisualScroll();
     }
@@ -116,7 +113,7 @@ public class ManagerMainScreen extends ManagerBaseScreen {
         Table contentTable = createContent();
         scrollPane = new ScrollPane(contentTable);
         addActor(scrollPane);
-        scrollPane.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
+        scrollPane.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT-200 - 100);
         scrollPane.setCanTouchArea(0,0,0,0);
         scrollPane.setDebug(true);
         scrollPane.setY(100);
@@ -151,11 +148,11 @@ public class ManagerMainScreen extends ManagerBaseScreen {
             align(Align.top);
         }};
         Group group = new Group();
-        group.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
+        group.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT-200 - 100);
         table.add(group);
         ScrollPane scrollPaneBZ = new ScrollPane(table1);
         group.addActor(scrollPaneBZ);
-        scrollPaneBZ.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
+        scrollPaneBZ.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT-200 - 100);
         scrollPaneBZ.setCanTouchArea(0,0,10000,1000);
         table.pack();
     }
@@ -187,11 +184,11 @@ public class ManagerMainScreen extends ManagerBaseScreen {
             align(Align.top);
         }};
         Group group = new Group();
-        group.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
+        group.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT-200 - 100);
         table.add(group);
         ScrollPane scrollPaneBZ = new ScrollPane(table1);
         group.addActor(scrollPaneBZ);
-        scrollPaneBZ.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
+        scrollPaneBZ.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT-200 - 100);
 
         scrollPaneBZ.setCanTouchArea(0,0,10000,1000);
         table.pack();

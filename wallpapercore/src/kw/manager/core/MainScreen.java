@@ -4,18 +4,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.wallper.asset.Asset;
+import com.wallper.constant.Constant;
+import com.wallper.screen.BasePetGame;
+import com.wallper.screen.BasePetScreen;
 
-import kw.manager.core.base.BaseGame;
-import kw.manager.core.base.BaseScreen;
 import kw.manager.core.group.EightDiagramGroup;
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/5 10:48
  */
-public class MainScreen extends BaseScreen {
+public class MainScreen extends BasePetScreen {
 
-    public MainScreen(BaseGame game) {
+    public MainScreen(BasePetGame game) {
         super(game);
     }
 

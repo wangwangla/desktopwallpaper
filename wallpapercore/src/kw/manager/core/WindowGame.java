@@ -2,15 +2,17 @@ package kw.manager.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.wallper.constant.Constant;
+import com.wallper.listener.WindowListener;
+import com.wallper.screen.BasePetGame;
 
-import kw.manager.core.base.BaseGame;
-import kw.manager.core.listener.WindowListener;
+
 
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/16 12:13
  */
-public class WindowGame extends BaseGame {
+public class WindowGame extends BasePetGame {
     public WindowGame(WindowListener listener) {
         super();
         Constant.windowListener = listener;

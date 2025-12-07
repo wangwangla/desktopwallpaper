@@ -2,6 +2,7 @@ package com.wallper.constant;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.wallper.listener.WindowListener;
 
 
 /**
@@ -20,6 +21,7 @@ public class Constant {
     public static float GAMEHIGHT = 1920;
     public static Color viewColor = new Color(1,1,1,0f);
     public static int viewportType = 0;
+    public static WindowListener windowListener;
 
     public static void updateSize(Viewport stageViewport) {
         if (stageViewport == null)return;

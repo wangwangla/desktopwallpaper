@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.wallper.listener.WindowListener;
 
 import java.awt.AWTException;
 import java.awt.Image;
@@ -16,7 +17,6 @@ import java.awt.TrayIcon;
 import java.util.Scanner;
 
 import kw.manager.core.WindowGame;
-import kw.manager.core.listener.WindowListener;
 import kw.test.DynamicUtils;
 
 /**
