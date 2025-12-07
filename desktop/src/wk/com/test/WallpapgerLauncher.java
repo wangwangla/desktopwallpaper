@@ -87,8 +87,8 @@ class WallpapgerLauncher {
 
             @Override
             public void setWallpaper() {
-//                long windowHandle = app.getWindowHandle();
-//                DynamicUtils.makeWallpaper(windowHandle);
+                long windowHandle = app.getWindowHandle();
+                DynamicUtils.makeWallpaper(windowHandle);
             }
         }), config);
         return app.getWindowHandle();

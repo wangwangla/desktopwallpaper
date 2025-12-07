@@ -98,8 +98,8 @@ public class WallManagerLauncher {
             String javaHome = System.getProperty("java.home");
             String javaBin = javaHome + "/bin/java";
             String classPath = System.getProperty("java.class.path");
-//            String className = "wk.com.test.WallpapgerLauncher";
-            String className = "wk.com.test.DesktopPetLauncher";
+            String className = "wk.com.test.WallpapgerLauncher";
+//            String className = "wk.com.test.DesktopPetLauncher";
 
             ProcessBuilder builder = new ProcessBuilder(
                     javaBin, "-cp", classPath, className
