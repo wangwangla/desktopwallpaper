@@ -80,7 +80,9 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 					moveListener.movePosition((float) x,(float) y);
 				}
             }else {
-				moveListener.startPosition((float) x,(float) y);
+				if (moveListener!=null) {
+					moveListener.startPosition((float) x, (float) y);
+				}
 			}
 
 			deltaX = (int)x - logicalMouseX;

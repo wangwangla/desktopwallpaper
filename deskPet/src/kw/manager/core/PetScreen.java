@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import kw.manager.core.asset.Asset;
-import kw.manager.core.base.BasePetGame;
-import kw.manager.core.base.BasePetScreen;
-import kw.manager.core.constant.Constant;
+import com.wallper.asset.Asset;
+import com.wallper.constant.Constant;
+import com.wallper.screen.BasePetGame;
+import com.wallper.screen.BasePetScreen;
 
 /**
  * @Auther jian xian si qi
@@ -25,7 +25,7 @@ public class PetScreen extends BasePetScreen {
     public void initView() {
         super.initView();
 
-        Image image = new Image(Asset.getAsset().getTexture("resource/zhuochong/img.png"));
+        Image image = new Image(Asset.getAsset().getTexture("wallResource/zhuochong/dog/dog.png"));
         addActor(image);
         image.setOrigin(Align.center);
         image.setScale(Math.max(Constant.GAMEWIDTH/image.getWidth(),Constant.GAMEHIGHT/image.getHeight()));

@@ -2,9 +2,7 @@ package kw.manager.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-
-import kw.manager.core.base.BasePetGame;
-import kw.manager.core.listener.MoveListener;
+import com.wallper.screen.BasePetGame;
 
 /**
  * @Auther jian xian si qi

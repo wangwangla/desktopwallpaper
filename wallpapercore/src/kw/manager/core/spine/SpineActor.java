@@ -10,15 +10,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.esotericsoftware.spine.AnimationState;
-import com.esotericsoftware.spine.AnimationStateData;
-import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonData;
-import com.esotericsoftware.spine.SkeletonRenderer;
-import com.esotericsoftware.spine.attachments.RegionAttachment;
-import com.esotericsoftware.spine.utils.SkeletonDataLoader;
+import com.wallper.asset.Asset;
+import com.wallper.csv.spine.AnimationState;
+import com.wallper.csv.spine.AnimationStateData;
+import com.wallper.csv.spine.Skeleton;
+import com.wallper.csv.spine.SkeletonData;
+import com.wallper.csv.spine.SkeletonRenderer;
+import com.wallper.csv.spine.attachments.RegionAttachment;
+import com.wallper.csv.spine.utils.SkeletonDataLoader;
 
-import kw.manager.core.asset.Asset;
 
 /**
  * @Auther jian xian si qi

@@ -6,9 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.wallper.asset.Asset;
 
 import kw.manager.core.Constant;
-import kw.manager.core.asset.Asset;
+
 
 public class HmBaoBao extends ShaderBaseGroup {
     private float touch[] = new float[2];

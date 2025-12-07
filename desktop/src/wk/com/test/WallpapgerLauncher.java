@@ -51,7 +51,7 @@ class WallpapgerLauncher {
         final String TITLE = "xx";
         config.setTitle(TITLE);
         config.setInitialVisible(true);
-        config.setTransparentFramebuffer(true);
+        config.setTransparentFramebuffer(false);
         config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
         // Instantiate the App
         this.app = new Lwjgl3Application();
@@ -68,7 +68,6 @@ class WallpapgerLauncher {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
                 if (sc.nextLine().equals("EXIT")) {
-//                    app.setVisible(false);
                     DynamicUtils.destroyWallpaper(app.getWindowHandle());
                     System.out.println("Wallpaper cleaned.");
                     System.exit(0);

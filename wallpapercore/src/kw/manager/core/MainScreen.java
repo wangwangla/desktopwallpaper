@@ -1,24 +1,13 @@
 package kw.manager.core;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.wallper.asset.Asset;
 
-import kw.manager.core.asset.Asset;
 import kw.manager.core.base.BaseGame;
 import kw.manager.core.base.BaseScreen;
 import kw.manager.core.group.EightDiagramGroup;
-import kw.manager.core.hhbb.HmBaoBao;
-import kw.manager.core.spine.SpineActor;
 
 /**
  * @Auther jian xian si qi
@@ -33,7 +22,7 @@ public class MainScreen extends BaseScreen {
     @Override
     public void initView() {
         super.initView();
-        Image image = new Image(Asset.getAsset().getTexture("white.png"));
+        Image image = new Image(Asset.getAsset().getTexture("ui/white.png"));
         addActor(image);
         image.setColor(Color.valueOf("#f0d9ac"));
         image.setSize(Constant.GAMEWIDTH,Constant.GAMEHIGHT);

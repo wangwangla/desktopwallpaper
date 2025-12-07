@@ -6,19 +6,19 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
+import com.wallper.asset.Asset;
 
-import kw.manager.core.asset.ManagerAsset;
 
 public class TileGroup extends Group {
     private Image selectBottom;
     public TileGroup(String btn){
         setSize(400,200);
-        Image btnFont = new Image(ManagerAsset.getAsset().getTexture(btn));
+        Image btnFont = new Image(Asset.getAsset().getTexture(btn));
         addActor(btnFont);
         btnFont.setPosition(getWidth()/2f,getHeight()/2f, Align.center);
 
         selectBottom = new Image(new NinePatch(
-                ManagerAsset.getAsset().getTexture("viewTexture/itemx.png"),20,20,1,1));
+                Asset.getAsset().getTexture("ui/viewTexture/itemx.png"),20,20,1,1));
         addActor(selectBottom);
         selectBottom.setWidth(getWidth()-30);
         selectBottom.setPosition(getWidth()/2f,20,Align.bottom);

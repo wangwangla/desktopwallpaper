@@ -11,8 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.wallper.asset.Asset;
 
-import kw.manager.core.asset.ManagerAsset;
+import javax.swing.WindowConstants;
+
 import kw.manager.core.base.ManagerBaseGame;
 import kw.manager.core.base.ManagerBaseScreen;
 import kw.manager.core.group.ItemGroup;
@@ -26,6 +28,7 @@ public class ManagerMainScreen extends ManagerBaseScreen {
     private TileGroup zhuoChongBtn;
     private TileGroup bizjiBtn;
     private ScrollPane scrollPane;
+    private int currentShowIndex = -1;
     public ManagerMainScreen(ManagerBaseGame game) {
         super(game);
     }
@@ -33,56 +36,66 @@ public class ManagerMainScreen extends ManagerBaseScreen {
     @Override
     public void initView() {
         super.initView();
-        Image bg = new Image(ManagerAsset.getAsset().getTexture("white.png"));
-        addActor(bg);
-        bg.setColor(Color.valueOf("#f2e4d6"));
-        bg.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT);
-        bg.setPosition(ManagerConstant.GAMEWIDTH/2.0f, ManagerConstant.GAMEHIGHT/2.0f, Align.center);
-        bg.addListener(new ClickListener(){
+        initBG();
+        initTopPanel();
+        initContent();
+        initFooter();
+
+        ManagerConstant.windowListener.windowForward();
+    }
+
+    private void initFooter() {
+        Image footer = new Image(Asset.getAsset().getTexture("ui/viewTexture/product.png"));
+        addActor(footer);
+        footer.setPosition(ManagerConstant.GAMEWIDTH/2f,50,Align.center);
+    }
+
+    private void initBG() {
+        Image managerBG = new Image(Asset.getAsset().getTexture("ui/white.png"));
+        addActor(managerBG);
+        managerBG.setColor(Color.valueOf("#f2e4d6"));
+        managerBG.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT);
+        managerBG.setPosition(ManagerConstant.GAMEWIDTH/2.0f, ManagerConstant.GAMEHIGHT/2.0f, Align.center);
+        managerBG.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
             }
         });
-        {
-            Group topPanel = new Group();
-            addActor(topPanel);
-            topPanel.setSize(ManagerConstant.GAMEWIDTH, 200);
-            topPanel.setPosition(ManagerConstant.GAMEWIDTH / 2f, ManagerConstant.GAMEHIGHT + offsetY, Align.top);
-            Image topBg = new Image(ManagerAsset.getAsset().getTexture("white.png"));
-            topPanel.addActor(topBg);
-            topBg.setColor(187 / 255.f, 173 / 255.f, 160 / 255.f, 255 / 255.f);
-            topBg.setSize(ManagerConstant.GAMEWIDTH, topPanel.getHeight());
-            topBg.setPosition(topPanel.getWidth() / 2f, topPanel.getHeight() / 2f, Align.center);
-            topPanel.addActor(new Table() {{
-                bizjiBtn = new TileGroup("viewTexture/title1.png");
-                bizjiBtn.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        super.clicked(event, x, y);
-                        setSelect(0);
-                    }
-                });
-                add(bizjiBtn);
-                zhuoChongBtn = new TileGroup("viewTexture/title2.png");
-                add(zhuoChongBtn);
-                zhuoChongBtn.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        super.clicked(event, x, y);
-                        setSelect(1);
-                    }
-                });
-                pack();
-            }});
-            initContent();
-        }
-
-        Image footer = new Image(ManagerAsset.getAsset().getTexture("viewTexture/product.png"));
-        addActor(footer);
-        footer.setPosition(ManagerConstant.GAMEWIDTH/2f,50,Align.center);
     }
-    private int currentShowIndex = -1;
+
+    private void initTopPanel() {
+        Group topPanel = new Group();
+        addActor(topPanel);
+        topPanel.setSize(ManagerConstant.GAMEWIDTH, 200);
+        topPanel.setPosition(ManagerConstant.GAMEWIDTH / 2f, ManagerConstant.GAMEHIGHT + offsetY, Align.top);
+        Image topBg = new Image(Asset.getAsset().getTexture("ui/white.png"));
+        topPanel.addActor(topBg);
+        topBg.setColor(187 / 255.f, 173 / 255.f, 160 / 255.f, 255 / 255.f);
+        topBg.setSize(ManagerConstant.GAMEWIDTH, topPanel.getHeight());
+        topBg.setPosition(topPanel.getWidth() / 2f, topPanel.getHeight() / 2f, Align.center);
+        topPanel.addActor(new Table() {{
+            bizjiBtn = new TileGroup("ui/viewTexture/title1.png");
+            bizjiBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    setSelect(0);
+                }
+            });
+            add(bizjiBtn);
+            zhuoChongBtn = new TileGroup("ui/viewTexture/title2.png");
+            add(zhuoChongBtn);
+            zhuoChongBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    setSelect(1);
+                }
+            });
+            pack();
+        }});
+    }
 
     public void setSelect(int index){
         if (currentShowIndex == index)return;
@@ -101,7 +114,6 @@ public class ManagerMainScreen extends ManagerBaseScreen {
 
     private void initContent(){
         Table contentTable = createContent();
-
         scrollPane = new ScrollPane(contentTable);
         addActor(scrollPane);
         scrollPane.setSize(ManagerConstant.GAMEWIDTH,ManagerConstant.GAMEHIGHT-200 - 100);
@@ -124,7 +136,7 @@ public class ManagerMainScreen extends ManagerBaseScreen {
             int i = 1;
             for (FileHandle fileHandle : local.list()) {
                 String name = fileHandle.name();
-                Texture localTexture = ManagerAsset.getAsset().getLocalTexture("resource/wallpaper/" + name + "/" + name + ".jpg");
+                Texture localTexture = Asset.getAsset().getLocalTexture("resource/wallpaper/" + name + "/" + name + ".jpg");
                 if (localTexture == null){
                     continue;
                 }
@@ -156,7 +168,7 @@ public class ManagerMainScreen extends ManagerBaseScreen {
             for (FileHandle fileHandle : local.list()) {
                 try {
                     String name = fileHandle.name();
-                    Texture localTexture = ManagerAsset.getAsset().getLocalTexture("/resource/wallpaper/" + name + "/" + name + ".jpg");
+                    Texture localTexture = Asset.getAsset().getLocalTexture("/resource/wallpaper/" + name + "/" + name + ".jpg");
                     if (localTexture == null){
                         continue;
                     }

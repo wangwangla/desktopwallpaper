@@ -17,6 +17,5 @@ public class WindowManagerGame extends ManagerBaseGame {
     protected void loadingView() {
         super.loadingView();
         setScreen(new ManagerMainScreen(this));
-
     }
 }

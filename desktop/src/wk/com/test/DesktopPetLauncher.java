@@ -25,8 +25,11 @@ import com.sun.jna.ptr.IntByReference;
 
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Scanner;
+
 import kw.manager.core.PetPetGame;
 import kw.manager.core.listener.MoveListener;
+import kw.test.DynamicUtils;
 
 public class DesktopPetLauncher {
     private Lwjgl3Application app;
@@ -103,6 +106,16 @@ public class DesktopPetLauncher {
                 dragOffsetY = y;
             }
         });
+        new Thread(() -> {
+            Scanner sc = new Scanner(System.in);
+            while (sc.hasNextLine()) {
+                if (sc.nextLine().equals("EXIT")) {
+                    DynamicUtils.destroyWallpaper(app.getWindowHandle());
+                    System.out.println("Wallpaper cleaned.");
+                    System.exit(0);
+                }
+            }
+        }).start();
         app.init(new PetPetGame(), config);
         return app.getWindowHandle();
     }

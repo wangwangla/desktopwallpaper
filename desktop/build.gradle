@@ -16,6 +16,7 @@ dependencies {
     implementation files('libs/jlayer-1.0.1-libgdx.zip')
     implementation files('libs/gdx-platform-1.11.0-natives-desktop.jar')
     implementation files('libs/jorbis.jar')
+    implementation project(":libCommon")
 
 
     implementation "net.java.dev.jna:jna:5.14.0"
