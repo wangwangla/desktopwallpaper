@@ -10,6 +10,9 @@ import com.sun.jna.platform.win32.WinUser;
 
 import kw.manager.core.WindowGame;
 
+/**
+ * 此玩意很卡  gggg
+ */
 public class MouseHook {
     private static WinUser.HHOOK hHook;
 

@@ -88,20 +88,25 @@ public class HmBaoBao extends ShaderBaseGroup {
     @Override
     public void act(float delta) {
         super.act(delta);
-        lj += delta;
-        time =lj * 1f;
+        if (wave_radius<3f){
+            lj += delta;
+            time =lj * 1f;
+            wave_radius = lj;
+        }
+        delayTime += delta;
+        if (delayTime>distanceTime){
+            distanceTime = (float) (4+Math.random() * 4);
+            float xx = (float) (Math.random() * rectangle.getWidth());
+            float yy = (float) (Math.random() * rectangle.getHeight());
+            touch[0] = (xx / image.getWidth()) + 0.5f;
+            touch[1] = 1.0f - (yy / image.getHeight()) - 0.5f;
+            delayTime = 0;
 
-        wave_radius = lj;
-        if (wave_radius>3f)return;
-
-//        delayTime += delta;
-//        if (delayTime>distanceTime){
-//            distanceTime = (float) (4+Math.random() * 4);
-//            float xx = (float) (Math.random() * rectangle.getWidth());
-//            float yy = (float) (Math.random() * rectangle.getHeight());
-//            touch[0] = (xx / image.getWidth()) + 0.5f;
-//            touch[1] = 1.0f - (yy / image.getHeight()) - 0.5f;
-//            delayTime = 0;
-//        }
+            waveStrength = 1f;
+            waveTime = 0f;
+            wave_radius = 0;
+            lj = 0;
+            time = 0;
+        }
     }
 }

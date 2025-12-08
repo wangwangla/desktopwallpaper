@@ -25,6 +25,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWNativeWin32;
 import org.lwjgl.glfw.GLFWVidMode;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import kw.demo.DisplayMonitorInfo;
@@ -94,10 +95,10 @@ public class DynamicUtils {
         long exStyle = User32.INSTANCE.GetWindowLong(thisWindow, User32.GWL_EXSTYLE);
         exStyle &= ~(WS_EX_DLGMODALFRAME | WS_EX_COMPOSITED | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_LAYERED | WS_EX_STATICEDGE | WS_EX_TOOLWINDOW | WS_EX_APPWINDOW);
         User32.INSTANCE.SetWindowLong(thisWindow, User32.GWL_EXSTYLE, (int) exStyle);
-
-        for (WinUser.MONITORINFOEX monitor : DisplayMonitorInfo.getMonitors()) {
+        List<WinUser.MONITORINFOEX> monitors = DisplayMonitorInfo.getMonitors();
+        if (monitors.size()>0) {
+            WinUser.MONITORINFOEX monitor = monitors.get(0);
             WinDef.HWND desktopWindow = getWorkerW(monitor.rcMonitor);
-
             User32.INSTANCE.SetParent(thisWindow, desktopWindow);
             User32.INSTANCE.ShowWindow(thisWindow, User32.SW_SHOW);
             GLFWVidMode glfwVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
@@ -107,14 +108,9 @@ public class DynamicUtils {
 
             int width = glfwVidMode.width();
             int height = glfwVidMode.height();
-            //根据窗口多少来确定
-            System.out.println(monitor.rcMonitor.left + "   " + monitor.rcMonitor.top);
-//            glfwSetWindowPos(window, monitor.rcMonitor.left,monitor.rcMonitor.top);
-            glfwSetWindowPos(window, 0, 0);
-
+            glfwSetWindowPos(window, monitor.rcMonitor.left,0);
             glfwSetWindowSize(window, width, height);
         }
-
     }
 
     private static void windowsDestroyWallpaper(long window) {

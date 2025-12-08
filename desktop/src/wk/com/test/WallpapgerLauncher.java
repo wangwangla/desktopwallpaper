@@ -93,8 +93,8 @@ class WallpapgerLauncher {
                 DynamicUtils.makeWallpaper(windowHandle);
             }
         });
-
-        MouseHook.installHook(windowGame);
+        //获取全局  鼠标点击
+//        MouseHook.installHook(windowGame);
 
         app.setMouseMoveListener(new MoveListener() {
             @Override
