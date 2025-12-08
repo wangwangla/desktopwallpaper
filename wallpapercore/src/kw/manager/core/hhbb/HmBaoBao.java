@@ -30,7 +30,7 @@ public class HmBaoBao extends ShaderBaseGroup {
     public HmBaoBao(Rectangle rectangle) {
         super("shader/wave/wave.vert","shader/wave/wave.glsl");
 
-        image = new Image(Asset.getAsset().getTexture("wallResource/wallpaper/SpongeBob SquarePants/SpongeBob SquarePants.jpeg"));
+        image = new Image(Asset.getAsset().getTexture("wallResource/wallpaper/SpongeBob SquarePants/SpongeBob SquarePants.png"));
         this.rectangle = rectangle;
         addActor(image);
         image.setPosition(0,0, Align.center);
