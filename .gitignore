@@ -13,3 +13,4 @@ android/ic_launcher-web.png
 *.iml
 libGdx/build/
 libCommon/build/
+libSpine/build/

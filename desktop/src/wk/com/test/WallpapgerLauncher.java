@@ -17,7 +17,9 @@ import java.awt.TrayIcon;
 import java.util.Scanner;
 
 import kw.manager.core.WindowGame;
+import kw.manager.core.listener.MoveListener;
 import kw.test.DynamicUtils;
+import wk.com.test.mouse.MouseHook;
 
 /**
  * @Auther jian xian si qi
@@ -75,7 +77,7 @@ class WallpapgerLauncher {
             }
         }).start();
 
-        app.init(new WindowGame(new WindowListener() {
+        WindowGame windowGame = new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
             }
@@ -90,7 +92,23 @@ class WallpapgerLauncher {
                 long windowHandle = app.getWindowHandle();
                 DynamicUtils.makeWallpaper(windowHandle);
             }
-        }), config);
+        });
+
+        MouseHook.installHook(windowGame);
+
+        app.setMouseMoveListener(new MoveListener() {
+            @Override
+            public void movePosition(float x, float y) {
+
+            }
+
+            @Override
+            public void startPosition(float x, float y) {
+
+            }
+        });
+
+        app.init(windowGame, config);
         return app.getWindowHandle();
     }
 }

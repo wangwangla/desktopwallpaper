@@ -75,15 +75,9 @@ public class DesktopPetLauncher {
 // ---- 关键：延迟 1 帧再绑定 (否则 handle 为 0) ----
                 Gdx.app.postRunnable(() -> {
                     long h = window.getWindowHandle();
-
-
-
-
                     //置顶
                     GLFW.glfwSetWindowAttrib(h, GLFW.GLFW_FLOATING, GLFW.GLFW_TRUE);
                     drag();
-
-//                    removeWindowShadow(new WinDef.HWND(new Pointer(h)));
                 });
             }
         });

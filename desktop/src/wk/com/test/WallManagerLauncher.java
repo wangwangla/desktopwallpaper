@@ -88,6 +88,7 @@ public class WallManagerLauncher {
     private void setWallPaper(int type) {
         if (startEnum == StartEnum.NEW_PROCESS) {
             TrayItemManager trayItemManager = TrayItemManager.getTrayItemManager();
+            trayItemManager.closeTrayAndProcessAll();
             TrayData trayData = new TrayData();
             trayItemManager.addTraydata(trayData);
             System.out.println("Original main start");

@@ -75,6 +75,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
 		@Override
 		public void invoke (long windowHandle, double x, double y) {
+			System.out.println("-------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		    if (touchDown) {
 				if (moveListener!=null) {
 					moveListener.movePosition((float) x,(float) y);

@@ -8,43 +8,35 @@ uniform sampler2D u_texture;
 uniform float time;
 uniform float wave_offset;
 uniform vec2 center;
+uniform float wave_strength;
+uniform float wave_radius;
+
+//void main() {
+//    float wave_radius = 0.9 * wave_strength;
+//    vec2 distance_vec = center - v_textCoords;
+//    distance_vec = distance_vec * vec2(1.0, 1.0);
+//    float distance = sqrt(distance_vec.x * distance_vec.x + distance_vec.y * distance_vec.y);
+//    float sin_factor = sin(distance * 100.0 - time) * 0.7 * wave_strength;
+//    float discard_factor = clamp(wave_radius - abs(wave_offset - distance), 0.0, 1.0);
+//    vec2 offset = normalize(distance_vec) * sin_factor * discard_factor;
+//    vec2 uv = -offset + v_textCoords;
+//    gl_FragColor = texture2D(u_texture, uv);
+//
+//}
 
 void main() {
-//    vec4 textureColor = v_color * texture2D(u_texture,v_textCoords);
-//    gl_FragColor = textureColor;
-
-//    vec2 uv = normalize(vec2(0.5, 0.5) - v_textCoords) * 0.2 * sin(time) + v_textCoords;
-//    vec4 textureColor = v_color * texture2D(u_texture,uv);
-//    gl_FragColor = textureColor;
-
-
-
-//    vec2 distance_vec = vec2(0.5, 0.5) - v_textCoords;
-//    float sin_factor = sin(time) * 0.2;
-//
-//    float wave_radius = 0.3;
-//    float distance = sqrt(distance_vec.x * distance_vec.x + distance_vec.y * distance_vec.y);
-//    // 其中waveOffset是随时间增长的，通过外部传入
-//    float dis_factor = clamp(wave_radius - abs(distance - 0.2), 0.0, 1.0);
-//
-//    vec2 uv = v_textCoords + normalize(distance_vec) * sin_factor * dis_factor;
-//
-//    vec4 textureColor = v_color * texture2D(u_texture,uv);
-//    gl_FragColor = textureColor;
-
-
-
-    float wave_radius = 0.9;
-
     vec2 distance_vec = center - v_textCoords;
     distance_vec = distance_vec * vec2(1.0, 1.0);
     float distance = sqrt(distance_vec.x * distance_vec.x + distance_vec.y * distance_vec.y);
-    float sin_factor = sin(distance * 100.0 - time ) * 0.01;
+
+    // distance小于1，但是我们希望能有多个波峰波谷，所以在sin的内部乘上一个比较大的倍数
+    // sin函数的值在-1到1之间，我们希望偏移值很小，所以输出的时候需要缩小一定的倍数倍
+    float sin_factor = sin(distance * 100.0 + time) * 0.1;
     float discard_factor = clamp(wave_radius - abs(wave_offset - distance), 0.0, 1.0);
 
+    // 计算总的uv的偏移值
     vec2 offset = normalize(distance_vec) * sin_factor * discard_factor;
-    vec2 uv = -offset + v_textCoords;
+    vec2 uv = offset + v_textCoords;
 
     gl_FragColor = texture2D(u_texture, uv);
-
 }
