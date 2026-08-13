@@ -45,9 +45,17 @@ public class HmBaoBao extends ShaderBaseGroup {
                 wave_radius = 0;
                 lj = 0;
                 time = 0;
+
+
+
+                Image image = new Image(Asset.getAsset().getTexture("ui/white.png"));
+                addActor(image);
+                image.setPosition(event.getStageX(),event.getStageY(), Align.center);
+                System.out.println("-----------------");
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
+
         EventListener.getInstance().addEvent("mousePosisiton", new EventRun() {
             @Override
             public void run(float x, float y) {

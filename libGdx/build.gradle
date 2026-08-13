@@ -4,11 +4,3 @@ sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [
         "utilssrc"
 ]
-// 打包源码
-task sourcesJar(type: Jar) {
-    from sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-artifacts {
-    archives sourcesJar
-}

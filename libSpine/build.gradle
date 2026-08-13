@@ -1,16 +1,9 @@
 apply plugin: "java"
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 sourceSets.main.java.srcDirs = [
         "utilssrc"
 ]
 dependencies {
     implementation project (':libGdx')
-}
-// 打包源码
-task sourcesJar(type: Jar) {
-    from sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-artifacts {
-    archives sourcesJar
 }
