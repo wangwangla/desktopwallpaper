@@ -3,6 +3,8 @@ package kw.manager.core.hhbb;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -27,7 +29,7 @@ public class HmBaoBao extends ShaderBaseGroup {
     private float wave_radius;
 
 
-    public HmBaoBao(Rectangle rectangle) {
+    public HmBaoBao(Stage stage,Rectangle rectangle) {
         super("shader/wave/wave.vert","shader/wave/wave.glsl");
 
         image = new Image(Asset.getAsset().getTexture("wallResource/wallpaper/SpongeBob SquarePants/SpongeBob SquarePants.png"));
@@ -62,6 +64,22 @@ public class HmBaoBao extends ShaderBaseGroup {
 
                 if (getStage()!=null) {
                     Vector2 stagePos = getStage().screenToStageCoordinates(new Vector2(x, y));
+
+
+                    {
+
+                        Image image = new Image(Asset.getAsset().getTexture("gongdeNum.png"));
+                        stage.addActor(image);
+                        image.setPosition(stagePos.x,stagePos.y, Align.center);
+                        image.addAction(Actions.parallel(
+                                Actions.moveToAligned(stagePos.x, stagePos.y + 100, Align.center,1.0f),
+                                Actions.sequence(
+                                        Actions.fadeOut(1.0f),
+                                        Actions.removeActor()
+                                )
+                        ));
+                    }
+
                     HmBaoBao.this.stageToLocalCoordinates(stagePos);
                     touch[0] = (stagePos.x / image.getWidth()) + 0.5f;
                     touch[1] = 1.0f - (stagePos.y / image.getHeight()) - 0.5f;
@@ -72,6 +90,8 @@ public class HmBaoBao extends ShaderBaseGroup {
 
                     waveStrength = 1f;
                     waveTime = 0f;
+
+
                 }
 
             }

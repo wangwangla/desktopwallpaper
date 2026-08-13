@@ -60,6 +60,7 @@ class WallpapgerLauncher {
         config.setWindowListener(new Lwjgl3WindowAdapter(){
             @Override
             public boolean closeRequested() {
+                MouseHook.uninstallHook();
                 DynamicUtils.destroyWallpaper(app.getWindowHandle());
                 System.out.println("Wallpaper cleaned.");
                 System.exit(0);
@@ -70,6 +71,7 @@ class WallpapgerLauncher {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
                 if (sc.nextLine().equals("EXIT")) {
+                    MouseHook.uninstallHook();
                     DynamicUtils.destroyWallpaper(app.getWindowHandle());
                     System.out.println("Wallpaper cleaned.");
                     System.exit(0);
@@ -77,7 +79,8 @@ class WallpapgerLauncher {
             }
         }).start();
 
-        WindowGame windowGame = new WindowGame(new WindowListener() {
+        WindowGame[] gameHolder = new WindowGame[1];
+        WindowGame windowGame = gameHolder[0] = new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
             }
@@ -91,10 +94,10 @@ class WallpapgerLauncher {
             public void setWallpaper() {
                 long windowHandle = app.getWindowHandle();
                 DynamicUtils.makeWallpaper(windowHandle);
+                MouseHook.installHook(gameHolder[0], windowHandle);
             }
         });
         //获取全局  鼠标点击
-//        MouseHook.installHook(windowGame);
 
         app.setMouseMoveListener(new MoveListener() {
             @Override

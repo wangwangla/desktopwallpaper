@@ -38,5 +38,5 @@ void main() {
     vec2 offset = normalize(distance_vec) * sin_factor * discard_factor;
     vec2 uv = offset + v_textCoords;
 
-    gl_FragColor = texture2D(u_texture, uv);
+    gl_FragColor = texture2D(u_texture, uv) * v_color.a;
 }

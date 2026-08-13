@@ -80,7 +80,7 @@ public class MainScreen extends BasePetScreen {
 //            ));
 //        }
 
-        HmBaoBao hmBaoBao = new HmBaoBao(new Rectangle(-offsetX1,-offsetY1,Constant.GAMEWIDTH,Constant.GAMEWIDTH));
+        HmBaoBao hmBaoBao = new HmBaoBao(stage,new Rectangle(-offsetX1,-offsetY1,Constant.GAMEWIDTH,Constant.GAMEWIDTH));
         addActor(hmBaoBao);
         hmBaoBao.setPosition(Constant.GAMEWIDTH/2f,Constant.GAMEHIGHT/2f,Align.center);
 
