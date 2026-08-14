@@ -1,0 +1,3 @@
+07.647 - I - DESK WALL_MANAGER - WallManagerLauncher.logConfig - set log and test!
+07.647 - I - xxxxxxxxxxx - Lwjgl3Window$4$1.run - JVM 正在退出，执行清理逻辑
+清理完成，JVM退出

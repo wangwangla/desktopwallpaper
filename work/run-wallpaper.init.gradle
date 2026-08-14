@@ -1,0 +1,10 @@
+gradle.projectsEvaluated {
+    def desktopProject = gradle.rootProject.project(':desktop')
+    desktopProject.tasks.register('runWallpaper', JavaExec) {
+        dependsOn desktopProject.tasks.named('classes')
+        classpath = desktopProject.sourceSets.main.runtimeClasspath
+        mainClass = 'wk.com.test.WallpapgerLauncher'
+        workingDir = rootProject.file('assets')
+        standardInput = System.in
+    }
+}

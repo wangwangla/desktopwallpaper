@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align;
 import com.wallper.asset.Asset;
 import com.wallper.constant.Constant;
 
+import kw.manager.core.MainScreen;
 import kw.manager.core.event.EventListener;
 import kw.manager.core.event.EventRun;
 
@@ -65,20 +66,8 @@ public class HmBaoBao extends ShaderBaseGroup {
                 if (getStage()!=null) {
                     Vector2 stagePos = getStage().screenToStageCoordinates(new Vector2(x, y));
 
-
-                    {
-
-                        Image image = new Image(Asset.getAsset().getTexture("gongdeNum.png"));
-                        stage.addActor(image);
-                        image.setPosition(stagePos.x,stagePos.y, Align.center);
-                        image.addAction(Actions.parallel(
-                                Actions.moveToAligned(stagePos.x, stagePos.y + 100, Align.center,1.0f),
-                                Actions.sequence(
-                                        Actions.fadeOut(1.0f),
-                                        Actions.removeActor()
-                                )
-                        ));
-                    }
+                    MainScreen.gd++;
+                    EventListener.getInstance().emit("updateGd",stagePos.x,stagePos.y);
 
                     HmBaoBao.this.stageToLocalCoordinates(stagePos);
                     touch[0] = (stagePos.x / image.getWidth()) + 0.5f;

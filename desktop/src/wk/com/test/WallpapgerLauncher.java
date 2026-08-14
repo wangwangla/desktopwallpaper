@@ -1,6 +1,8 @@
 package wk.com.test;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
@@ -47,7 +49,11 @@ class WallpapgerLauncher {
         // Configure window layout
         config.setDecorated(true);
         config.setResizable(false);
-        config.setWindowedMode((int) (1920 * 0.5f), (int) (1200 * 0.5f));
+        // 获取当前屏幕尺寸
+        Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
+        int screenWidth = displayMode.width;
+        int screenHeight = displayMode.height;
+        config.setWindowedMode((int) (screenWidth* 0.5f), (int) (screenHeight * 0.5f));
         config.setWindowPosition(0, 100);
         // Configure window title
         final String TITLE = "xx";
