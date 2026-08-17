@@ -1,123 +1,137 @@
 package wk.com.test;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowConfiguration;
 import com.badlogic.gdx.graphics.Color;
+import com.sun.jna.platform.win32.WinUser;
 import com.wallper.listener.WindowListener;
 
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import kw.demo.DisplayMonitorInfo;
 import kw.manager.core.WindowGame;
 import kw.manager.core.listener.MoveListener;
 import kw.test.DynamicUtils;
 import wk.com.test.mouse.MouseHook;
 
-/**
- * @Auther jian xian si qi
- * @Date 2024/1/18 21:14
- */
 class WallpapgerLauncher {
     private Lwjgl3Application app;
+    private List<WinUser.MONITORINFOEX> monitors;
+    private final AtomicBoolean extraWindowsCreated = new AtomicBoolean(false);
+
     public static void main(String[] args) {
-        WallpapgerLauncher launcher = new WallpapgerLauncher();
-        launcher.run();
+        new WallpapgerLauncher().run();
     }
 
-
-    public static long setWall(){
-        WallpapgerLauncher launcher = new WallpapgerLauncher();
-        return launcher.run();
+    public static long setWall() {
+        return new WallpapgerLauncher().run();
     }
 
-    public long run(){
+    public long run() {
+        monitors = DisplayMonitorInfo.getMonitors();
+        if (monitors.isEmpty()) {
+            throw new IllegalStateException("No display monitor found");
+        }
 
+        WinUser.MONITORINFOEX firstMonitor = monitors.get(0);
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        // Configure FPS
         config.setForegroundFPS(30);
         config.setIdleFPS(30);
-        // Configure window layout
-        config.setDecorated(true);
+        config.setDecorated(false);
         config.setResizable(false);
-        // 获取当前屏幕尺寸
-        Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
-        int screenWidth = displayMode.width;
-        int screenHeight = displayMode.height;
-        config.setWindowedMode((int) (screenWidth* 0.5f), (int) (screenHeight * 0.5f));
-        config.setWindowPosition(0, 100);
-        // Configure window title
-        final String TITLE = "xx";
-        config.setTitle(TITLE);
+        config.setWindowedMode(monitorWidth(firstMonitor), monitorHeight(firstMonitor));
+        config.setWindowPosition(firstMonitor.rcMonitor.left, firstMonitor.rcMonitor.top);
+        config.setTitle("xx-0");
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(false);
         config.setInitialBackgroundColor(new Color(0, 0, 0, 0));
-        // Instantiate the App
-        this.app = new Lwjgl3Application();
-        config.setWindowListener(new Lwjgl3WindowAdapter(){
+        config.setWindowListener(new Lwjgl3WindowAdapter() {
             @Override
             public boolean closeRequested() {
-                MouseHook.uninstallHook();
-                DynamicUtils.destroyWallpaper(app.getWindowHandle());
-                System.out.println("Wallpaper cleaned.");
-                System.exit(0);
-                return super.closeRequested();
+                closeWallpaper();
+                return true;
             }
         });
+
+        this.app = new Lwjgl3Application();
         new Thread(() -> {
-            Scanner sc = new Scanner(System.in);
-            while (sc.hasNextLine()) {
-                if (sc.nextLine().equals("EXIT")) {
-                    MouseHook.uninstallHook();
-                    DynamicUtils.destroyWallpaper(app.getWindowHandle());
-                    System.out.println("Wallpaper cleaned.");
-                    System.exit(0);
+            Scanner scanner = new Scanner(System.in);
+            while (scanner.hasNextLine()) {
+                if ("EXIT".equals(scanner.nextLine())) {
+                    closeWallpaper();
                 }
             }
-        }).start();
+        }, "WallpaperConsole").start();
 
+        app.setMouseMoveListener(new MoveListener() {
+            @Override
+            public void movePosition(float x, float y) {
+            }
+
+            @Override
+            public void startPosition(float x, float y) {
+            }
+        });
+
+        app.init(createWallpaperGame(firstMonitor, true), config);
+        return app.getWindowHandle();
+    }
+
+    private WindowGame createWallpaperGame(WinUser.MONITORINFOEX monitor, boolean createOtherWindows) {
         WindowGame[] gameHolder = new WindowGame[1];
-        WindowGame windowGame = gameHolder[0] = new WindowGame(new WindowListener() {
+        gameHolder[0] = new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
             }
 
             @Override
             public void moveWindowPosition(float x, float y) {
-
             }
 
             @Override
             public void setWallpaper() {
-                long windowHandle = app.getWindowHandle();
-                DynamicUtils.makeWallpaper(windowHandle);
-                MouseHook.installHook(gameHolder[0], windowHandle);
+                long handle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
+                DynamicUtils.makeWallpaper(handle, monitor);
+                if (createOtherWindows) {
+                    MouseHook.installHook(gameHolder[0], handle);
+                    createOtherMonitorWindows();
+                }
             }
         });
-        //获取全局  鼠标点击
+        return gameHolder[0];
+    }
 
-        app.setMouseMoveListener(new MoveListener() {
-            @Override
-            public void movePosition(float x, float y) {
+    private void createOtherMonitorWindows() {
+        if (!extraWindowsCreated.compareAndSet(false, true)) return;
+        for (int i = 1; i < monitors.size(); i++) {
+            WinUser.MONITORINFOEX monitor = monitors.get(i);
+            Lwjgl3WindowConfiguration config = new Lwjgl3WindowConfiguration();
+            config.setDecorated(false);
+            config.setResizable(false);
+            config.setWindowedMode(monitorWidth(monitor), monitorHeight(monitor));
+            config.setWindowPosition(monitor.rcMonitor.left, monitor.rcMonitor.top);
+            config.setTitle("xx-" + i);
+            app.newWindow(createWallpaperGame(monitor, false), config);
+        }
+    }
 
-            }
+    private static int monitorWidth(WinUser.MONITORINFOEX monitor) {
+        return monitor.rcMonitor.right - monitor.rcMonitor.left;
+    }
 
-            @Override
-            public void startPosition(float x, float y) {
+    private static int monitorHeight(WinUser.MONITORINFOEX monitor) {
+        return monitor.rcMonitor.bottom - monitor.rcMonitor.top;
+    }
 
-            }
-        });
-
-        app.init(windowGame, config);
-        return app.getWindowHandle();
+    private void closeWallpaper() {
+        MouseHook.uninstallHook();
+        if (app != null) app.exit();
+        System.out.println("Wallpaper cleaned.");
     }
 }

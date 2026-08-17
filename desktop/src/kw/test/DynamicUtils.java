@@ -21,11 +21,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWNativeWin32;
-import org.lwjgl.glfw.GLFWVidMode;
-
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import kw.demo.DisplayMonitorInfo;
@@ -69,14 +65,18 @@ public class DynamicUtils {
     }
 
     public static void makeWallpaper(long window) {
-        windowsMakeWallpaper(window);
+        windowsMakeWallpaper(window, null);
+    }
+
+    public static void makeWallpaper(long window, WinUser.MONITORINFOEX monitor) {
+        windowsMakeWallpaper(window, monitor);
     }
 
     public static void destroyWallpaper(long window) {
         windowsDestroyWallpaper(window);
     }
 
-    private static void windowsMakeWallpaper(long window) {
+    private static void windowsMakeWallpaper(long window, WinUser.MONITORINFOEX monitor) {
         long nativeWindow = GLFWNativeWin32.glfwGetWin32Window(window);
 
         // procedure from https://github.com/Francesco149/weebp
@@ -95,22 +95,41 @@ public class DynamicUtils {
         long exStyle = User32.INSTANCE.GetWindowLong(thisWindow, User32.GWL_EXSTYLE);
         exStyle &= ~(WS_EX_DLGMODALFRAME | WS_EX_COMPOSITED | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_LAYERED | WS_EX_STATICEDGE | WS_EX_TOOLWINDOW | WS_EX_APPWINDOW);
         User32.INSTANCE.SetWindowLong(thisWindow, User32.GWL_EXSTYLE, (int) exStyle);
-        List<WinUser.MONITORINFOEX> monitors = DisplayMonitorInfo.getMonitors();
-        if (monitors.size()>0) {
-            WinUser.MONITORINFOEX monitor = monitors.get(0);
-            WinDef.HWND desktopWindow = getWorkerW(monitor.rcMonitor);
+        WinDef.HWND desktopWindow = getWorkerW();
+        if (desktopWindow != null) {
             User32.INSTANCE.SetParent(thisWindow, desktopWindow);
             User32.INSTANCE.ShowWindow(thisWindow, User32.SW_SHOW);
-            GLFWVidMode glfwVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
-            WinDef.RECT rect2 = new WinDef.RECT();
-            User32.INSTANCE.GetClientRect(desktopWindow, rect2);
+            WinDef.RECT virtualDesktop = getVirtualDesktopBounds();
+            WinDef.RECT target = monitor == null ? virtualDesktop : monitor.rcMonitor;
+            int width = target.right - target.left;
+            int height = target.bottom - target.top;
 
-            int width = glfwVidMode.width();
-            int height = glfwVidMode.height();
-            glfwSetWindowPos(window, monitor.rcMonitor.left,0);
+            glfwSetWindowPos(window,
+                    target.left - virtualDesktop.left,
+                    target.top - virtualDesktop.top);
             glfwSetWindowSize(window, width, height);
         }
+    }
+
+    private static WinDef.RECT getVirtualDesktopBounds() {
+        WinDef.RECT bounds = new WinDef.RECT();
+        boolean first = true;
+        for (WinUser.MONITORINFOEX monitor : DisplayMonitorInfo.getMonitors()) {
+            if (first) {
+                bounds.left = monitor.rcMonitor.left;
+                bounds.top = monitor.rcMonitor.top;
+                bounds.right = monitor.rcMonitor.right;
+                bounds.bottom = monitor.rcMonitor.bottom;
+                first = false;
+            } else {
+                bounds.left = Math.min(bounds.left, monitor.rcMonitor.left);
+                bounds.top = Math.min(bounds.top, monitor.rcMonitor.top);
+                bounds.right = Math.max(bounds.right, monitor.rcMonitor.right);
+                bounds.bottom = Math.max(bounds.bottom, monitor.rcMonitor.bottom);
+            }
+        }
+        return bounds;
     }
 
     private static void windowsDestroyWallpaper(long window) {

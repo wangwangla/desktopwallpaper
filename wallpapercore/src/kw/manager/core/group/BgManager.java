@@ -3,15 +3,18 @@ package kw.manager.core.group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.wallper.asset.Asset;
 import com.wallper.constant.Constant;
 
 public class BgManager {
     private static BgManager bgManager;
-    private GameBgAnimation gameBgAnimation;
+    private final ObjectMap<Stage, GameBgAnimation> backgrounds = new ObjectMap<>();
     public void showBg(Stage stage){
+        GameBgAnimation gameBgAnimation = backgrounds.get(stage);
         if (gameBgAnimation == null){
             gameBgAnimation = new GameBgAnimation();
+            backgrounds.put(stage, gameBgAnimation);
             stage.addActor(gameBgAnimation);
             Image image = new Image(Asset.getAsset().getTexture("000.png"));
             gameBgAnimation.addActor(image);
@@ -20,8 +23,6 @@ public class BgManager {
             gameBgAnimation.setPosition(Constant.GAMEWIDTH/2f,Constant.GAMEHIGHT/2f,Align.center);
             image.setPosition(gameBgAnimation.getWidth()/2f, gameBgAnimation.getHeight()/2f,Align.center);
             image.setDebug(true);
-        }else {
-            stage.addActor(gameBgAnimation);
         }
         gameBgAnimation.toBack();
     }
