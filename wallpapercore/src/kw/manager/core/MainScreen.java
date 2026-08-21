@@ -85,36 +85,6 @@ public class MainScreen extends BasePetScreen {
 
         BgManager.getBgManager().showBg(stage);
 
-        Label label = new Label("11",new Label.LabelStyle(){{
-            font = Asset.getAsset().loadBitFont("front/Manrope-Bold_38.fnt");
-        }});
-        stage.addActor(label);
-        label.setPosition(Constant.GAMEWIDTH - 200,Constant.GAMEHIGHT-200,Align.top);
-        label.setText("123");
-        label.setColor(Color.RED);
-
-        EventListener.getInstance().addEvent("updateGd", new EventRun() {
-            @Override
-            public void run(float x, float y) {
-                {
-
-                    Image image = new Image(Asset.getAsset().getTexture("gongdeNum.png"));
-                    stage.addActor(image);
-                    image.setPosition(x,y, Align.center);
-                    image.addAction(Actions.parallel(
-                            Actions.moveToAligned(x, y + 100, Align.center,1.0f),
-                            Actions.sequence(
-                                    Actions.fadeOut(1.0f),
-                                    Actions.removeActor()
-                            )
-                    ));
-                }
-
-                label.setText("merit    "+gd);
-            }
-        });
-        EventListener.getInstance().emit("updateGd",0,0);
-
 //        SpineActor spineActor = new SpineActor("3_75_32");
 //        addActor(spineActor);
 //        spineActor.setAnimation("animation",true);

@@ -14,8 +14,7 @@ import com.wallper.constant.Constant;
 
 public class GameBgAnimation extends Group {
     private final ShaderProgram program;
-    private float time = 4f;
-    private final float flash = 0f;
+    private float time;
     public GameBgAnimation(){
         ShaderProgram shaderProgram = new ShaderProgram(
                 Gdx.files.internal("shader/xiaochoupai/b.vert"),
@@ -37,12 +36,10 @@ public class GameBgAnimation extends Group {
             return;
         }
         batch.setShader(program);
-        program.setUniformf("time", time * 0.7f);
-        program.setUniformf("vort_speed", 4.0f);
-        program.setUniformf("mid_flash", flash);
-        program.setUniformf("vort_offset", 0.0f);
-        program.setUniformf("colour_1", new Color(0.4f, 0.7f, 1f, 1f));
-        program.setUniformf("colour_2", new Color(0.8f, 0.2f, 1f, 1f));
+        program.setUniformf("time", time);
+        program.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        program.setUniformf("colour_1", new Color(0.20f, 0.68f, 1.0f, 1f));
+        program.setUniformf("colour_2", new Color(0.72f, 0.32f, 1.0f, 1f));
         super.draw(batch, parentAlpha);
         batch.setShader(null);
     }
