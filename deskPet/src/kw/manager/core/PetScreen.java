@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.wallper.asset.Asset;
 import com.wallper.constant.Constant;
@@ -15,7 +14,7 @@ import com.wallper.pre.GamePre;
 import com.wallper.screen.BasePetGame;
 import com.wallper.screen.BasePetScreen;
 
-import kw.manager.core.csv.CsvReadFile1;
+import kw.manager.core.csv.CsvReadFile;
 import kw.manager.core.csv.DataBean;
 
 /**
@@ -31,8 +30,8 @@ public class PetScreen extends BasePetScreen {
     public void initView() {
         super.initView();
 
-        CsvReadFile1.readCw();
-        ArrayMap<String,DataBean> chongwuMapAll = CsvReadFile1.getChongwuMapAll();
+        CsvReadFile.readCw();
+        ArrayMap<String,DataBean> chongwuMapAll = CsvReadFile.getChongwuMapAll();
 
 
         String pet = GamePre.getInstance().getPet();

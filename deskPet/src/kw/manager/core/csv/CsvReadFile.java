@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.wallper.csv.ReadCvs;
 
-public class CsvReadFile1 {
+public class CsvReadFile {
     private static ArrayMap<String, DataBean> chongwuMapAll;
     private static ArrayMap<String, Array<DataBean>> chongwuMap;
     private static ArrayMap<String,Array<DataBean>> wallMap;
