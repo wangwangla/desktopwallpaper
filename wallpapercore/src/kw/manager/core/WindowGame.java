@@ -23,7 +23,22 @@ public class WindowGame extends BasePetGame {
     @Override
     protected void loadingView() {
         super.loadingView();
-        setScreen(new MainScreen(this));
+        if ("Muyu".equals(com.wallper.pre.GamePre.getInstance().getWall())) {
+            setScreen(new kw.manager.core.muyu.MuyuScreen(new kw.manager.core.muyu.MuyuScreen.DesktopActions() {
+                public void wallpaper() { Constant.windowListener.setWallpaper(); }
+                public void preview() { Constant.windowListener.windowForward(); }
+                public void quit() { getScreen().dispose(); System.exit(0); }
+            }, true));
+        } else if ("Weather City".equals(com.wallper.pre.GamePre.getInstance().getWall())) {
+            setScreen(new kw.manager.core.city.WeatherCityScreen(kw.manager.core.city.WeatherSettings.load(),
+                new kw.manager.core.city.WeatherCityScreen.DesktopActions() {
+                    public void wallpaper() { Constant.windowListener.setWallpaper(); }
+                    public void preview() { Constant.windowListener.windowForward(); }
+                    public void quit() { getScreen().dispose(); System.exit(0); }
+                }, true));
+        } else {
+            setScreen(new MainScreen(this));
+        }
         Constant.windowListener.moveWindowPosition(0,0);
         Constant.windowListener.setWallpaper();
     }

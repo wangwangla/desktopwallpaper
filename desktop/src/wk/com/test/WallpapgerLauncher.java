@@ -27,6 +27,8 @@ import wk.com.test.mouse.MouseHook;
  */
 class WallpapgerLauncher {
     private Lwjgl3Application app;
+    private boolean wallpaperAttached;
+    private final MuyuDesktopMouse muyuMouse = new MuyuDesktopMouse();
     public static void main(String[] args) {
         WallpapgerLauncher launcher = new WallpapgerLauncher();
         launcher.run();
@@ -80,6 +82,10 @@ class WallpapgerLauncher {
         WindowGame windowGame = new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
+                DynamicUtils.destroyWallpaper(app.getWindowHandle());
+                wallpaperAttached = false;
+                org.lwjgl.glfw.GLFW.glfwSetWindowSize(app.getWindowHandle(), 1280, 720);
+                org.lwjgl.glfw.GLFW.glfwSetWindowPos(app.getWindowHandle(), 80, 80);
             }
 
             @Override
@@ -91,8 +97,18 @@ class WallpapgerLauncher {
             public void setWallpaper() {
                 long windowHandle = app.getWindowHandle();
                 DynamicUtils.makeWallpaper(windowHandle);
+                wallpaperAttached = true;
             }
-        });
+        }) {
+            @Override public void render() {
+                if (getScreen() instanceof kw.manager.core.muyu.MuyuScreen) {
+                    kw.manager.core.muyu.MuyuScreen scene = (kw.manager.core.muyu.MuyuScreen)getScreen();
+                    scene.setWallpaper(wallpaperAttached);
+                    muyuMouse.poll(scene, app.getWindowHandle(), wallpaperAttached);
+                }
+                super.render();
+            }
+        };
         //获取全局  鼠标点击
 //        MouseHook.installHook(windowGame);
 

@@ -6,8 +6,19 @@ apply plugin: "java"
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 //源代码目录
 sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.resources.srcDirs = ["../android/assets"]
-sourceCompatibility = 1.8
+// Prefer the real assets folder in this repo; fallback keeps old layout compatible.
+sourceSets.main.resources.srcDirs = [file("../assets").exists() ? "../assets" : "../android/assets"]
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+ext {
+    exeMainClass = 'wk.com.test.WallManagerLauncher'
+    exeJarName = "${project.name}-${project.version}.jar"
+    exeAppName = 'DesktopWallpaperManager'
+    exeVendor = 'desktopwallpaper'
+}
 
 dependencies {
     implementation files('libs/AppleJavaExtensions-1.4.jar')
@@ -47,13 +58,142 @@ dependencies {
 }
 
 task dist(type: Jar) {
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes 'Main-Class': 'wk.com.test.WallManagerLauncher'
+        attributes 'Main-Class': exeMainClass
     }
     dependsOn configurations.runtimeClasspath
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     with jar
+}
+
+def resolveJpackageExecutable() {
+    def javaHome = System.getenv('JAVA_HOME')
+    if (javaHome) {
+        def winExe = file("${javaHome}/bin/jpackage.exe")
+        if (winExe.exists()) return winExe.absolutePath
+        def unixExe = file("${javaHome}/bin/jpackage")
+        if (unixExe.exists()) return unixExe.absolutePath
+    }
+    return 'jpackage'
+}
+
+task packageAppImage(type: Exec) {
+    group = 'distribution'
+    description = 'Build a Windows app-image via jpackage (JDK 17+ required).'
+    dependsOn dist
+
+    doFirst {
+        if (JavaVersion.current() < JavaVersion.toVersion('17')) {
+            throw new GradleException('packageAppImage needs JDK 17+ to run Gradle/jpackage. Please switch JAVA_HOME to JDK 17 or newer.')
+        }
+    }
+
+    commandLine resolveJpackageExecutable(),
+            '--type', 'app-image',
+            '--name', exeAppName,
+            '--vendor', exeVendor,
+            '--input', "$buildDir/libs",
+            '--main-jar', exeJarName,
+            '--main-class', exeMainClass,
+            '--dest', "$buildDir/exe"
+}
+
+task packageExe(type: Exec) {
+    group = 'distribution'
+    description = 'Build a Windows .exe installer via jpackage (JDK 17+ required).'
+    dependsOn dist
+
+    doFirst {
+        if (JavaVersion.current() < JavaVersion.toVersion('17')) {
+            throw new GradleException('packageExe needs JDK 17+ to run Gradle/jpackage. Please switch JAVA_HOME to JDK 17 or newer.')
+        }
+    }
+
+    commandLine resolveJpackageExecutable(),
+            '--type', 'exe',
+            '--name', exeAppName,
+            '--vendor', exeVendor,
+            '--input', "$buildDir/libs",
+            '--main-jar', exeJarName,
+            '--main-class', exeMainClass,
+            '--dest', "$buildDir/exe",
+            '--win-dir-chooser',
+            '--win-menu',
+            '--win-shortcut'
+}
+
+task printPackageHelp {
+    group = 'help'
+    description = 'Print packaging hints for app-image and exe tasks.'
+    doLast {
+        println 'Packaging tips:'
+        println '1) Build jar: ./gradlew :desktop:dist'
+        println '2) Build app image: ./gradlew :desktop:packageAppImage'
+        println '3) Build exe installer: ./gradlew :desktop:packageExe'
+        println 'Output folder: desktop/build/exe'
+    }
+}
+
+task runWeatherCity(type: JavaExec) {
+    group = 'application'
+    description = 'Preview the weather-driven 3D city with its Chinese controller.'
+    dependsOn classes
+    mainClass = 'wk.com.test.WeatherCityLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    jvmArgs '-Djava.net.preferIPv4Stack=true'
+}
+
+sourceSets.test.java.srcDirs = ['tests']
+tasks.withType(Test).configureEach {
+    useJUnit()
+}
+
+task runMuyu(type: JavaExec) {
+    group = 'application'
+    dependsOn classes
+    mainClass = 'wk.com.test.MuyuLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+}
+
+task snapshotMuyu(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.MuyuLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--snapshot', rootProject.file('desktop/build/muyu-preview.png').absolutePath
+}
+
+task snapshotMuyuStroke(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.MuyuLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--stroke-snapshots', rootProject.file('desktop/build/muyu-stroke-preview').absolutePath
+}
+
+task snapshotMuyuWork(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.MuyuLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--work-preview', '2026-11-23T10:30:00', '--snapshot', rootProject.file('desktop/build/muyu-work-preview.png').absolutePath
+}
+
+task snapshotWeatherCity(type: JavaExec) {
+    group = 'verification'
+    description = 'Render day, dawn, rain and night without changing the desktop.'
+    dependsOn classes
+    mainClass = 'wk.com.test.WeatherCityLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--snapshot', rootProject.file('desktop/build/weather-city-preview').absolutePath
+    jvmArgs '-Djava.net.preferIPv4Stack=true'
 }

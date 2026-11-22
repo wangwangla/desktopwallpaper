@@ -79,7 +79,38 @@ public class OpenALLwjgl3Audio implements Lwjgl3Audio {
 	}
 
 	public OpenALLwjgl3Audio (int simultaneousSources, int deviceBufferCount, int deviceBufferSize) {
-
+		registerSound("wav", Wav.Sound.class);
+		registerSound("ogg", Ogg.Sound.class);
+		registerSound("mp3", Mp3.Sound.class);
+		registerMusic("wav", Wav.Music.class);
+		registerMusic("ogg", Ogg.Music.class);
+		registerMusic("mp3", Mp3.Music.class);
+		allSources = new IntArray();
+		idleSources = new IntArray();
+		soundIdToSource = new LongMap<Integer>();
+		sourceToSoundId = new IntMap<Long>();
+		recentSounds = new OpenALSound[Math.max(1, simultaneousSources)];
+		try {
+			device = alcOpenDevice((ByteBuffer)null);
+			if (device == 0) throw new IllegalStateException("No audio output device");
+			ALCCapabilities capabilities = ALC.createCapabilities(device);
+			context = alcCreateContext(device, (IntBuffer)null);
+			if (context == 0 || !alcMakeContextCurrent(context)) throw new IllegalStateException("Cannot create audio context");
+			AL.createCapabilities(capabilities);
+			for (int i = 0; i < simultaneousSources; i++) {
+				int source = alGenSources();
+				if (alGetError() != AL_NO_ERROR) break;
+				allSources.add(source);
+				idleSources.add(source);
+			}
+			AL10.alListener3f(AL_POSITION, 0, 0, 0);
+			AL10.alListener3f(AL_VELOCITY, 0, 0, 0);
+			AL10.alListenerfv(AL_ORIENTATION, new float[] {0, 0, -1, 0, 1, 0});
+		} catch (Throwable failure) {
+			dispose();
+			noDevice = true;
+			System.err.println("Audio output unavailable: " + failure.getMessage());
+		}
 	}
 
 	public void registerSound (String extension, Class<? extends OpenALSound> soundClass) {
@@ -262,8 +293,16 @@ public class OpenALLwjgl3Audio implements Lwjgl3Audio {
 	}
 
 	public void dispose () {
-
-
+		if (context != 0) {
+			if (allSources != null) for (int i = 0; i < allSources.size; i++) alDeleteSources(allSources.get(i));
+			alcMakeContextCurrent(0);
+			alcDestroyContext(context);
+			context = 0;
+		}
+		if (device != 0) {
+			alcCloseDevice(device);
+			device = 0;
+		}
 	}
 
 	public AudioDevice newAudioDevice (int sampleRate, final boolean isMono) {
