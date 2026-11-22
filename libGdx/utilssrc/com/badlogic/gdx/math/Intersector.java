@@ -44,7 +44,25 @@ public final class Intersector {
 	 * check is performed that this is the case. <br>
 	 * If the Vector3 parameters contain both small and large values, such as one that contains 0.0001 and one that contains
 	 * 10000000.0, this can fail due to floating-point imprecision.
-	 * 
+	 *
+	 * 叉积（cross product）+ 点积（dot product）判断方向一致性
+	 * 检测点是不是在三角形内
+	 *
+	 * v0=A−P
+	 * v1=B−P
+	 * v2=C−P
+	 *
+	 * n
+	 * 1
+	 * 	​
+	 *
+	 * =(B−P)×(C−P)
+	 * n
+	 * 2
+	 * 	​
+	 *
+	 * =(C−P)×(A−P)
+	 *
 	 * @param t1 the first vertex of the triangle
 	 * @param t2 the second vertex of the triangle
 	 * @param t3 the third vertex of the triangle
@@ -197,8 +215,13 @@ public final class Intersector {
 			floatArray2.addAll(floatArray);
 			floatArray.clear();
 		}
-		if (floatArray2.size != 0) {
+		// Ensure first and last point are different
+		if (floatArray2.size >= 6 && floatArray2.get(0) == floatArray2.get(floatArray2.size - 2)
+			&& floatArray2.get(1) == floatArray2.get(floatArray2.size - 1)) floatArray2.setSize(floatArray2.size - 2);
+		// Check for 3 or more vertices needed due to floating point precision errors
+		if (floatArray2.size >= 6) {
 			if (overlap != null) {
+				overlap.resetTransformations();
 				if (overlap.getVertices().length == floatArray2.size)
 					System.arraycopy(floatArray2.items, 0, overlap.getVertices(), 0, floatArray2.size);
 				else
@@ -209,14 +232,14 @@ public final class Intersector {
 		return false;
 	}
 
-	/** Returns true if the specified poygons intersect. */
+	/** Returns true if the specified polygons intersect. */
 	static public boolean intersectPolygons (FloatArray polygon1, FloatArray polygon2) {
 		if (Intersector.isPointInPolygon(polygon1.items, 0, polygon1.size, polygon2.items[0], polygon2.items[1])) return true;
 		if (Intersector.isPointInPolygon(polygon2.items, 0, polygon2.size, polygon1.items[0], polygon1.items[1])) return true;
 		return intersectPolygonEdges(polygon1, polygon2);
 	}
 
-	/** Returns true if the lines of the specified poygons intersect. */
+	/** Returns true if the lines of the specified polygons intersect. */
 	static public boolean intersectPolygonEdges (FloatArray polygon1, FloatArray polygon2) {
 		int last1 = polygon1.size - 2, last2 = polygon2.size - 2;
 		float[] p1 = polygon1.items, p2 = polygon2.items;

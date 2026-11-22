@@ -55,8 +55,6 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 
-import kw.manager.core.listener.MoveListener;
-
 public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 	private Lwjgl3ApplicationConfiguration config;
 	final Array<Lwjgl3Window> windows = new Array<Lwjgl3Window>();
@@ -424,12 +422,6 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 	void createWindow(Lwjgl3Window window, Lwjgl3ApplicationConfiguration config, long sharedContext) {
 		long windowHandle = createGlfwWindow(config, sharedContext);
 		window.create(windowHandle);
-		if (moveListener!=null){
-			Lwjgl3Input input = window.getInput();
-            if (input instanceof DefaultLwjgl3Input) {
-				((DefaultLwjgl3Input)(input)).setMoveListener(moveListener);
-            }
-		}
 		this.windowHandle = windowHandle;
 		window.setVisible(config.initialVisible);
 
@@ -554,11 +546,6 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		// FBO is in core since OpenGL 3.0, see https://www.opengl.org/wiki/Framebuffer_Object
 		return glVersion.isVersionEqualToOrHigher(3, 0) || GLFW.glfwExtensionSupported("GL_EXT_framebuffer_object")
 			|| GLFW.glfwExtensionSupported("GL_ARB_framebuffer_object");
-	}
-
-	private MoveListener moveListener;
-	public void setMouseMoveListener(MoveListener moveListener) {
-		this.moveListener = moveListener;
 	}
 
 	public enum GLDebugMessageSeverity {

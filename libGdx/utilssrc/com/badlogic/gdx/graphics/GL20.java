@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -352,10 +352,10 @@ public interface GL20 {
 	public void glColorMask (boolean red, boolean green, boolean blue, boolean alpha);
 
 	public void glCompressedTexImage2D (int target, int level, int internalformat, int width, int height, int border,
-										int imageSize, Buffer data);
+		int imageSize, Buffer data);
 
 	public void glCompressedTexSubImage2D (int target, int level, int xoffset, int yoffset, int width, int height, int format,
-										   int imageSize, Buffer data);
+		int imageSize, Buffer data);
 
 	public void glCopyTexImage2D (int target, int level, int internalformat, int x, int y, int width, int height, int border);
 
@@ -417,12 +417,12 @@ public interface GL20 {
 	public void glStencilOp (int fail, int zfail, int zpass);
 
 	public void glTexImage2D (int target, int level, int internalformat, int width, int height, int border, int format, int type,
-							  Buffer pixels);
+		Buffer pixels);
 
 	public void glTexParameterf (int target, int pname, float param);
 
 	public void glTexSubImage2D (int target, int level, int xoffset, int yoffset, int width, int height, int format, int type,
-								 Buffer pixels);
+		Buffer pixels);
 
 	public void glViewport (int x, int y, int width, int height);
 

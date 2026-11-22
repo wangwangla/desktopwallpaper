@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx;
 
+import com.badlogic.gdx.input.NativeInputConfiguration;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
 /**
@@ -44,7 +45,7 @@ import com.badlogic.gdx.utils.ObjectIntMap;
  * @author mzechner */
 public interface Input {
 	/** Callback interface for {@link Input#getTextInput(TextInputListener, String, String, String)}
-	 * 
+	 * 键盘输入
 	 * @author mzechner */
 	static public interface TextInputListener {
 		public void input (String text);
@@ -786,6 +787,29 @@ public interface Input {
 	 * @param type which type of keyboard we wish to display. Can be null when hiding */
 	public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type);
 
+	static interface InputStringValidator {
+		/** @param toCheck The string that should be validated
+		 * @return true, if the string is acceptable, false if not. */
+		boolean validate (String toCheck);
+	}
+
+	/** Sets the on-screen keyboard visible if available.
+	 *
+	 * @param configuration The configuration for the native input field */
+	public void openTextInputField (NativeInputConfiguration configuration);
+
+	/** Closes the native input field and applies the result to the input wrapper.
+	 * @param sendReturn Whether a "return" key should be send after processing */
+	public void closeTextInputField (boolean sendReturn);
+
+	static interface KeyboardHeightObserver {
+		void onKeyboardHeightChanged (int height);
+	}
+
+	/** This will set a keyboard height callback. This will get called, whenever the keyboard height changes. Note: When using
+	 * openTextInputField, it will report the height of the native input field too. */
+	public void setKeyboardHeightObserver (KeyboardHeightObserver observer);
+
 	public enum OnscreenKeyboardType {
 		Default, NumberPad, PhonePad, Email, Password, URI
 	}
@@ -865,34 +889,6 @@ public interface Input {
 
 	/** @return the time of the event currently reported to the {@link InputProcessor}. */
 	public long getCurrentEventTime ();
-
-	/** @deprecated use {@link Input#setCatchKey(int keycode, boolean catchKey)} instead
-	 *
-	 *             Sets whether the BACK button on Android should be caught. This will prevent the app from being paused. Will have
-	 *             no effect on the desktop.
-	 *
-	 * @param catchBack whether to catch the back button */
-	@Deprecated
-	public void setCatchBackKey (boolean catchBack);
-
-	/** @deprecated use {@link Input#isCatchKey(int keycode)} instead
-	 * @return whether the back button is currently being caught */
-	@Deprecated
-	public boolean isCatchBackKey ();
-
-	/** @deprecated use {@link Input#setCatchKey(int keycode, boolean catchKey)} instead
-	 *
-	 *             Sets whether the MENU button on Android should be caught. This will prevent the onscreen keyboard to show up.
-	 *             Will have no effect on the desktop.
-	 * 
-	 * @param catchMenu whether to catch the menu button */
-	@Deprecated
-	public void setCatchMenuKey (boolean catchMenu);
-
-	/** @deprecated use {@link Input#isCatchKey(int keycode)} instead
-	 * @return whether the menu button is currently being caught */
-	@Deprecated
-	public boolean isCatchMenuKey ();
 
 	/** Sets whether the given key on Android or GWT should be caught. No effect on other platforms. All keys that are not caught
 	 * may be handled by other apps or background processes on Android, or may trigger default browser behaviour on GWT. For

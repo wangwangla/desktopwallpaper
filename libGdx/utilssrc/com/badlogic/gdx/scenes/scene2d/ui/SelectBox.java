@@ -128,7 +128,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		this.style = style;
 
 		if (scrollPane != null) {
-
+			scrollPane.setStyle(style.scrollStyle);
 			scrollPane.list.setStyle(style.listStyle);
 		}
 		invalidateHierarchy();
@@ -136,8 +136,8 @@ public class SelectBox<T> extends Widget implements Disableable {
 
 	/** Returns the select box's style. Modifying the returned style may not have an effect until {@link #setStyle(SelectBoxStyle)}
 	 * is called. */
-	public static SelectBoxStyle getStyle() {
-		return null;
+	public SelectBoxStyle getStyle () {
+		return style;
 	}
 
 	/** Set the backing Array that makes up the choices available in the SelectBox */
@@ -532,11 +532,18 @@ public class SelectBox<T> extends Widget implements Disableable {
 				setY(stagePosition.y - height);
 			else
 				setY(stagePosition.y + selectBox.getHeight());
-			setX(stagePosition.x);
+
 			setHeight(height);
 			validate();
 			float width = Math.max(getPrefWidth(), selectBox.getWidth());
 			setWidth(width);
+
+			float x = stagePosition.x;
+			if (x + width > stage.getWidth()) {
+				x -= getWidth() - selectBox.getWidth() - 1;
+				if (x < 0) x = 0;
+			}
+			setX(x);
 
 			validate();
 			scrollTo(0, list.getHeight() - selectBox.getSelectedIndex() * itemHeight - itemHeight / 2, 0, 0, true, true);

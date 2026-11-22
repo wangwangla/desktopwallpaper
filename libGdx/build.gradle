@@ -1,18 +1,19 @@
 apply plugin: "java"
-
+group='com.github.wangGame'
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 sourceSets.main.java.srcDirs = [
         "utilssrc"
 ]
-sourceSets.main.resources.srcDirs = ["resources"]
-// 打包源码
-task sourcesJar(type: Jar) {
-    from sourceSets.main.java.srcDirs
-    archiveClassifier = 'sources'
+
+dependencies {
+    implementation project(":libGdxJnigenLoader")
 }
-tasks.named('assemble') {
-    dependsOn sourcesJar
+
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
+

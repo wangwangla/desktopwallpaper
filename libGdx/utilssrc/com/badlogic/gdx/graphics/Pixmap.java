@@ -116,7 +116,7 @@ public class Pixmap implements Disposable {
 
 	/** Sets the type of {@link Blending} to be used for all operations. Default is {@link Blending#SourceOver}.
 	 * @param blending the blending type */
-	public void setBlending (Blending blending) {
+	public void setBlending(Blending blending) {
 		this.blending = blending;
 		pixmap.setBlend(blending == Blending.None ? 0 : 1);
 	}
@@ -391,7 +391,10 @@ public class Pixmap implements Disposable {
 
 	/** Releases all resources associated with this Pixmap. */
 	public void dispose () {
-		if (disposed) throw new GdxRuntimeException("Pixmap already disposed!");
+		if (disposed) {
+			Gdx.app.error("Pixmap", "Pixmap already disposed!");
+			return;
+		}
 		pixmap.dispose();
 		disposed = true;
 	}

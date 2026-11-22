@@ -9,8 +9,8 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 // Prefer the real assets folder in this repo; fallback keeps old layout compatible.
 sourceSets.main.resources.srcDirs = [file("../assets").exists() ? "../assets" : "../android/assets"]
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 ext {
@@ -27,16 +27,13 @@ dependencies {
     implementation files('libs/jlayer-1.0.1-libgdx.zip')
     implementation files('libs/gdx-platform-1.11.0-natives-desktop.jar')
     implementation files('libs/jorbis.jar')
-    implementation project(":libCommon")
 
 
     implementation "net.java.dev.jna:jna:5.14.0"
     implementation "net.java.dev.jna:jna-platform:5.14.0"
-    implementation project (':wallpapermanagercore')
     implementation project (':wallpapercore')
     implementation project (':libGdx')
-    implementation project (':deskPet')
-
+    implementation project (':libGdxJnigenLoader')
     implementation 'junit:junit:4.12'
     implementation "org.lwjgl:lwjgl:3.3.3"
     implementation "org.lwjgl:lwjgl:3.3.3:natives-windows"
