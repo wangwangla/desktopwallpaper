@@ -23,6 +23,9 @@ public final class SeasonController {
     private final Runnable quit;
     private final String[] modes={"real","clear","cloudy","overcast","rain","snow","fog"};
     public SeasonController(Supplier<SeasonSettings> settings,Consumer<SeasonSettings> configure,WeatherService weather,Runnable attach,Runnable detach,Runnable quit) {
+        this(settings,configure,weather,attach,detach,quit,true);
+    }
+    public SeasonController(Supplier<SeasonSettings> settings,Consumer<SeasonSettings> configure,WeatherService weather,Runnable attach,Runnable detach,Runnable quit,boolean showControls) {
         this.settings=settings;this.configure=configure;this.weather=weather;this.quit=quit;
         JPanel panel=new JPanel();panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));panel.setBorder(new EmptyBorder(24,24,24,24));
         JLabel title=new JLabel("四季流转，万物有时");panel.add(title);panel.add(Box.createVerticalStrut(18));
@@ -58,7 +61,7 @@ public final class SeasonController {
         panel.add(Box.createVerticalStrut(12));JLabel credit=new JLabel("天气：Open-Meteo · 每 15 分钟更新");panel.add(credit);
         font(panel,new Font("Microsoft YaHei",Font.PLAIN,13));title.setFont(new Font("Microsoft YaHei",Font.BOLD,21));
         frame.setContentPane(panel);frame.setSize(460,680);frame.setResizable(false);frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);frame.setLocationRelativeTo(null);
-        timer=new Timer(1000,e->update());timer.start();update();tray();show();
+        timer=new Timer(1000,e->update());timer.start();update();tray();if(showControls)show();
     }
     private void coordinates(){SeasonSettings s=settings.get();JTextField name=new JTextField(s.city),lat=new JTextField(""+s.latitude),lon=new JTextField(""+s.longitude),zone=new JTextField(s.timezone);
         JPanel p=new JPanel(new GridLayout(4,2,8,8));p.add(new JLabel("地点名称"));p.add(name);p.add(new JLabel("纬度 (-90~90)"));p.add(lat);p.add(new JLabel("经度 (-180~180)"));p.add(lon);p.add(new JLabel("时区"));p.add(zone);

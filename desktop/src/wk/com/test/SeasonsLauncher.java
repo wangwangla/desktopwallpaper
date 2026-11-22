@@ -28,16 +28,17 @@ public final class SeasonsLauncher {
     public static void main(String[] args){if(!WallpaperSession.forwardExisting("seasons",args))new SeasonsLauncher().run(args);}
     private void configure(SeasonSettings s){SeasonSettings old=settings;settings=s.copy();settings.save();
         if(old.latitude!=s.latitude||old.longitude!=s.longitude||!old.timezone.equals(s.timezone))weather.changingLocation(s);}
-    private void attach(){try{DynamicUtils.makeWallpaper(app.getWindowHandle());attached=true;}
+    private void attach(){try{DynamicUtils.makeWallpaper(app.getWindowHandle());attached=true;WallpaperAutostart.select("seasons");}
         catch(RuntimeException e){if(session!=null)throw e;SwingUtilities.invokeLater(()->javax.swing.JOptionPane.showMessageDialog(null,"桌面嵌入失败："+e.getMessage()));}}
-    private void detach(){if(attached){DynamicUtils.destroyWallpaper(app.getWindowHandle());attached=false;}
-        GLFW.glfwSetWindowSize(app.getWindowHandle(),1280,720);GLFW.glfwSetWindowPos(app.getWindowHandle(),60,60);GLFW.glfwShowWindow(app.getWindowHandle());}
+    private void detach(){detach(true);}
+    private void detach(boolean clearStartup){if(attached){DynamicUtils.destroyWallpaper(app.getWindowHandle());attached=false;}
+        GLFW.glfwSetWindowSize(app.getWindowHandle(),1280,720);GLFW.glfwSetWindowPos(app.getWindowHandle(),60,60);GLFW.glfwShowWindow(app.getWindowHandle());if(clearStartup)WallpaperAutostart.clear("seasons");}
     private void quit(){if(attached)detach();Gdx.app.exit();}
     private void run(String[] args){String snapshot=null;boolean wall=false;
         for(int i=0;i<args.length;i++){if("--wallpaper".equals(args[i]))wall=true;if("--snapshot".equals(args[i])&&i+1<args.length)snapshot=args[++i];}
-        final String output=snapshot;final boolean initialWall=wall;
+        final String output=snapshot;final boolean initialWall=wall, quiet=java.util.Arrays.asList(args).contains("--quiet-controls");
         Lwjgl3ApplicationConfiguration config=new Lwjgl3ApplicationConfiguration();config.setTitle("四季节气 · 动态壁纸");config.setWindowedMode(1280,720);
-        config.setResizable(true);config.setForegroundFPS(15);config.setIdleFPS(15);config.disableAudio(true);config.setInitialVisible(output==null);
+        config.setResizable(true);config.setForegroundFPS(15);config.setIdleFPS(15);config.disableAudio(true);config.setInitialVisible(output==null&&!quiet);
         app=new Lwjgl3Application();app.init(new ApplicationAdapter(){
             final SeasonArtwork artwork=new SeasonArtwork();SpriteBatch batch;Texture texture;Pixmap pixels;double elapsed;int frame,shot;
             final int[] terms={3,9,15,20,5,12,21,17};
@@ -46,7 +47,7 @@ public final class SeasonsLauncher {
             public void create(){settings=output==null?SeasonSettings.loadSeason():new SeasonSettings();
                 weather=new WeatherService(()->settings,output==null);batch=new SpriteBatch();pixels=new Pixmap(SeasonArtwork.W,SeasonArtwork.H,Pixmap.Format.RGBA8888);
                 pixels.getPixels().order(ByteOrder.BIG_ENDIAN);texture=new Texture(pixels);texture.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
-                if(output!=null)preview();else SwingUtilities.invokeLater(()->controller=new SeasonController(()->settings,SeasonsLauncher.this::configure,weather,SeasonsLauncher.this::attach,SeasonsLauncher.this::detach,SeasonsLauncher.this::quit));
+                if(output!=null)preview();else SwingUtilities.invokeLater(()->controller=new SeasonController(()->settings,SeasonsLauncher.this::configure,weather,SeasonsLauncher.this::attach,SeasonsLauncher.this::detach,SeasonsLauncher.this::quit,!quiet));
                 if(initialWall&&output==null)Gdx.app.postRunnable(SeasonsLauncher.this::attach);
                 if(output==null)try{
                     session=new WallpaperSession("seasons",()->attached?"wallpaper":"preview",Gdx.app::postRunnable,command->{
@@ -72,7 +73,7 @@ public final class SeasonsLauncher {
                 if(output==null&&Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){if(attached)detach();else quit();}
                 if(output==null&&Gdx.input.isKeyJustPressed(Input.Keys.F1)&&controller!=null)SwingUtilities.invokeLater(controller::show);
             }
-            public void dispose(){if(session!=null)session.close();if(attached)detach();weather.close();if(controller!=null)controller.dispose();texture.dispose();pixels.dispose();batch.dispose();}
+            public void dispose(){if(session!=null)session.close();if(attached)detach(false);weather.close();if(controller!=null)controller.dispose();texture.dispose();pixels.dispose();batch.dispose();}
         },config);System.exit(0);
     }
 }

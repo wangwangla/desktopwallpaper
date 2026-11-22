@@ -32,6 +32,9 @@ public final class WeatherCityScreen extends ScreenAdapter {
     private volatile String clockSummary = "", sunSummary = "";
 
     public WeatherCityScreen(WeatherSettings settings, DesktopActions actions, boolean interactive) {
+        this(settings,actions,interactive,true);
+    }
+    public WeatherCityScreen(WeatherSettings settings, DesktopActions actions, boolean interactive, boolean showControls) {
         this.settings=settings.copy();this.actions=actions;
         weather=new WeatherService(()->this.settings,interactive);
         city=new CityModel(settings.modelPath);
@@ -42,7 +45,7 @@ public final class WeatherCityScreen extends ScreenAdapter {
             new Vector3(positions[i][0],positions[i][1],positions[i][2]),20);environment.add(lamps[i]);}
         Gdx.input.setInputProcessor(new InputAdapter(){@Override public boolean keyDown(int key){
             if(key==Input.Keys.F1){showController();return true;}return false;}});
-        if(interactive) showController();
+        if(interactive&&showControls) showController();
     }
 
     public WeatherSettings settings(){return settings.copy();}

@@ -40,7 +40,7 @@ public final class MuyuLauncher {
             }
         }
         final String output = snapshot, workTime = workPreview;
-        final boolean initialWall = wall, animationPreview = strokePreview;
+        final boolean initialWall = wall, animationPreview = strokePreview, quiet=java.util.Arrays.asList(args).contains("--quiet-controls");
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("一念木鱼 · LibGDX");
         config.setWindowedMode(1200, 800);
@@ -49,7 +49,7 @@ public final class MuyuLauncher {
         config.setForegroundFPS(60);
         config.setIdleFPS(60);
         config.setBackBufferConfig(8, 8, 8, 8, 0, 0, 4);
-        config.setInitialVisible(output == null);
+        config.setInitialVisible(output == null&&!quiet);
         config.disableAudio(output != null);
         app = new Lwjgl3Application();
         app.init(new ApplicationAdapter() {
@@ -70,7 +70,7 @@ public final class MuyuLauncher {
                         if (attached) detach();
                         Gdx.app.exit();
                     }
-                }, output == null);
+                }, output == null,!quiet);
                 if (workTime != null)
                     scene.previewWorkTime(java.time.LocalDateTime.parse(workTime));
                 if (initialWall) Gdx.app.postRunnable(MuyuLauncher.this::attach);
@@ -114,7 +114,7 @@ public final class MuyuLauncher {
             @Override
             public void dispose() {
                 if (session != null) session.close();
-                if (attached) detach();
+                if (attached) detach(false);
                 if (scene != null) scene.dispose();
             }
         }, config);
@@ -127,9 +127,13 @@ public final class MuyuLauncher {
             attached = true;
         }
         scene.setWallpaper(true);
+        WallpaperAutostart.select("muyu");
     }
 
     private void detach() {
+        detach(true);
+    }
+    private void detach(boolean clearStartup) {
         if (attached) {
             DynamicUtils.destroyWallpaper(app.getWindowHandle());
             attached = false;
@@ -138,5 +142,6 @@ public final class MuyuLauncher {
         GLFW.glfwSetWindowPos(app.getWindowHandle(), 80, 60);
         GLFW.glfwShowWindow(app.getWindowHandle());
         scene.setWallpaper(false);
+        if(clearStartup)WallpaperAutostart.clear("muyu");
     }
 }

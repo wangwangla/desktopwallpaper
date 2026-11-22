@@ -36,7 +36,7 @@ public final class WeatherCityLauncher {
             if ("--wallpaper".equals(args[i])) asWallpaper = true;
         }
         final String output = snapshot;
-        final boolean wallpaper = asWallpaper;
+        final boolean wallpaper = asWallpaper, quiet=java.util.Arrays.asList(args).contains("--quiet-controls");
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("天气城市 · 写实风格预览");
         config.setWindowedMode(1280, 720);
@@ -46,7 +46,7 @@ public final class WeatherCityLauncher {
         config.setForegroundFPS(output == null ? 30 : 60);
         config.setIdleFPS(output == null ? 30 : 60);
         config.disableAudio(true);
-        config.setInitialVisible(output == null);
+        config.setInitialVisible(output == null&&!quiet);
         app = new Lwjgl3Application();
         app.init(new ApplicationAdapter() {
             int frame, shot;
@@ -74,7 +74,7 @@ public final class WeatherCityLauncher {
                         if (attached) detach();
                         Gdx.app.exit();
                     }
-                } : null, output == null);
+                } : null, output == null,!quiet);
                 if (wallpaper) Gdx.app.postRunnable(WeatherCityLauncher.this::attach);
                 if(output==null)try{
                     session=new WallpaperSession("weather-city",()->attached?"wallpaper":"preview",Gdx.app::postRunnable,command->{
@@ -108,7 +108,7 @@ public final class WeatherCityLauncher {
             @Override
             public void dispose() {
                 if(session!=null)session.close();
-                if(attached)detach();
+                if(attached)detach(false);
                 if (scene != null) scene.dispose();
             }
         }, config);
@@ -119,9 +119,13 @@ public final class WeatherCityLauncher {
     private void attach() {
         DynamicUtils.makeWallpaper(app.getWindowHandle());
         attached = true;
+        WallpaperAutostart.select("weather-city");
     }
 
     private void detach() {
+        detach(true);
+    }
+    private void detach(boolean clearStartup) {
         if (attached) {
             DynamicUtils.destroyWallpaper(app.getWindowHandle());
             attached = false;
@@ -129,5 +133,6 @@ public final class WeatherCityLauncher {
         GLFW.glfwSetWindowSize(app.getWindowHandle(), 1280, 720);
         GLFW.glfwSetWindowPos(app.getWindowHandle(), 80, 80);
         GLFW.glfwShowWindow(app.getWindowHandle());
+        if(clearStartup)WallpaperAutostart.clear("weather-city");
     }
 }

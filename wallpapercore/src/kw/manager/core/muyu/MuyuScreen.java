@@ -32,9 +32,12 @@ public final class MuyuScreen extends ScreenAdapter {
     private boolean automatic,wallpaper;private Sound sound;private MuyuController controller;private long lastHit;
     public volatile String status="已保存到本机";
     public MuyuScreen(DesktopActions actions,boolean interactive) {
+        this(actions,interactive,true);
+    }
+    public MuyuScreen(DesktopActions actions,boolean interactive,boolean showControls) {
         work=new WorkDashboard(interactive);
         progress=new MuyuProgress(interactive?MuyuProgress.defaultFile():Paths.get(System.getProperty("java.io.tmpdir"),"muyu-preview-unused.properties"));
-        if(interactive){createSound();javax.swing.SwingUtilities.invokeLater(()->{controller=new MuyuController(this,actions);controller.show();});}
+        if(interactive){createSound();javax.swing.SwingUtilities.invokeLater(()->{controller=new MuyuController(this,actions);if(showControls)controller.show();});}
         Gdx.input.setInputProcessor(new InputAdapter(){@Override public boolean touchDown(int x,int y,int pointer,int button){if(!wallpaper&&button==Input.Buttons.LEFT)click(x,y);return false;}
             @Override public boolean keyDown(int key){if(!wallpaper&&key==Input.Keys.SPACE){hit();return true;}if(key==Input.Keys.F1&&controller!=null){javax.swing.SwingUtilities.invokeLater(controller::show);return true;}return false;}});
     }

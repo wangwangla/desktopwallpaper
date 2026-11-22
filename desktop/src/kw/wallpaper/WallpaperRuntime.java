@@ -64,6 +64,9 @@ public final class WallpaperRuntime {
         return command.equalsIgnoreCase(entry.external().toString())||Arrays.asList(args).contains(entry.external().toString());
     }
     public Process launch(WallpaperCatalog.Entry entry) throws IOException {
+        return launch(entry,false);
+    }
+    private Process launch(WallpaperCatalog.Entry entry,boolean quiet) throws IOException {
         List<String> command=new ArrayList<>();
         if(entry.builtIn()){
             Path companion=appDirectory==null||entry.executables().isEmpty()?null:appDirectory.resolve(entry.executables().get(0));
@@ -74,6 +77,7 @@ public final class WallpaperRuntime {
             if(entry.external().toString().toLowerCase(Locale.ROOT).endsWith(".jar")){command.add(javaExecutable());command.add("-jar");}
             command.add(entry.external().toString());
         }
+        if(quiet&&entry.builtIn())command.add("--quiet-controls");
         ProcessBuilder builder=new ProcessBuilder(command);if(entry.external()!=null)builder.directory(entry.external().getParent().toFile());
         builder.redirectErrorStream(true);builder.redirectOutput(ProcessBuilder.Redirect.appendTo(WallpaperCatalog.directory().resolve(entry.id()+".log").toFile()));
         Process process=builder.start();children.put(entry.id(),process);return process;
@@ -85,10 +89,13 @@ public final class WallpaperRuntime {
         throw new IOException("JAR 启动器需要 Java 21+；也可以添加它的 EXE 版本");
     }
     private WallpaperSession.Endpoint ensureManaged(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {
+        return ensureManaged(entry,catalog,false);
+    }
+    private WallpaperSession.Endpoint ensureManaged(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog,boolean quiet) throws Exception {
         for(Running current:running(catalog))if(current.entry().id().equals(entry.id())) {
             if(current.managed())return current.endpoint();stop(current);
         }
-        Process process=launch(entry);
+        Process process=launch(entry,quiet);
         for(int attempt=0;attempt<150;attempt++) {
             if(!process.isAlive())throw new IOException("壁纸启动失败，日志："+WallpaperCatalog.directory().resolve(entry.id()+".log"));
             Optional<WallpaperSession.Endpoint> e=WallpaperSession.endpoint(entry.id());
@@ -99,13 +106,17 @@ public final class WallpaperRuntime {
     public void preview(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {
         if(!entry.builtIn()){if(running(catalog).stream().noneMatch(r->r.entry().id().equals(entry.id())))launch(entry);return;}
         WallpaperSession.request(ensureManaged(entry,catalog),"preview");
+        WallpaperAutostart.clear(entry.id());
     }
     public void activate(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {
+        activate(entry,catalog,false);
+    }
+    public void activate(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog,boolean quiet) throws Exception {
         if(!entry.builtIn()){preview(entry,catalog);return;}
-        WallpaperSession.Endpoint target=ensureManaged(entry,catalog);
+        WallpaperSession.Endpoint target=ensureManaged(entry,catalog,quiet);
         List<Running> previous=running(catalog).stream().filter(r->r.pid()!=target.pid()&&(r.mode().equals("wallpaper")||r.entry().id().equals(entry.id()))).toList();
         // First prove the new renderer is ready, then switch; restore the old wallpaper if attaching fails.
-        try{for(Running old:previous)stop(old);WallpaperSession.request(target,"wallpaper");}
+        try{for(Running old:previous)stop(old);WallpaperSession.request(target,"wallpaper");WallpaperAutostart.select(entry.id());}
         catch(Exception failure){for(Running old:previous)try{WallpaperSession.request(ensureManaged(old.entry(),catalog),"wallpaper");}catch(Exception ignored){}throw failure;}
     }
     public void controls(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {
@@ -127,6 +138,7 @@ public final class WallpaperRuntime {
             else if(!current.entry().builtIn())process.destroy();else throw new IOException("找不到这个壁纸的窗口，请在原控制器中退出");
         }
         try{process.onExit().get(7,TimeUnit.SECONDS);}catch(TimeoutException e){throw new IOException("壁纸尚未退出，请检查它的设置窗口");}
+        WallpaperAutostart.clear(current.entry().id());
     }
-    public void stopEntry(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {for(Running r:running(catalog))if(r.entry().id().equals(entry.id()))stop(r);}
+    public void stopEntry(WallpaperCatalog.Entry entry,List<WallpaperCatalog.Entry> catalog) throws Exception {for(Running r:running(catalog))if(r.entry().id().equals(entry.id()))stop(r);WallpaperAutostart.clear(entry.id());}
 }
