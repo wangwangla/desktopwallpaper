@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import kw.manager.core.city.*;
-import kw.test.DynamicUtils;
+import kw.joker.DynamicUtils;
 
 import org.lwjgl.glfw.GLFW;
 

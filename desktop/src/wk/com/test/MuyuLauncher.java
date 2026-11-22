@@ -7,7 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import kw.manager.core.muyu.MuyuScreen;
-import kw.test.DynamicUtils;
+import kw.joker.DynamicUtils;
 
 import org.lwjgl.glfw.GLFW;
 
