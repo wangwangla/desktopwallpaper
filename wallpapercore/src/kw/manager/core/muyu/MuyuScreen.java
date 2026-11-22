@@ -39,6 +39,7 @@ public final class MuyuScreen extends ScreenAdapter {
             @Override public boolean keyDown(int key){if(!wallpaper&&key==Input.Keys.SPACE){hit();return true;}if(key==Input.Keys.F1&&controller!=null){javax.swing.SwingUtilities.invokeLater(controller::show);return true;}return false;}});
     }
     public void setWallpaper(boolean value){wallpaper=value;status=value?"桌面壁纸 · 点击木鱼或右侧卡片":"窗口预览 · 点击木鱼或按空格";}
+    public void showController(){javax.swing.SwingUtilities.invokeLater(()->{if(controller!=null)controller.show();});}
     public WorkSettings workSettings(){return work.settings();}
     public boolean configureWork(WorkSettings value){try{work.configure(value);status="作息设置已保存到本机";return true;}catch(Exception e){status="作息设置保存失败";System.err.println(e);return false;}}
     public void previewWorkTime(java.time.LocalDateTime time){work.preview(time);}

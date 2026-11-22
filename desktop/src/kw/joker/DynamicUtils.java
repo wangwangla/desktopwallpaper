@@ -61,6 +61,10 @@ public class DynamicUtils {
     }
 
     private static DesktopLayer getDesktopLayer() {
+        // Reuse the stable layer, as Muyu and other wallpaper windows may already be attached.
+        // Sending the spawn message unconditionally briefly tears down the Win11 icon layer.
+        DesktopLayer existing = findDesktopLayer();
+        if (existing != null) return existing;
         WinDef.HWND progman = User32.INSTANCE.FindWindow("Progman", null);
         if (progman != null) {
             // Trigger WorkerW creation. Some Win11 builds need this call before EnumWindows can see it.
@@ -69,6 +73,18 @@ public class DynamicUtils {
             User32.INSTANCE.SendMessageTimeout(progman, PROGMAN_SPAWN_WORKERW,
                     new WinDef.WPARAM(0xD), new WinDef.LPARAM(0x1), User32.SMTO_NORMAL, 1000, null);
         }
+
+        // Explorer creates these windows asynchronously after the message returns.
+        for (int attempt = 0; attempt < 20; attempt++) {
+            DesktopLayer layer = findDesktopLayer();
+            if (layer != null) return layer;
+            try { Thread.sleep(50); }
+            catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+        }
+        throw new IllegalStateException("Could not find a visible desktop wallpaper layer");
+    }
+
+    private static DesktopLayer findDesktopLayer() {
 
         AtomicReference<WinDef.HWND> workerRef = new AtomicReference<>();
         AtomicReference<WinDef.HWND> defViewParentRef = new AtomicReference<>();
@@ -116,7 +132,7 @@ public class DynamicUtils {
             layer.insertAfter = defViewRef.get();
             return layer;
         }
-        throw new IllegalStateException("Could not find a visible desktop wallpaper layer");
+        return null;
     }
 
     public static void makeWallpaper(long window) {

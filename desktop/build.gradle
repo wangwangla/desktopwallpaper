@@ -8,6 +8,7 @@ apply plugin: "java"
 sourceSets.main.java.srcDirs = [ "src/" ]
 // Prefer the real assets folder in this repo; fallback keeps old layout compatible.
 sourceSets.main.resources.srcDirs = [file("../assets").exists() ? "../assets" : "../android/assets"]
+sourceSets.main.resources.srcDirs += ["resources"]
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
@@ -77,10 +78,23 @@ def resolveJpackageExecutable() {
     return 'jpackage'
 }
 
+task prepareManagerInput(type: Sync) {
+    dependsOn dist
+    from(tasks.dist.archiveFile)
+    into "$buildDir/manager-package/input"
+    doLast {
+        def launchers = file("$buildDir/manager-package/launchers")
+        launchers.mkdirs()
+        ['Muyu':'MuyuLauncher', 'WeatherCity':'WeatherCityLauncher', 'SeasonsWallpaper':'SeasonsLauncher'].each { name, launcher ->
+            new File(launchers, name + '.properties').text = "main-class=wk.com.test.${launcher}\nmain-jar=${exeJarName}\n"
+        }
+    }
+}
+
 task packageAppImage(type: Exec) {
     group = 'distribution'
     description = 'Build a Windows app-image via jpackage (JDK 17+ required).'
-    dependsOn dist
+    dependsOn prepareManagerInput
 
     doFirst {
         if (JavaVersion.current() < JavaVersion.toVersion('17')) {
@@ -92,16 +106,19 @@ task packageAppImage(type: Exec) {
             '--type', 'app-image',
             '--name', exeAppName,
             '--vendor', exeVendor,
-            '--input', "$buildDir/libs",
+            '--input', "$buildDir/manager-package/input",
             '--main-jar', exeJarName,
             '--main-class', exeMainClass,
-            '--dest', "$buildDir/exe"
+            '--dest', "$buildDir/exe",
+            '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
+            '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
+            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
 }
 
 task packageExe(type: Exec) {
     group = 'distribution'
     description = 'Build a Windows .exe installer via jpackage (JDK 17+ required).'
-    dependsOn dist
+    dependsOn prepareManagerInput
 
     doFirst {
         if (JavaVersion.current() < JavaVersion.toVersion('17')) {
@@ -113,13 +130,16 @@ task packageExe(type: Exec) {
             '--type', 'exe',
             '--name', exeAppName,
             '--vendor', exeVendor,
-            '--input', "$buildDir/libs",
+            '--input', "$buildDir/manager-package/input",
             '--main-jar', exeJarName,
             '--main-class', exeMainClass,
             '--dest', "$buildDir/exe",
             '--win-dir-chooser',
             '--win-menu',
-            '--win-shortcut'
+            '--win-shortcut',
+            '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
+            '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
+            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
 }
 
 task printPackageHelp {
@@ -193,4 +213,77 @@ task snapshotWeatherCity(type: JavaExec) {
     workingDir rootProject.file('assets')
     args '--snapshot', rootProject.file('desktop/build/weather-city-preview').absolutePath
     jvmArgs '-Djava.net.preferIPv4Stack=true'
+}
+
+task runSeasons(type: JavaExec) {
+    group = 'application'
+    description = 'Preview the illustrated solar-term and live-weather wallpaper.'
+    dependsOn classes
+    mainClass = 'wk.com.test.SeasonsLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    jvmArgs '-Djava.net.preferIPv4Stack=true'
+    if (project.hasProperty('wallpaper')) args '--wallpaper'
+}
+
+task snapshotSeasons(type: JavaExec) {
+    group = 'verification'
+    description = 'Render all four seasons, rain, snow, fog, overcast and night.'
+    dependsOn classes
+    mainClass = 'wk.com.test.SeasonsLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--snapshot', rootProject.file('desktop/build/seasons-preview').absolutePath
+}
+
+task seasonsDist(type: Jar) {
+    group = 'distribution'
+    archiveFileName = 'SeasonsWallpaper.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes 'Main-Class': 'wk.com.test.SeasonsLauncher' }
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task packageSeasons(type: Exec) {
+    group = 'distribution'
+    description = 'Build the portable seasons wallpaper with its own Java runtime.'
+    dependsOn seasonsDist
+    commandLine resolveJpackageExecutable(), '--type', 'app-image',
+        '--name', 'SeasonsWallpaper', '--vendor', exeVendor,
+        '--input', "$buildDir/libs", '--main-jar', 'SeasonsWallpaper.jar',
+        '--main-class', 'wk.com.test.SeasonsLauncher', '--dest', "$buildDir/seasons-app",
+        '--java-options', '-Djava.net.preferIPv4Stack=true'
+}
+
+task runWallManager(type: JavaExec) {
+    group = 'application'
+    dependsOn classes
+    mainClass = 'wk.com.test.WallManagerLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+}
+
+task snapshotWallManager(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.WallManagerLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--snapshot', rootProject.file('desktop/build/wallpaper-manager-preview.png').absolutePath
+}
+
+task packageWallManager(type: Exec) {
+    group = 'distribution'
+    description = 'Build one portable controller and all three wallpaper launchers.'
+    dependsOn prepareManagerInput
+    commandLine resolveJpackageExecutable(), '--type', 'app-image',
+        '--name', exeAppName, '--vendor', exeVendor,
+        '--input', "$buildDir/manager-package/input", '--main-jar', exeJarName,
+        '--main-class', exeMainClass, '--dest', "$buildDir/manager-app",
+        '--java-options', '-Djava.net.preferIPv4Stack=true',
+        '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
+        '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
+        '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
 }

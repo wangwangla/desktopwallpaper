@@ -9,17 +9,22 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import kw.manager.core.city.*;
 import kw.joker.DynamicUtils;
+import kw.wallpaper.*;
 
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 
+@WallpaperDefinition(id="weather-city",title="天气城市",description="立体城市与光影 · 实时天气和昼夜变化",accent=0x527e9d,
+    thumbnail="wallpaper-previews/weather-city.png",sceneTitle="天气城市 · 写实风格预览",controllerTitle="天气城市 · 控制器",executables={"WeatherCity.exe"})
 public final class WeatherCityLauncher {
     private Lwjgl3Application app;
     private WeatherCityScreen scene;
-    private boolean attached;
+    private volatile boolean attached;
+    private WallpaperSession session;
 
     public static void main(String[] args) {
+        if (WallpaperSession.forwardExisting("weather-city",args)) return;
         new WeatherCityLauncher().run(args);
     }
 
@@ -71,6 +76,11 @@ public final class WeatherCityLauncher {
                     }
                 } : null, output == null);
                 if (wallpaper) Gdx.app.postRunnable(WeatherCityLauncher.this::attach);
+                if(output==null)try{
+                    session=new WallpaperSession("weather-city",()->attached?"wallpaper":"preview",Gdx.app::postRunnable,command->{
+                        switch(command){case "wallpaper"->attach();case "preview"->detach();case "controls"->scene.showController();case "stop"->{if(attached)detach();Gdx.app.exit();}}
+                    });
+                }catch(java.io.IOException e){throw new RuntimeException(e);}
             }
 
             @Override
@@ -97,6 +107,8 @@ public final class WeatherCityLauncher {
 
             @Override
             public void dispose() {
+                if(session!=null)session.close();
+                if(attached)detach();
                 if (scene != null) scene.dispose();
             }
         }, config);

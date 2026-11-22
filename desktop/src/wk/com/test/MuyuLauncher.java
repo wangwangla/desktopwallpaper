@@ -8,17 +8,22 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import kw.manager.core.muyu.MuyuScreen;
 import kw.joker.DynamicUtils;
+import kw.wallpaper.*;
 
 import org.lwjgl.glfw.GLFW;
 
+@WallpaperDefinition(id="muyu",title="一念木鱼",description="轻敲木鱼，累计功德 · 作息与工作进度",accent=0x9d6b45,
+    thumbnail="wallpaper-previews/muyu.png",sceneTitle="一念木鱼 · LibGDX",controllerTitle="一念木鱼 · 壁纸控制器",executables={"Muyu.exe"})
 public final class MuyuLauncher {
     private Lwjgl3Application app;
     private MuyuScreen scene;
-    private boolean attached;
+    private volatile boolean attached;
+    private WallpaperSession session;
     private final MuyuDesktopMouse mouse = new MuyuDesktopMouse();
     private Lwjgl3ApplicationConfiguration config;
 
     public static void main(String[] args) {
+        if (WallpaperSession.forwardExisting("muyu",args)) return;
         new MuyuLauncher().run(args);
     }
 
@@ -69,6 +74,11 @@ public final class MuyuLauncher {
                 if (workTime != null)
                     scene.previewWorkTime(java.time.LocalDateTime.parse(workTime));
                 if (initialWall) Gdx.app.postRunnable(MuyuLauncher.this::attach);
+                if (output == null) try {
+                    session=new WallpaperSession("muyu",()->attached?"wallpaper":"preview",Gdx.app::postRunnable,command->{
+                        switch(command){case "wallpaper"->attach();case "preview"->detach();case "controls"->scene.showController();case "stop"->{if(attached)detach();Gdx.app.exit();}}
+                    });
+                } catch (java.io.IOException e) { throw new RuntimeException(e); }
             }
 
             @Override
@@ -103,6 +113,7 @@ public final class MuyuLauncher {
 
             @Override
             public void dispose() {
+                if (session != null) session.close();
                 if (attached) detach();
                 if (scene != null) scene.dispose();
             }

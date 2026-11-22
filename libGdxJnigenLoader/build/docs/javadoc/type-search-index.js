@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.badlogic.gdx.utils","l":"Architecture"},{"p":"com.badlogic.gdx.utils","l":"Architecture.Bitness"},{"p":"com.badlogic.gdx.utils","l":"Os"},{"p":"com.badlogic.gdx.utils","l":"SharedLibraryLoader"},{"p":"com.badlogic.gdx.utils","l":"SharedLibraryLoadRuntimeException"}];updateSearchResults();

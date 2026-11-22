@@ -7,6 +7,7 @@ java {
 sourceSets.main.java.srcDirs = [
         "utilssrc"
 ]
+sourceSets.main.resources.srcDirs = ["resources"]
 
 dependencies {
     implementation project(":libGdxJnigenLoader")
