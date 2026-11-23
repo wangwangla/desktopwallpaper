@@ -16,6 +16,7 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.util.Locale;
 import java.util.Scanner;
 
 import kw.manager.core.WindowGame;
@@ -29,6 +30,9 @@ import wk.com.test.mouse.MouseHook;
  */
 class WallpapgerLauncher {
     private Lwjgl3Application app;
+    private volatile boolean interactionEnabled = true;
+    private volatile long wallpaperWindowHandle;
+    private WindowGame windowGame;
     public static void main(String[] args) {
         WallpapgerLauncher launcher = new WallpapgerLauncher();
         launcher.run();
@@ -53,10 +57,10 @@ class WallpapgerLauncher {
         Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
         int screenWidth = displayMode.width;
         int screenHeight = displayMode.height;
-        config.setWindowedMode((int) (screenWidth* 0.5f), (int) (screenHeight * 0.5f));
-        config.setWindowPosition(0, 100);
+        config.setWindowedMode(screenWidth, screenHeight);
+        config.setWindowPosition(0, 0);
         // Configure window title
-        final String TITLE = "xx";
+        final String TITLE = "A Day in Lines";
         config.setTitle(TITLE);
         config.setInitialVisible(true);
         config.setTransparentFramebuffer(false);
@@ -73,20 +77,17 @@ class WallpapgerLauncher {
                 return super.closeRequested();
             }
         });
-        new Thread(() -> {
+        Thread commandThread = new Thread(() -> {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
-                if (sc.nextLine().equals("EXIT")) {
-                    MouseHook.uninstallHook();
-                    DynamicUtils.destroyWallpaper(app.getWindowHandle());
-                    System.out.println("Wallpaper cleaned.");
-                    System.exit(0);
-                }
+                handleCommand(sc.nextLine());
             }
-        }).start();
+        }, "wallpaper-command-listener");
+        commandThread.setDaemon(true);
+        commandThread.start();
 
         WindowGame[] gameHolder = new WindowGame[1];
-        WindowGame windowGame = gameHolder[0] = new WindowGame(new WindowListener() {
+        windowGame = gameHolder[0] = new WindowGame(new WindowListener() {
             @Override
             public void windowForward() {
             }
@@ -99,8 +100,11 @@ class WallpapgerLauncher {
             @Override
             public void setWallpaper() {
                 long windowHandle = app.getWindowHandle();
+                wallpaperWindowHandle = windowHandle;
                 DynamicUtils.makeWallpaper(windowHandle);
-                MouseHook.installHook(gameHolder[0], windowHandle);
+                if (interactionEnabled) {
+                    MouseHook.installHook(gameHolder[0], windowHandle);
+                }
             }
         });
         //获取全局  鼠标点击
@@ -119,5 +123,40 @@ class WallpapgerLauncher {
 
         app.init(windowGame, config);
         return app.getWindowHandle();
+    }
+
+    private void handleCommand(String rawCommand) {
+        String command = rawCommand == null ? "" : rawCommand.trim().toUpperCase(Locale.ROOT);
+        switch (command) {
+            case "PAUSE":
+                Gdx.app.postRunnable(() -> Gdx.graphics.setContinuousRendering(false));
+                break;
+            case "RESUME":
+                Gdx.app.postRunnable(() -> {
+                    Gdx.graphics.setContinuousRendering(true);
+                    Gdx.graphics.requestRendering();
+                });
+                break;
+            case "INTERACTION_ON":
+                interactionEnabled = true;
+                if (wallpaperWindowHandle != 0 && windowGame != null) {
+                    MouseHook.installHook(windowGame, wallpaperWindowHandle);
+                }
+                break;
+            case "INTERACTION_OFF":
+                interactionEnabled = false;
+                MouseHook.uninstallHook();
+                break;
+            case "EXIT":
+                MouseHook.uninstallHook();
+                if (wallpaperWindowHandle != 0) {
+                    DynamicUtils.destroyWallpaper(wallpaperWindowHandle);
+                }
+                System.out.println("Wallpaper cleaned.");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Unknown wallpaper command: " + rawCommand);
+        }
     }
 }

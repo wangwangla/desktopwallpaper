@@ -23,7 +23,7 @@ public class WindowGame extends BasePetGame {
     @Override
     protected void loadingView() {
         super.loadingView();
-        setScreen(new MainScreen(this));
+        setScreen(new DailyRhythmScreen(this));
         Constant.windowListener.moveWindowPosition(0,0);
         Constant.windowListener.setWallpaper();
     }
@@ -37,5 +37,12 @@ public class WindowGame extends BasePetGame {
 
     public void setMousePosition(int x, int y) {
         EventListener.getInstance().emit("mousePosisiton",x,y);
+    }
+
+    @Override
+    public void otherDispose() {
+        // Game.dispose() only hides its Screen; release the screen-owned FBO/shader too.
+        if (getScreen() != null) getScreen().dispose();
+        super.otherDispose();
     }
 }

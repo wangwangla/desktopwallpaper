@@ -9,6 +9,18 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener;
 import com.badlogic.gdx.utils.NLog;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.FlowLayout;
 
 import kw.manager.core.WindowManagerGame;
 import kw.manager.core.listener.ManagerListener;
@@ -23,6 +35,8 @@ import wk.com.test.tray.TrayItemManager;
  */
 public class WallManagerLauncher {
     private StartEnum startEnum;
+    private volatile Process activeWallpaperProcess;
+    private JLabel wallpaperStatus;
 
     public static void main(String[] args) {
         WallManagerLauncher wallManagerLauncher = new WallManagerLauncher();
@@ -49,8 +63,11 @@ public class WallManagerLauncher {
         config.setTitle( Config.APP_TITLE);
         Lwjgl3Application app = new Lwjgl3Application();
         config.setWindowListener(windowListener());
-        app.init(new WindowManagerGame(WindowManagerListener()), config);
+        SwingUtilities.invokeLater(this::showWallpaperControlPanel);
         Runtime.getRuntime().addShutdownHook(shutDown());
+        // init() enters the LibGDX main loop and does not return until the app exits,
+        // so desktop UI and shutdown hooks must be registered before this call.
+        app.init(new WindowManagerGame(WindowManagerListener()), config);
     }
 
     private static void logConfig() {
@@ -110,11 +127,14 @@ public class WallManagerLauncher {
 //                    builder.inheritIO(); // 让新进程打印输出到当前控制台
             try {
                 Process start = builder.start();
+                activeWallpaperProcess = start;
                 trayData.setProcess(start);
                 TrayItem trayItem = new TrayItem();
                 trayItem.showTray();
                 trayData.setItem(trayItem);
                 trayItem.setProcess(start);
+                updateWallpaperStatus("壁纸运行中");
+                watchWallpaperProcess(start);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -124,6 +144,91 @@ public class WallManagerLauncher {
         }else {
 
         }
+    }
+
+    private void showWallpaperControlPanel() {
+        JFrame frame = new JFrame("壁纸控制面板");
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        frame.setAlwaysOnTop(true);
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        panel.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
+        wallpaperStatus = new JLabel(activeWallpaperProcess == null ? "壁纸未启动" : "壁纸运行中");
+
+        JButton pause = new JButton("暂停");
+        pause.addActionListener(e -> sendWallpaperCommand("PAUSE"));
+        JButton resume = new JButton("继续");
+        resume.addActionListener(e -> sendWallpaperCommand("RESUME"));
+        JCheckBox interaction = new JCheckBox("鼠标交互", true);
+        interaction.addActionListener(e -> sendWallpaperCommand(
+                interaction.isSelected() ? "INTERACTION_ON" : "INTERACTION_OFF"));
+        JButton stop = new JButton("停止壁纸");
+        stop.addActionListener(e -> {
+            if (sendWallpaperCommand("EXIT")) {
+                updateWallpaperStatus("正在停止...");
+            }
+        });
+        JButton exit = new JButton("退出全部");
+        exit.addActionListener(e -> System.exit(0));
+
+        panel.add(wallpaperStatus);
+        panel.add(pause);
+        panel.add(resume);
+        panel.add(interaction);
+        panel.add(stop);
+        panel.add(exit);
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private boolean sendWallpaperCommand(String command) {
+        Process process = activeWallpaperProcess;
+        if (process == null || !process.isAlive()) {
+            updateWallpaperStatus("壁纸未启动，请先在主界面选择壁纸");
+            return false;
+        }
+        try {
+            OutputStream output = process.getOutputStream();
+            output.write((command + "\n").getBytes(StandardCharsets.UTF_8));
+            output.flush();
+            if ("PAUSE".equals(command)) {
+                updateWallpaperStatus("壁纸已暂停");
+            } else if ("RESUME".equals(command)) {
+                updateWallpaperStatus("壁纸运行中");
+            }
+            return true;
+        } catch (IOException e) {
+            updateWallpaperStatus("控制命令发送失败");
+            NLog.i("wallpaper-control", "Failed to send command: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private void watchWallpaperProcess(Process process) {
+        Thread watcher = new Thread(() -> {
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                if (activeWallpaperProcess == process) {
+                    activeWallpaperProcess = null;
+                    updateWallpaperStatus("壁纸已停止");
+                }
+            }
+        }, "wallpaper-process-watcher");
+        watcher.setDaemon(true);
+        watcher.start();
+    }
+
+    private void updateWallpaperStatus(String status) {
+        SwingUtilities.invokeLater(() -> {
+            if (wallpaperStatus != null) {
+                wallpaperStatus.setText(status);
+            }
+        });
     }
 
     public Lwjgl3WindowListener windowListener(){

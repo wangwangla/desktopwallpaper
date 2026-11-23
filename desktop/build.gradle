@@ -45,6 +45,22 @@ dependencies {
     implementation "org.lwjgl:lwjgl-stb:3.3.3:natives-windows-x86"
 }
 
+tasks.register('runRetroCrt', JavaExec) {
+    dependsOn classes
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'wk.com.test.RetroCrtLauncher'
+    workingDir = rootProject.file('assets')
+    if (project.hasProperty('crtSmoke')) args '--smoke-test'
+}
+
+tasks.register('runDailyRhythm', JavaExec) {
+    dependsOn classes
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'wk.com.test.DailyRhythmLauncher'
+    workingDir = rootProject.file('assets')
+    if (project.hasProperty('rhythmSmoke')) args '--smoke-test'
+}
+
 task dist(type: Jar) {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     manifest {
