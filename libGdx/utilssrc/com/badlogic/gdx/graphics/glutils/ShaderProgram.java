@@ -81,7 +81,7 @@ public class ShaderProgram implements Disposable {
 	public static final String BONEWEIGHT_ATTRIBUTE = "a_boneWeight";
 
 	/** flag indicating whether attributes & uniforms must be present at all times **/
-	public static boolean pedantic = true;
+	public static boolean pedantic = false;
 
 	/** code that is always added to the vertex shader code, typically used to inject a #version line. Note that this is added
 	 * as-is, you should include a newline (`\n`) if needed. */
