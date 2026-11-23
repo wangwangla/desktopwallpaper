@@ -130,7 +130,10 @@ public final class WallpaperRuntime {
     }
     public void stop(Running current) throws Exception {
         ProcessHandle process=ProcessHandle.of(current.pid()).orElse(null);if(process==null||!process.isAlive())return;
-        if(!matches(process,current.entry()))throw new IOException("进程已发生变化，请刷新列表");
+        // IDE launches may use a Java argument file, hiding the main class from ProcessHandle.
+        // An authenticated session also proves identity through its PID and start time.
+        boolean validIdentity=current.managed()?WallpaperSession.endpoint(current.entry().id()).filter(e->e.equals(current.endpoint())).isPresent():matches(process,current.entry());
+        if(!validIdentity)throw new IOException("进程已发生变化，请刷新列表");
         if(current.managed())WallpaperSession.request(current.endpoint(),"stop");
         else{
             List<NativeWindow> owned=windows().stream().filter(w->w.pid()==current.pid()&&(current.entry().builtIn()?w.type().equals("GLFW30"):true)).toList();
