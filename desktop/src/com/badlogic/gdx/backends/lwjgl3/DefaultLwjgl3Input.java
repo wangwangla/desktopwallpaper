@@ -28,8 +28,7 @@ import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputEventQueue;
 import com.badlogic.gdx.InputProcessor;
-
-import kw.manager.core.listener.MoveListener;
+import com.badlogic.gdx.input.NativeInputConfiguration;
 
 public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	final Lwjgl3Window window;
@@ -75,17 +74,6 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
 		@Override
 		public void invoke (long windowHandle, double x, double y) {
-			System.out.println("-------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		    if (touchDown) {
-				if (moveListener!=null) {
-					moveListener.movePosition((float) x,(float) y);
-				}
-            }else {
-				if (moveListener!=null) {
-					moveListener.startPosition((float) x, (float) y);
-				}
-			}
-
 			deltaX = (int)x - logicalMouseX;
 			deltaY = (int)y - logicalMouseY;
 			mouseX = logicalMouseX = (int)x;
@@ -674,6 +662,21 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	}
 
 	@Override
+	public void openTextInputField(NativeInputConfiguration configuration) {
+
+	}
+
+	@Override
+	public void closeTextInputField(boolean sendReturn) {
+
+	}
+
+	@Override
+	public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
+
+	}
+
+	@Override
 	public void vibrate (int milliseconds) {
 	}
 
@@ -724,10 +727,5 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 	@Override
 	public float getGyroscopeZ () {
 		return 0;
-	}
-
-	private MoveListener moveListener;
-	public void setMoveListener(MoveListener moveListener) {
-		this.moveListener = moveListener;
 	}
 }

@@ -1,7 +1,0 @@
-apply plugin: "java"
-sourceSets.main.java.srcDirs = [ "src/" ]
-dependencies {
-    implementation project (':libGdx')
-    implementation project (':libSpine')
-    implementation project (':libCommon')
-}

@@ -1,6 +1,20 @@
 apply plugin: "java"
-
-sourceCompatibility = 1.8
+group='com.github.wangGame'
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 sourceSets.main.java.srcDirs = [
         "utilssrc"
 ]
+sourceSets.main.resources.srcDirs = ["resources"]
+
+dependencies {
+    implementation project(":libGdxJnigenLoader")
+}
+
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+

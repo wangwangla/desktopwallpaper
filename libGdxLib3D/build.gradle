@@ -1,0 +1,19 @@
+apply plugin: "java"
+group='com.github.wangGame'
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+sourceSets.main.java.srcDirs = [
+        "src"
+]
+
+dependencies {
+    implementation project (':libGdxLib')
+    implementation project (':libGdx')
+}
+
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

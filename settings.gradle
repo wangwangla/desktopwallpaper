@@ -1,7 +1,1 @@
-include 'desktop',
-        'libGdx',
-        'deskPet',
-        'libCommon'
-include ':wallpapercore'
-include ':wallpapermanagercore'
-include ':libSpine'
+include 'desktop','libGdx', ':wallpapercore',':libSpine','libGdxLib',"libGdxJnigenLoader","libGdxLib3D"

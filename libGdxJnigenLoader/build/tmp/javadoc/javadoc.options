@@ -1,0 +1,12 @@
+-Xdoclint:none 
+-classpath 'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\build\\classes\\java\\main;D:\\java\\LibGdxTool\\libGdxJnigenLoader\\build\\resources\\main'
+-d 'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\build\\docs\\javadoc'
+-doctitle 'libGdxJnigenLoader 3.0.0 API'
+-encoding 'UTF-8'
+-notimestamp 
+-quiet 
+-windowtitle 'libGdxJnigenLoader 3.0.0 API'
+'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\src\\com\\badlogic\\gdx\\utils\\Architecture.java'
+'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\src\\com\\badlogic\\gdx\\utils\\Os.java'
+'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\src\\com\\badlogic\\gdx\\utils\\SharedLibraryLoader.java'
+'D:\\java\\LibGdxTool\\libGdxJnigenLoader\\src\\com\\badlogic\\gdx\\utils\\SharedLibraryLoadRuntimeException.java'

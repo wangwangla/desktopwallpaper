@@ -1,8 +1,13 @@
 apply plugin: "java"
 sourceSets.main.java.srcDirs = [ "src/" ]
-sourceCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 dependencies {
     implementation project (':libGdx')
     implementation project (':libSpine')
-    implementation project(":libCommon")
+    implementation project (':libGdxLib')
+    implementation project(':libGdxLib3D')
 }
