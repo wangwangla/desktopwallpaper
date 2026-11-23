@@ -27,7 +27,13 @@
 
 ## 开发接入
 
-项目壁纸保留各自的启动器。在 `wk.com.test` 包中的 `*Launcher` 类上增加 `@WallpaperDefinition` 元数据后，控制器自动发现该类。启动器使用 `WallpaperSession` 接收 `wallpaper`、`preview`、`controls`、`stop` 命令，将命令派发到自身渲染线程，并在退出时关闭会话。单纯添加注解只能显示，控制操作还需接入会话接口。
+core 使用 Game + Screen：`WallpaperGame` 继承现有的 `com.kw.gdx.BaseGame`，`MuyuGame`、`WeatherCityGame`、`SeasonsGame` 各自创建继承 `com.kw.gdx.screen.BaseScreen` 的 Screen。画面、动画、天气、节气与业务设置全部在 `wallpapercore/src/kw/manager/core`。
+
+`WallpaperPlatform` 是 core 对桌面能力的回调接口，包括设置壁纸、窗口预览、退出、打开设置，以及 ready/frame/disposed 生命周期通知。core 不引用 LWJGL、JNA、Swing、托盘或启动项。Game 负责 BaseGame/Screen 生命周期，退出时释放 Screen 和共享 Batch。
+
+desktop 的 `DesktopWallpaperHost` 实现回调，集中管理 GLFW 窗口、Windows 桌面嵌入、IPC、自启和托盘设置窗口；原来的三个 Launcher 只配置窗口、创建对应的 core Game 并绑定桌面设置。Swing 设置窗口位于 `desktop/src/kw/desktop/controls`。截图工具在 desktop 捕获帧缓冲，通过 Screen 的预览接口选择测试画面。
+
+项目壁纸保留各自的启动器。在 `wk.com.test` 包中的 `*Launcher` 类上增加 `@WallpaperDefinition` 元数据后，控制器自动发现该类。新壁纸接入 `DesktopWallpaperHost` 和 `WallpaperPlatform` 即可使用统一控制。免安装打包时还需在 `prepareManagerInput` 中注册对应的伴随启动器。
 
 三个内置壁纸已完成接入。`WallpaperRuntime` 优先使用会话控制，旧版本按名称匹配进程并向所属 GLFW 窗口发送正常关闭请求，不终止其他 Java 程序。
 

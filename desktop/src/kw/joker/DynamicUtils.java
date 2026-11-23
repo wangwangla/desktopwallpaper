@@ -32,16 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import kw.joker.DisplayMonitorInfo;
-
 /**
  * @Auther jian xian si qi
  * @Date 2024/1/5 0:13
  */
 public class DynamicUtils {
-
     private interface CoordinateApi extends StdCallLibrary {
         CoordinateApi INSTANCE = Native.load("user32", CoordinateApi.class, W32APIOptions.DEFAULT_OPTIONS);
+
         boolean ScreenToClient(WinDef.HWND window, WinDef.POINT point);
     }
 
@@ -57,7 +55,10 @@ public class DynamicUtils {
     private static final class DesktopLayer {
         WinDef.HWND parent;
         WinDef.HWND insertAfter = HWND_TOP;
-        DesktopLayer(WinDef.HWND parent) { this.parent = parent; }
+
+        DesktopLayer(WinDef.HWND parent) {
+            this.parent = parent;
+        }
     }
 
     private static DesktopLayer getDesktopLayer() {
@@ -68,18 +69,20 @@ public class DynamicUtils {
         WinDef.HWND progman = User32.INSTANCE.FindWindow("Progman", null);
         if (progman != null) {
             // Trigger WorkerW creation. Some Win11 builds need this call before EnumWindows can see it.
-            User32.INSTANCE.SendMessageTimeout(progman, PROGMAN_SPAWN_WORKERW,
-                    new WinDef.WPARAM(0), new WinDef.LPARAM(0), User32.SMTO_NORMAL, 1000, null);
-            User32.INSTANCE.SendMessageTimeout(progman, PROGMAN_SPAWN_WORKERW,
-                    new WinDef.WPARAM(0xD), new WinDef.LPARAM(0x1), User32.SMTO_NORMAL, 1000, null);
+            User32.INSTANCE.SendMessageTimeout(progman, PROGMAN_SPAWN_WORKERW, new WinDef.WPARAM(0), new WinDef.LPARAM(0), User32.SMTO_NORMAL, 1000, null);
+            User32.INSTANCE.SendMessageTimeout(progman, PROGMAN_SPAWN_WORKERW, new WinDef.WPARAM(0xD), new WinDef.LPARAM(0x1), User32.SMTO_NORMAL, 1000, null);
         }
 
         // Explorer creates these windows asynchronously after the message returns.
         for (int attempt = 0; attempt < 20; attempt++) {
             DesktopLayer layer = findDesktopLayer();
             if (layer != null) return layer;
-            try { Thread.sleep(50); }
-            catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
         throw new IllegalStateException("Could not find a visible desktop wallpaper layer");
     }
@@ -168,9 +171,10 @@ public class DynamicUtils {
         User32.INSTANCE.SetWindowLong(thisWindow, User32.GWL_EXSTYLE, (int) exStyle);
 
         List<WinUser.MONITORINFOEX> monitors = DisplayMonitorInfo.getMonitors();
-        if (monitors.size()>0) {
+        if (monitors.size() > 0) {
             WinUser.MONITORINFOEX monitor = monitors.get(0);
-            for (WinUser.MONITORINFOEX candidate : monitors) if ((candidate.dwFlags & 1) != 0) monitor = candidate;
+            for (WinUser.MONITORINFOEX candidate : monitors)
+                if ((candidate.dwFlags & 1) != 0) monitor = candidate;
             User32.INSTANCE.SetParent(thisWindow, layer.parent);
             WinDef.HWND actualParent = User32.INSTANCE.GetParent(thisWindow);
             if (actualParent == null || !actualParent.getPointer().equals(layer.parent.getPointer())) {
@@ -187,12 +191,9 @@ public class DynamicUtils {
             glfwSetWindowSize(window, width, height);
             WinDef.POINT origin = new WinDef.POINT(monitor.rcMonitor.left, monitor.rcMonitor.top);
             CoordinateApi.INSTANCE.ScreenToClient(layer.parent, origin);
-            User32.INSTANCE.SetWindowPos(thisWindow, layer.insertAfter,
-                    origin.x, origin.y, width, height,
-                    User32.SWP_NOACTIVATE | User32.SWP_SHOWWINDOW | User32.SWP_FRAMECHANGED);
+            User32.INSTANCE.SetWindowPos(thisWindow, layer.insertAfter, origin.x, origin.y, width, height, User32.SWP_NOACTIVATE | User32.SWP_SHOWWINDOW | User32.SWP_FRAMECHANGED);
             User32.INSTANCE.ShowWindow(thisWindow, User32.SW_SHOW);
-            System.out.printf("Wallpaper attached: parent=%x, after=%x, size=%dx%d%n",
-                    Pointer.nativeValue(layer.parent.getPointer()), Pointer.nativeValue(layer.insertAfter.getPointer()), width, height);
+            System.out.printf("Wallpaper attached: parent=%x, after=%x, size=%dx%d%n", Pointer.nativeValue(layer.parent.getPointer()), Pointer.nativeValue(layer.insertAfter.getPointer()), width, height);
         }
     }
 
@@ -210,8 +211,6 @@ public class DynamicUtils {
 
         // not sure if we need those, but better keep them in
         User32.INSTANCE.SetWindowLong(thisWindow, User32.GWL_EXSTYLE, original.extendedStyle);
-        User32.INSTANCE.SetWindowPos(thisWindow, HWND_TOP, original.rect.left, original.rect.top,
-                original.rect.right - original.rect.left, original.rect.bottom - original.rect.top,
-                User32.SWP_FRAMECHANGED | User32.SWP_SHOWWINDOW);
+        User32.INSTANCE.SetWindowPos(thisWindow, HWND_TOP, original.rect.left, original.rect.top, original.rect.right - original.rect.left, original.rect.bottom - original.rect.top, User32.SWP_FRAMECHANGED | User32.SWP_SHOWWINDOW);
     }
 }

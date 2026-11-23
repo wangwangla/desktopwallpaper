@@ -29,9 +29,7 @@ public class DisplayMonitorInfo {
             System.out.println("\tBottom: " + monitor.rcMonitor.bottom);
             // 获取第一个显示器的句柄
             WinDef.POINT.ByValue byValue = new WinDef.POINT.ByValue(monitor.rcMonitor.left, monitor.rcMonitor.top);
-            WinUser.HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(
-                    byValue,
-                    WinUser.MONITOR_DEFAULTTONEAREST);
+            WinUser.HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(byValue, WinUser.MONITOR_DEFAULTTONEAREST);
             // 输出显示器句柄
             System.out.println("显示器句柄: " + hMonitor);
         }

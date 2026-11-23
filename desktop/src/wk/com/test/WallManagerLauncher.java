@@ -9,12 +9,19 @@ import java.util.Arrays;
 
 public final class WallManagerLauncher {
     public static void main(String[] args) throws Exception {
-        if(Arrays.asList(args).contains("--restore-wallpaper")){
-            try{WallpaperAutostart.restore();}catch(Exception e){
-                java.nio.file.Files.writeString(WallpaperCatalog.directory().resolve("startup-error.log"),java.time.Instant.now()+" "+e+System.lineSeparator(),java.nio.file.StandardOpenOption.CREATE,java.nio.file.StandardOpenOption.APPEND);
-            }return;
+        if (Arrays.asList(args).contains("--restore-wallpaper")) {
+            try {
+                WallpaperAutostart.restore();
+            } catch (Exception e) {
+                java.nio.file.Files.writeString(WallpaperCatalog.directory().resolve("startup-error.log"), java.time.Instant.now() + " " + e + System.lineSeparator(), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            }
+            return;
         }
-        if(Arrays.asList(args).contains("--sync-autostart")){WallpaperAutostart.synchronizeCurrent();System.out.println("Autostart: "+WallpaperAutostart.selectedWallpaper()+" / "+WallpaperAutostart.isEnabled());return;}
+        if (Arrays.asList(args).contains("--sync-autostart")) {
+            WallpaperAutostart.synchronizeCurrent();
+            System.out.println("Autostart: " + WallpaperAutostart.selectedWallpaper() + " / " + WallpaperAutostart.isEnabled());
+            return;
+        }
         if (Arrays.asList(args).contains("--list")) {
             var entries = WallpaperCatalog.discover();
             var running = new WallpaperRuntime().running(entries);

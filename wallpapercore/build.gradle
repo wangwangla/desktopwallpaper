@@ -1,4 +1,4 @@
-apply plugin: "java"
+apply plugin: "java-library"
 sourceSets.main.java.srcDirs = [ "src/" ]
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -8,6 +8,6 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 dependencies {
     implementation project (':libGdx')
     implementation project (':libSpine')
-    implementation project (':libGdxLib')
+    api project (':libGdxLib')
     implementation project(':libGdxLib3D')
 }

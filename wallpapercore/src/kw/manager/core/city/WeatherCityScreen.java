@@ -10,10 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public final class WeatherCityScreen extends ScreenAdapter {
-    public interface DesktopActions {
-        void wallpaper(); void preview(); void quit();
-    }
+public final class WeatherCityScreen extends com.kw.gdx.screen.BaseScreen {
     private volatile WeatherSettings settings;
     public final WeatherService weather;
     private final CityModel city;
@@ -26,15 +23,12 @@ public final class WeatherCityScreen extends ScreenAdapter {
     private final ColorAttribute fog = new ColorAttribute(ColorAttribute.Fog,new Color());
     private final PointLight[] lamps = new PointLight[4];
     private final Color waterColor = new Color();
-    private WeatherCityController controller;
-    private final DesktopActions actions;
+    private final kw.manager.core.WallpaperPlatform actions;
     private boolean disposed;
     private volatile String clockSummary = "", sunSummary = "";
 
-    public WeatherCityScreen(WeatherSettings settings, DesktopActions actions, boolean interactive) {
-        this(settings,actions,interactive,true);
-    }
-    public WeatherCityScreen(WeatherSettings settings, DesktopActions actions, boolean interactive, boolean showControls) {
+    public WeatherCityScreen(WeatherCityGame game) {
+        super(game);WeatherSettings settings=game.initialSettings;kw.manager.core.WallpaperPlatform actions=game.platform();boolean interactive=game.interactive;
         this.settings=settings.copy();this.actions=actions;
         weather=new WeatherService(()->this.settings,interactive);
         city=new CityModel(settings.modelPath);
@@ -45,7 +39,6 @@ public final class WeatherCityScreen extends ScreenAdapter {
             new Vector3(positions[i][0],positions[i][1],positions[i][2]),20);environment.add(lamps[i]);}
         Gdx.input.setInputProcessor(new InputAdapter(){@Override public boolean keyDown(int key){
             if(key==Input.Keys.F1){showController();return true;}return false;}});
-        if(interactive&&showControls) showController();
     }
 
     public WeatherSettings settings(){return settings.copy();}
@@ -56,8 +49,8 @@ public final class WeatherCityScreen extends ScreenAdapter {
     }
     public void preview(int minutes,String mode){WeatherSettings next=settings.copy();next.previewMinutes=minutes;
         next.weatherMode=mode;settings=next;}
-    public void showController(){if(actions==null)return;javax.swing.SwingUtilities.invokeLater(()->{
-        if(controller==null)controller=new WeatherCityController(this,actions);controller.show();});}
+    @Override protected void initTouch(){}
+    public void showController(){actions.showControls();}
     public String clockSummary(){return clockSummary;}
     public String sunSummary(){return sunSummary;}
     public String weatherSummary(){WeatherData data=weather.data.preview(settings.weatherMode);
@@ -98,5 +91,5 @@ public final class WeatherCityScreen extends ScreenAdapter {
         sky.precipitation(width,height,data);
     }
     @Override public void dispose(){if(disposed)return;disposed=true;weather.close();
-        if(controller!=null)controller.dispose();city.dispose();sky.dispose();models.dispose();shadows.dispose();sunlight.dispose();}
+        city.dispose();sky.dispose();models.dispose();shadows.dispose();sunlight.dispose();super.dispose();}
 }

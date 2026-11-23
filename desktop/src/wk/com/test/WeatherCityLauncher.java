@@ -1,138 +1,38 @@
 package wk.com.test;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.backends.lwjgl3.*;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.Gdx;
 
 import kw.manager.core.city.*;
-import kw.joker.DynamicUtils;
+import kw.desktop.controls.WeatherCityController;
 import kw.wallpaper.*;
 
-import org.lwjgl.glfw.GLFW;
+import javax.swing.SwingUtilities;
 
-import java.io.File;
-
-@WallpaperDefinition(id="weather-city",title="天气城市",description="立体城市与光影 · 实时天气和昼夜变化",accent=0x527e9d,
-    thumbnail="wallpaper-previews/weather-city.png",sceneTitle="天气城市 · 写实风格预览",controllerTitle="天气城市 · 控制器",executables={"WeatherCity.exe"})
+@WallpaperDefinition(id = "weather-city", title = "天气城市", description = "立体城市与光影 · 实时天气和昼夜变化", accent = 0x527e9d, thumbnail = "wallpaper-previews/weather-city.png", sceneTitle = "天气城市 · 写实风格预览", controllerTitle = "天气城市 · 控制器", executables = {"WeatherCity.exe"})
 public final class WeatherCityLauncher {
-    private Lwjgl3Application app;
-    private WeatherCityScreen scene;
-    private volatile boolean attached;
-    private WallpaperSession session;
-
     public static void main(String[] args) {
-        if (WallpaperSession.forwardExisting("weather-city",args)) return;
-        new WeatherCityLauncher().run(args);
-    }
-
-    private void run(String[] args) {
-        String snapshot = null;
-        boolean asWallpaper = false;
-        for (int i = 0; i < args.length; i++) {
-            if ("--snapshot".equals(args[i]) && i + 1 < args.length) snapshot = args[++i];
-            if ("--wallpaper".equals(args[i])) asWallpaper = true;
+        if (WallpaperSession.forwardExisting("weather-city", args)) return;
+        DesktopLaunchOptions options = new DesktopLaunchOptions(args);
+        DesktopWallpaperHost host = new DesktopWallpaperHost("weather-city", 1280, 720, options.interactive(), options.wallpaper, options.quiet);
+        WeatherSettings settings = options.interactive() ? WeatherSettings.load() : new WeatherSettings();
+        if (!options.interactive()) {
+            settings.previewMinutes = 720;
+            settings.weatherMode = "clear";
         }
-        final String output = snapshot;
-        final boolean wallpaper = asWallpaper, quiet=java.util.Arrays.asList(args).contains("--quiet-controls");
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("天气城市 · 写实风格预览");
-        config.setWindowedMode(1280, 720);
-        config.setResizable(true);
-        config.setWindowPosition(40, 60);
-        config.setBackBufferConfig(8, 8, 8, 8, 24, 0, 4);
-        config.setForegroundFPS(output == null ? 30 : 60);
-        config.setIdleFPS(output == null ? 30 : 60);
-        config.disableAudio(true);
-        config.setInitialVisible(output == null&&!quiet);
-        app = new Lwjgl3Application();
-        app.init(new ApplicationAdapter() {
-            int frame, shot;
-            final String[] names = {"day-clear", "dawn-cloudy", "day-rain", "night"};
-            final String[] modes = {"clear", "cloudy", "rain", "clear"};
-            final int[] minutes = {720, 390, 840, 1320};
-
-            @Override
-            public void create() {
-                WeatherSettings settings = output == null ? WeatherSettings.load() : new WeatherSettings();
-                if (output != null) {
-                    settings.previewMinutes = minutes[0];
-                    settings.weatherMode = modes[0];
-                }
-                scene = new WeatherCityScreen(settings, output == null ? new WeatherCityScreen.DesktopActions() {
-                    public void wallpaper() {
-                        attach();
-                    }
-
-                    public void preview() {
-                        detach();
-                    }
-
-                    public void quit() {
-                        if (attached) detach();
-                        Gdx.app.exit();
-                    }
-                } : null, output == null,!quiet);
-                if (wallpaper) Gdx.app.postRunnable(WeatherCityLauncher.this::attach);
-                if(output==null)try{
-                    session=new WallpaperSession("weather-city",()->attached?"wallpaper":"preview",Gdx.app::postRunnable,command->{
-                        switch(command){case "wallpaper"->attach();case "preview"->detach();case "controls"->scene.showController();case "stop"->{if(attached)detach();Gdx.app.exit();}}
-                    });
-                }catch(java.io.IOException e){throw new RuntimeException(e);}
-            }
-
-            @Override
-            public void render() {
-                scene.render(Gdx.graphics.getDeltaTime());
-                if (output != null && ++frame >= 12) {
-                    Pixmap image = ScreenUtils.getFrameBufferPixmap(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
-                    File file = new File(output, names[shot] + ".png");
-                    file.getParentFile().mkdirs();
-                    PixmapIO.writePNG(new FileHandle(file), image, -1, true);
-                    image.dispose();
-                    System.out.println("Saved " + file);
-                    shot++;
-                    frame = 0;
-                    if (shot >= names.length) Gdx.app.exit();
-                    else scene.preview(minutes[shot], modes[shot]);
-                }
-            }
-
-            @Override
-            public void resize(int width, int height) {
-                if (scene != null) scene.resize(width, height);
-            }
-
-            @Override
-            public void dispose() {
-                if(session!=null)session.close();
-                if(attached)detach(false);
-                if (scene != null) scene.dispose();
-            }
-        }, config);
-        // Swing's event thread must not keep a closed renderer alive.
-        System.exit(0);
-    }
-
-    private void attach() {
-        DynamicUtils.makeWallpaper(app.getWindowHandle());
-        attached = true;
-        WallpaperAutostart.select("weather-city");
-    }
-
-    private void detach() {
-        detach(true);
-    }
-    private void detach(boolean clearStartup) {
-        if (attached) {
-            DynamicUtils.destroyWallpaper(app.getWindowHandle());
-            attached = false;
-        }
-        GLFW.glfwSetWindowSize(app.getWindowHandle(), 1280, 720);
-        GLFW.glfwSetWindowPos(app.getWindowHandle(), 80, 80);
-        GLFW.glfwShowWindow(app.getWindowHandle());
-        if(clearStartup)WallpaperAutostart.clear("weather-city");
+        String[] names = {"day-clear", "dawn-cloudy", "day-rain", "night"}, modes = {"clear", "cloudy", "rain", "clear"};
+        int[] minutes = {720, 390, 840, 1320}, counters = {0, 0};
+        host.run(options.window("天气城市 · 写实风格预览", 1280, 720, options.interactive() ? 30 : 60, false, true), platform -> new WeatherCityGame(platform, settings, options.interactive()), game -> {
+            if (options.interactive()) SwingUtilities.invokeLater(() -> {
+                WeatherCityController controls = new WeatherCityController(((WeatherCityGame) game).wallpaperScreen(), host);
+                host.controls(controls::show, controls::show, controls::dispose);
+            });
+        }, game -> {
+            if (options.output == null || ++counters[0] < 12) return;
+            DesktopLaunchOptions.capture(options.output.resolve(names[counters[1]] + ".png"));
+            counters[0] = 0;
+            if (++counters[1] == names.length) Gdx.app.exit();
+            else
+                ((WeatherCityGame) game).wallpaperScreen().preview(minutes[counters[1]], modes[counters[1]]);
+        });
     }
 }
