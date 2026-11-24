@@ -17,6 +17,12 @@ public final class MuyuGame extends WallpaperGame<MuyuScreen> {
     }
 
     @Override
+    protected void gameInfoConfig() {
+        super.gameInfoConfig();
+        com.kw.gdx.constant.Constant.viewColor.set(.96f, .94f, .9f, 1);
+    }
+
+    @Override
     protected MuyuScreen createScreen() {
         MuyuScreen screen = new MuyuScreen(this);
         if (workPreview != null) screen.previewWorkTime(workPreview);

@@ -12,9 +12,10 @@ import java.util.Random;
 final class CitySky implements Disposable {
     private final ShapeRenderer shapes = new ShapeRenderer();
     private final SpriteBatch sprites = new SpriteBatch();
-    private final Texture sun = sunTexture(), cloud = cloudTexture();
+    private final kw.manager.core.WallpaperAssets assets=new kw.manager.core.WallpaperAssets();
+    private final Texture sun=assets.texture("city/sun.png"),cloud=assets.texture("weather/cloud.png");
     private Texture moon;
-    private double cachedPhase = -1;
+    private int cachedPhase=-1;
     private final float[][] stars = new float[140][3], clouds = new float[22][4], drops = new float[420][4];
     final Color horizon = new Color(), top = new Color();
     float daylight, night;
@@ -57,9 +58,8 @@ final class CitySky implements Disposable {
                 height*(.70f + .26f*(float)Math.sin(progress*Math.PI))-size/2,size,size);
         }
         double phase = Astronomy.lunarPhase(time.toInstant());
-        if (moon == null || Math.abs(phase-cachedPhase) > .01) {
-            if (moon != null) moon.dispose(); moon = moonTexture(phase); cachedPhase = phase;
-        }
+        int phaseIndex=Math.min(31,(int)(phase*32));
+        if(phaseIndex!=cachedPhase){moon=assets.texture("city/moon-"+phaseIndex+".png");cachedPhase=phaseIndex;}
         if (night > .1f) {
             ZonedDateTime start = time.isBefore(solar.sunrise) ? solar.sunset.minusDays(1) : solar.sunset;
             ZonedDateTime end = time.isBefore(solar.sunrise) ? solar.sunrise : solar.sunrise.plusDays(1);
@@ -96,40 +96,7 @@ final class CitySky implements Disposable {
         }
         shapes.end();
     }
-    private static Texture sunTexture() {
-        Pixmap image=new Pixmap(256,256,Pixmap.Format.RGBA8888);
-        for(int y=0;y<256;y++)for(int x=0;x<256;x++) {
-            double r=Math.hypot((x-127.5)/128,(y-127.5)/128);
-            float alpha=(float)(Math.exp(-r*r*9)*.15+Math.exp(-r*r*45)*.25);
-            if(r<.10)alpha=1; image.setColor(1,1,1,Math.min(1,alpha));image.drawPixel(x,y);
-        }
-        return texture(image);
-    }
-    private static Texture cloudTexture() {
-        Pixmap image=new Pixmap(256,104,Pixmap.Format.RGBA8888);
-        for(int y=0;y<104;y++)for(int x=0;x<256;x++) {
-            double nx=x/256.0,ny=y/104.0,amount=0;
-            for(int i=0;i<6;i++) {double cx=.17+i*.13,cy=.43+Math.sin(i*1.8)*.10;
-                amount+=Math.exp(-Math.pow((nx-cx)*8,2)-Math.pow((ny-cy)*3.4,2));}
-            float alpha=clamp((float)(amount-.22)*.8f,0,.9f);
-            float tone=.83f+(1-y/104f)*.17f; image.setColor(tone,tone,tone,alpha);image.drawPixel(x,y);
-        }
-        return texture(image);
-    }
-    private static Texture moonTexture(double phase) {
-        Pixmap image=new Pixmap(128,128,Pixmap.Format.RGBA8888);Random noise=new Random(9);
-        double a=phase*Math.PI*2;
-        for(int y=0;y<128;y++)for(int x=0;x<128;x++) {
-            double nx=(x-63.5)/61,ny=(y-63.5)/61,rr=nx*nx+ny*ny;
-            if(rr>1)continue; double nz=Math.sqrt(1-rr);
-            double incidence=nx*Math.sin(a)-nz*Math.cos(a);
-            float lit=incidence>0?.80f:.08f; lit*=.84f+noise.nextFloat()*.16f;
-            image.setColor(lit,lit,lit,1);image.drawPixel(x,y);
-        }
-        return texture(image);
-    }
-    private static Texture texture(Pixmap image) {Texture result=new Texture(image);image.dispose();result.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);return result;}
     private static float smooth(float value){value=clamp(value,0,1);return value*value*(3-2*value);}
     private static float clamp(float value,float min,float max){return Math.max(min,Math.min(max,value));}
-    @Override public void dispose(){sun.dispose();cloud.dispose();if(moon!=null)moon.dispose();shapes.dispose();sprites.dispose();}
+    @Override public void dispose(){assets.close();shapes.dispose();sprites.dispose();}
 }

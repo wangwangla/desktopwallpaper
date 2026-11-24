@@ -1,4 +1,5 @@
-package kw.manager.core.seasons;
+package kw.artwork;
+import kw.manager.core.seasons.*;
 
 import kw.manager.core.city.*;
 import kw.manager.core.seasons.SolarTerms;
@@ -13,7 +14,7 @@ import java.util.Random;
 /**
  * Deterministic, layered illustration. The landscape is cached; only weather and drifting particles animate.
  */
-public final class SeasonArtwork {
+public final class SeasonArtworkSource {
     public static final int W = 1600, H = 900;
     private BufferedImage landscape;
     private final BufferedImage canvas = new BufferedImage(W, H, BufferedImage.TYPE_INT_RGB);

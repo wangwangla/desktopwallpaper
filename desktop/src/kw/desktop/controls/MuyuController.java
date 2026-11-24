@@ -22,7 +22,10 @@ public final class MuyuController {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new EmptyBorder(24, 24, 24, 24));
         panel.setBackground(new Color(247, 243, 233));
-        JLabel title = new JLabel("一念 · 木鱼"), count = new JLabel(), today = new JLabel(), status = new JLabel();
+        JLabel title = new JLabel("一念 · 木鱼");
+        JLabel count = new JLabel();
+        JLabel today = new JLabel();
+        JLabel status = new JLabel();
         title.setFont(new Font("Microsoft YaHei", Font.BOLD, 24));
         panel.add(title);
         panel.add(Box.createVerticalStrut(20));
@@ -31,8 +34,8 @@ public final class MuyuController {
         panel.add(today);
         panel.add(Box.createVerticalStrut(22));
         JButton hit = new JButton("敲一下 · 功德 +1");
-        hit.setAlignmentX(0);
         hit.setMaximumSize(new Dimension(340, 44));
+        hit.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(hit);
         hit.addActionListener(e -> Gdx.app.postRunnable(scene::hit));
         panel.add(Box.createVerticalStrut(18));
@@ -73,6 +76,11 @@ public final class MuyuController {
         JLabel tip = new JLabel("关闭面板后，可从托盘找回控制器。");
         tip.setForeground(new Color(140, 123, 102));
         panel.add(tip);
+        // BoxLayout uses one shared horizontal alignment for all direct children.
+        // Mixing centered buttons with left-aligned labels shifts the whole column.
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JComponent child) child.setAlignmentX(Component.CENTER_ALIGNMENT);
+        }
         setFont(panel, new Font("Microsoft YaHei", Font.PLAIN, 14));
         title.setFont(new Font("Microsoft YaHei", Font.BOLD, 24));
         count.setFont(new Font("Microsoft YaHei", Font.PLAIN, 20));

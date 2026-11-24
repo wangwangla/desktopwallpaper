@@ -4,30 +4,44 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.kw.gdx.screen.BaseScreen;
 
-import java.awt.Color;
 import java.nio.*;
 import java.nio.file.*;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 
-public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
-    private final kw.manager.core.WallpaperPlatform actions;
+import kw.manager.core.WallpaperPlatform;
+
+public final class MuyuScreen extends BaseScreen {
+    private final WallpaperPlatform actions;
     public final MuyuProgress progress;
-    private final ExtendViewport viewport = new ExtendViewport(1200, 800);
-    private final SpriteBatch batch = new SpriteBatch();
-    private final Texture background = MuyuArtwork.background(), fish = MuyuArtwork.fish(), stick = MuyuArtwork.stick();
-    private final MuyuStroke stroke = new MuyuStroke();
+    private final kw.manager.core.WallpaperAssets assets=new kw.manager.core.WallpaperAssets();
+    private final Texture background=assets.texture("muyu/background.png"),fish=assets.texture("muyu/fish.png"),stick=assets.texture("muyu/stick.png");
+    private final MuyuStroke stroke=new MuyuStroke();
     private final WorkDashboard work;
-    private final Texture title = MuyuArtwork.text("一 念", 26, new Color(79, 61, 43), true), caption = MuyuArtwork.text("累 计 功 德", 16, new Color(148, 130, 108), false), hint = MuyuArtwork.text("点击木鱼，或轻按空格", 16, new Color(148, 130, 108), false), footer = MuyuArtwork.text("一声木鱼，片刻清静。", 16, new Color(148, 130, 108), false), desktopHint = MuyuArtwork.text("轻点木鱼 · 把烦恼放一放", 16, new Color(148, 130, 108), false), merit = MuyuArtwork.text("功德 +1", 28, new Color(157, 107, 69), true);
-    private Texture count, today, sessionText;
+    private final Label title=assets.label("一 念",26,0x4f3d2b),caption=assets.label("累 计 功 德",16,0x94826c),
+        hint=assets.label("点击木鱼，或轻按空格",16,0x94826c),footer=assets.label("一声木鱼，片刻清静。",16,0x94826c),
+        desktopHint=assets.label("轻点木鱼 · 把烦恼放一放",16,0x94826c),
+        count=assets.label("0",88,0x43362a,true),today=assets.label("",17,0x94826c),sessionText=assets.label("",16,0x7a6750);
     private long shownTotal = -1, shownToday = -1, shownSession = -1;
     private volatile long session;
-    private final List<Float> floats = new ArrayList<>();
+    private final Group content = new Group() {
+        @Override
+        public void act(float delta) {
+            float step = ((MuyuGame) game).previewDelta > 0 ? ((MuyuGame) game).previewDelta : delta;
+            update(step);
+            super.act(step);
+        }
+    };
+    private Group workActors;
+    private Image backgroundActor,fishActor,stickActor;
+    private Label titleActor,captionActor,countActor,todayActor,hintActor,sessionActor,footerActor;
     private float hitAnimation, automaticElapsed, saveDelay = -1;
     private boolean automatic, wallpaper;
     private Sound sound;
@@ -38,39 +52,15 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
         super(game);
         this.actions = game.platform();
         boolean interactive = game.interactive;
-        work = new WorkDashboard(interactive);
+        work = new WorkDashboard(interactive,assets);
         progress = new MuyuProgress(interactive ? MuyuProgress.defaultFile() : Paths.get(System.getProperty("java.io.tmpdir"), "muyu-preview-unused.properties"));
         if (interactive) createSound();
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int x, int y, int pointer, int button) {
-                if (!wallpaper && button == Input.Buttons.LEFT) click(x, y);
-                return false;
-            }
-
-            @Override
-            public boolean keyDown(int key) {
-                if (!wallpaper && key == Input.Keys.SPACE) {
-                    hit();
-                    return true;
-                }
-                if (key == Input.Keys.F1) {
-                    actions.showControls();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     public void setWallpaper(boolean value) {
         wallpaper = value;
         status = value ? "桌面壁纸 · 点击木鱼或右侧卡片" : "窗口预览 · 点击木鱼或按空格";
     }
-
-    @Override
-    protected void initTouch() {
-    } // The illustration has its own coordinate-based input handler.
 
     public void showController() {
         actions.showControls();
@@ -97,44 +87,27 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
     }
 
     private float woodCenter() {
-        return viewport.getWorldWidth() / 2 - (work.visible() ? 250 : 0);
+        return stage.getViewport().getWorldWidth() / 2 - (work.visible() ? 250 : 0);
     }
 
     private float verticalOffset() {
-        return (viewport.getWorldHeight() - 800) / 2;
+        return (stage.getViewport().getWorldHeight() - 800) / 2;
     }
 
     private float cardX() {
-        return viewport.getWorldWidth() / 2 + 90;
+        return stage.getViewport().getWorldWidth() / 2 + 90;
     }
 
     private float cardY() {
-        return (viewport.getWorldHeight() - WorkDashboard.HEIGHT) / 2;
+        return (stage.getViewport().getWorldHeight() - WorkDashboard.HEIGHT) / 2;
     }
 
-    public void click(int x, int y) {
-        Vector2 p = viewport.unproject(new Vector2(x, y));
-        if (work.visible()) {
-            float localX = p.x - cardX(), top = WorkDashboard.HEIGHT - (p.y - cardY());
-            if (localX >= 28 && localX <= 432 && top >= 380 && top <= 417) {
-                try {
-                    work.togglePause();
-                } catch (Exception e) {
-                    status = "暂停记录保存失败";
-                }
-                return;
-            }
-            if (localX >= 25 && localX <= 432 && top >= 503 && top <= 590) {
-                work.talk();
-                return;
-            }
-            if (localX >= 350 && localX <= 438 && top >= 16 && top <= 60) {
-                actions.showWorkControls();
-                return;
-            }
-        }
-        float dx = (p.x - woodCenter()) / 180, dy = (p.y - 407 - verticalOffset()) / 128;
-        if (dx * dx + dy * dy <= 1) hit();
+    /**
+     * Desktop only translates Windows cursor positions; Stage performs hit detection and dispatch.
+     */
+    public void desktopTouch(int x, int y, boolean pressed) {
+        if (pressed) stage.touchDown(x, y, 0, Input.Buttons.LEFT);
+        else stage.touchUp(x, y, 0, Input.Buttons.LEFT);
     }
 
     public void hit() {
@@ -148,7 +121,9 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
         progress.hit(LocalDate.now());
         session++;
         hitAnimation = .14f;
-        floats.add(0f);
+        Label feedback=assets.label("功德 +1",28,0x9d6b45);feedback.pack();
+        feedback.setPosition(woodCenter()-185-feedback.getWidth()/2,475+verticalOffset());
+        feedback.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0,90,1),Actions.fadeOut(1)),Actions.removeActor()));content.addActor(feedback);
         if (saveDelay < 0) saveDelay = .5f;
         if (progress.sound && sound != null)
             sound.play(.7f, .96f + (float) Math.random() * .08f, 0);
@@ -212,31 +187,93 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
     }
 
     private void updateLabels() {
-        if (shownTotal != progress.total) {
-            if (count != null) count.dispose();
-            count = MuyuArtwork.text(String.format(Locale.CHINA, "%,d", progress.total), 88, new Color(67, 54, 42), true);
-            shownTotal = progress.total;
-        }
-        if (shownToday != progress.today) {
-            if (today != null) today.dispose();
-            today = MuyuArtwork.text("今日 " + progress.today + " 次 · 慢慢来，不着急", 17, new Color(148, 130, 108), false);
-            shownToday = progress.today;
-        }
-        if (shownSession != session) {
-            if (sessionText != null) sessionText.dispose();
-            sessionText = MuyuArtwork.text("本次已敲 " + session + " 下", 16, new Color(122, 103, 80), false);
-            shownSession = session;
-        }
+        if(shownTotal!=progress.total){count.setText(String.format(Locale.CHINA,"%,d",progress.total));shownTotal=progress.total;}
+        if(shownToday!=progress.today){today.setText("今日 "+progress.today+" 次 · 慢慢来，不着急");shownToday=progress.today;}
+        if(shownSession!=session){sessionText.setText("本次已敲 "+session+" 下");shownSession=session;}
+    }
+    private Label addLabel(Label label){content.addActor(label);label.pack();return label;}
+    private Image image(Texture texture) {
+        Image actor = new Image(texture);
+        actor.setTouchable(Touchable.disabled);
+        return actor;
     }
 
-    private void centered(Texture t, float y) {
-        float scale = Math.min(1, (work.visible() ? 590f : 640f) / t.getWidth());
-        batch.draw(t, woodCenter() - t.getWidth() * scale / 2, y + verticalOffset(), t.getWidth() * scale, t.getHeight() * scale);
+    private Image addImage(Texture texture) {
+        Image actor = image(texture);
+        content.addActor(actor);
+        return actor;
+    }
+
+    private void listen(Actor actor, Runnable action) {
+        actor.setTouchable(Touchable.enabled);
+        actor.addListener(new ClickListener(Input.Buttons.LEFT) {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                action.run();
+            }
+        });
     }
 
     @Override
-    public void render(float delta) {
-        if (((MuyuGame) game).previewDelta > 0) delta = ((MuyuGame) game).previewDelta;
+    public void initView() {
+        if (backgroundActor != null) return;
+        updateLabels();
+        backgroundActor = addImage(background);
+        titleActor = addLabel(title);
+        captionActor = addLabel(caption);
+        countActor = addLabel(count);
+        todayActor = addLabel(today);
+        fishActor = addImage(fish);
+        fishActor.setName("muyu");
+        listen(fishActor, this::hit);
+        stickActor = addImage(stick);
+        stickActor.setOrigin(27, 30);
+        hintActor = addLabel(hint);
+        sessionActor = addLabel(sessionText);
+        footerActor = addLabel(footer);
+        workActors=work.view(actions::showWorkControls,message->status=message);content.addActor(workActors);
+        stage.addActor(content);
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int key) {
+                if (key == Input.Keys.SPACE && !wallpaper) {
+                    hit();
+                    return true;
+                }
+                if (key == Input.Keys.F1) {
+                    actions.showControls();
+                    return true;
+                }
+                return false;
+            }
+        });
+        layoutActors();
+    }
+
+    private void centered(Label actor,float y){
+        if(actor==countActor){actor.setFontScale(1);float limit=work.visible()?590:640;if(actor.getPrefWidth()>limit)actor.setFontScale(limit/actor.getPrefWidth());}
+        float width=actor.getPrefWidth();actor.setBounds(woodCenter()-width/2,y+verticalOffset(),width,actor.getPrefHeight());
+    }
+    private void layoutActors() {
+        if (backgroundActor == null) return;
+        backgroundActor.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+        titleActor.setPosition(45, stage.getViewport().getWorldHeight() - 70);
+        centered(captionActor,674);
+        centered(countActor,567);
+        centered(todayActor,547);
+        float reaction = hitAnimation / .14f, scale = 1 - .025f * reaction, w = 460 * scale, h = 337 * scale;
+        fishActor.setBounds(woodCenter() - w / 2, 240 + verticalOffset() + (337 - h) / 2 - 3 * reaction, w, h);
+        stickActor.setBounds(woodCenter() + stroke.headX() - 27, stroke.headY() + verticalOffset() - 30, 150, 60);
+        stickActor.setRotation(stroke.rotation());
+        hintActor.setText((wallpaper?desktopHint:hint).getText());centered(hintActor,223);
+        centered(sessionActor,129);
+        centered(footerActor,87);
+        workActors.setVisible(work.visible());
+        workActors.setBounds(cardX(), cardY(), WorkDashboard.WIDTH, WorkDashboard.HEIGHT);
+
+    }
+
+    private void update(float delta) {
         delta = Math.min(delta, .1f);
         progress.rollDay(LocalDate.now());
         if (automatic) {
@@ -254,44 +291,13 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
             saveDelay = -1;
         }
         updateLabels();
-        viewport.apply();
-        Gdx.gl.glClearColor(.96f, .94f, .9f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-        batch.begin();
-        batch.setColor(1, 1, 1, 1);
-        batch.draw(background, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
-        batch.draw(title, 45, viewport.getWorldHeight() - 70);
-        centered(caption, 674);
-        centered(count, 567);
-        centered(today, 547);
-        float reaction = hitAnimation / .14f, scale = 1 - .025f * reaction, w = 460 * scale, h = 337 * scale;
-        batch.draw(fish, woodCenter() - w / 2, 240 + verticalOffset() + (337 - h) / 2 - 3 * reaction, w, h);
-        float headX = woodCenter() + stroke.headX(), headY = stroke.headY() + verticalOffset();
-        batch.draw(stick, headX - 27, headY - 30, 27, 30, 150, 60, 1, 1, stroke.rotation(), 0, 0, stick.getWidth(), stick.getHeight(), false, false);
-        for (int i = floats.size() - 1; i >= 0; i--) {
-            float age = floats.get(i) + delta;
-            if (age > 1) {
-                floats.remove(i);
-                continue;
-            }
-            floats.set(i, age);
-            batch.setColor(1, 1, 1, 1 - age);
-            batch.draw(merit, woodCenter() - 185 - merit.getWidth() / 2f, 475 + verticalOffset() + age * 90);
-        }
-        batch.setColor(1, 1, 1, 1);
-        centered(wallpaper ? desktopHint : hint, 223);
-        centered(sessionText, 129);
-        centered(footer, 87);
-        if (work.visible())
-            batch.draw(work.image(), cardX(), cardY(), WorkDashboard.WIDTH, WorkDashboard.HEIGHT);
-        batch.end();
+        layoutActors();
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        viewport.update(width, height, true);
+        layoutActors();
     }
 
     @Override
@@ -299,11 +305,9 @@ public final class MuyuScreen extends com.kw.gdx.screen.BaseScreen {
         automatic = false;
         save();
         if (sound != null) sound.dispose();
-        batch.dispose();
         work.dispose();
-        for (Texture t : new Texture[]{background, fish, stick, title, caption, hint, desktopHint, footer, merit, count, today, sessionText})
-            if (t != null) t.dispose();
         Gdx.input.setInputProcessor(null);
         super.dispose();
+        assets.close();
     }
 }

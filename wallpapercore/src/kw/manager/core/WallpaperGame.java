@@ -27,12 +27,6 @@ public abstract class WallpaperGame<T extends BaseScreen> extends BaseGame {
 
     protected abstract T createScreen();
 
-    @Override
-    protected void initViewport() {
-        super.initViewport();
-        stageViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        Constant.updateSize(stageViewport);
-    }
 
     @Override
     protected void initScreen() {

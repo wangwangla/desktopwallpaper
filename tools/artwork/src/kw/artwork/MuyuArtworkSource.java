@@ -1,7 +1,7 @@
-package kw.manager.core.muyu;
+package kw.artwork;
 
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+
+
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import java.util.Random;
 
-final class MuyuArtwork {
+final class MuyuArtworkSource {
     static Graphics2D graphics(BufferedImage image) {
         Graphics2D g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -20,22 +20,7 @@ final class MuyuArtwork {
         return g;
     }
 
-    static Texture texture(BufferedImage image) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", out);
-            byte[] bytes = out.toByteArray();
-            Pixmap pixmap = new Pixmap(bytes, 0, bytes.length);
-            Texture t = new Texture(pixmap);
-            pixmap.dispose();
-            t.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return t;
-        } catch (Exception error) {
-            throw new IllegalStateException("Cannot create wooden fish artwork", error);
-        }
-    }
-
-    static Texture text(String text, int size, Color color, boolean serif) {
+    static BufferedImage text(String text, int size, Color color, boolean serif) {
         Font font = new Font(serif ? "Serif" : "Microsoft YaHei", Font.PLAIN, size);
         BufferedImage probe = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D pg = graphics(probe);
@@ -49,10 +34,10 @@ final class MuyuArtwork {
         g.setColor(color);
         g.drawString(text, 4, 4 + metrics.getAscent());
         g.dispose();
-        return texture(image);
+        return image;
     }
 
-    static Texture background() {
+    static BufferedImage background() {
         BufferedImage image = new BufferedImage(1200, 800, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = graphics(image);
         g.setPaint(new RadialGradientPaint(new Point2D.Float(600, 340), 800, new float[]{0, 1}, new Color[]{new Color(255, 252, 245), new Color(237, 227, 209)}));
@@ -61,10 +46,10 @@ final class MuyuArtwork {
         g.setColor(new Color(113, 87, 53, 7));
         for (int i = 0; i < 12000; i++) g.fillRect(r.nextInt(1200), r.nextInt(800), 1, 1);
         g.dispose();
-        return texture(image);
+        return image;
     }
 
-    static Texture fish() {
+    static BufferedImage fish() {
         BufferedImage image = new BufferedImage(600, 440, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = graphics(image);
         g.setColor(new Color(66, 43, 24, 13));
@@ -104,10 +89,10 @@ final class MuyuArtwork {
         g.draw(new Arc2D.Float(297, 164, 49, 55, 15, 145, Arc2D.OPEN));
         g.fill(new Ellipse2D.Float(287, 214, 11, 7));
         g.dispose();
-        return texture(image);
+        return image;
     }
 
-    static Texture stick() {
+    static BufferedImage stick() {
         BufferedImage image = new BufferedImage(200, 80, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = graphics(image);
         g.setPaint(new GradientPaint(70, 31, new Color(219, 182, 125), 70, 49, new Color(127, 80, 43)));
@@ -120,6 +105,6 @@ final class MuyuArtwork {
         g.setStroke(new BasicStroke(3));
         g.draw(new Arc2D.Float(17, 16, 32, 34, 50, 105, Arc2D.OPEN));
         g.dispose();
-        return texture(image);
+        return image;
     }
 }

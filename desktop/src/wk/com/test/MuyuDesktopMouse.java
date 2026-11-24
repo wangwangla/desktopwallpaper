@@ -20,10 +20,11 @@ final class MuyuDesktopMouse {
     }
 
     private boolean down;
+    private boolean forwarded;
 
     void poll(MuyuScreen scene, long glfwWindow, boolean attached) {
         boolean pressed = (User32.INSTANCE.GetAsyncKeyState(1) & 0x8000) != 0;
-        boolean edge = pressed && !down;
+        boolean edge = pressed != down;
         down = pressed;
         if (!edge || !attached || scene == null) return;
         WinDef.POINT point = new WinDef.POINT();
@@ -38,12 +39,18 @@ final class MuyuDesktopMouse {
         WinDef.RECT rect = new WinDef.RECT();
         WinDef.HWND window = new WinDef.HWND(Pointer.createConstant(GLFWNativeWin32.glfwGetWin32Window(glfwWindow)));
         boolean ownWindow = target != null && window.getPointer().equals(target.getPointer());
-        if (!(ownWindow || "SysListView32".equals(type) || "SHELLDLL_DefView".equals(type) || "WorkerW".equals(type) || "Progman".equals(type)))
+        if (pressed && !(ownWindow || "SysListView32".equals(type) || "SHELLDLL_DefView".equals(type) || "WorkerW".equals(type) || "Progman".equals(type)))
             return;
         if (!User32.INSTANCE.GetWindowRect(window, rect) || rect.right <= rect.left || rect.bottom <= rect.top)
             return;
         int x = (int) ((point.x - rect.left) * (double) Gdx.graphics.getWidth() / (rect.right - rect.left));
         int y = (int) ((point.y - rect.top) * (double) Gdx.graphics.getHeight() / (rect.bottom - rect.top));
-        scene.click(x, y);
+        if (pressed) {
+            forwarded = true;
+            scene.desktopTouch(x, y, true);
+        } else if (forwarded) {
+            forwarded = false;
+            scene.desktopTouch(x, y, false);
+        }
     }
 }

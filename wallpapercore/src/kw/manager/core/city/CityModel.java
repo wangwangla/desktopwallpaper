@@ -20,7 +20,7 @@ public final class CityModel implements Disposable {
     public final ModelInstance instance;
     public Material road, sea;
     private final List<ColorAttribute> windows = new ArrayList<>();
-    private final List<Texture> textures = new ArrayList<>();
+    private final kw.manager.core.WallpaperAssets assets=new kw.manager.core.WallpaperAssets();
     private final ModelBuilder builder = new ModelBuilder();
     private final Map<Material, MeshBuilder> writers = new LinkedHashMap<>();
     private final Random random = new Random(1141694);
@@ -33,7 +33,8 @@ public final class CityModel implements Disposable {
         sea = new Material("sea", ColorAttribute.createDiffuse(.12f, .25f, .31f, 1),
             ColorAttribute.createSpecular(.65f, .7f, .7f, 1), FloatAttribute.createShininess(90));
         if (importedModel != null && !importedModel.trim().isEmpty() && Gdx.files.absolute(importedModel).exists()) {
-            model = new G3dModelLoader(new JsonReader()).loadModel(Gdx.files.absolute(importedModel));
+            model = new G3dModelLoader(new JsonReader()).loadModel(Gdx.files.absolute(importedModel),assets::texturePath);
+            for(var iterator=model.getManagedDisposables().iterator();iterator.hasNext();)if(iterator.next() instanceof Texture)iterator.remove();
             instance = new ModelInstance(model);
             BoundingBox box = instance.calculateBoundingBox(new BoundingBox());
             Vector3 size = box.getDimensions(new Vector3()), center = box.getCenter(new Vector3());
@@ -150,48 +151,13 @@ public final class CityModel implements Disposable {
     }
     private Material material(String name, float r, float g, float b) { return new Material(name, ColorAttribute.createDiffuse(r, g, b, 1)); }
 
-    private Texture asphalt() {
-        Pixmap image = new Pixmap(128, 128, Pixmap.Format.RGBA8888);
-        Random noise = new Random(41);
-        for (int y = 0; y < 128; y++) for (int x = 0; x < 128; x++) {
-            float gray = .17f + noise.nextFloat() * .07f;
-            image.setColor(gray, gray * 1.02f, gray * 1.04f, 1); image.drawPixel(x, y);
-        }
-        return texture(image);
-    }
-    private Texture[] facade(int family) {
-        Pixmap face = new Pixmap(128, 128, Pixmap.Format.RGBA8888);
-        Pixmap glow = new Pixmap(128, 128, Pixmap.Format.RGBA8888);
-        float[][] tones = {{.49f,.49f,.46f},{.37f,.43f,.46f},{.58f,.55f,.49f},{.30f,.35f,.39f}};
-        float[] tint = tones[family];
-        for (int y = 0; y < 128; y++) for (int x = 0; x < 128; x++) {
-            float noise = (random.nextFloat() - .5f) * .06f;
-            face.setColor(tint[0] + noise, tint[1] + noise, tint[2] + noise, 1); face.drawPixel(x, y);
-        }
-        glow.setColor(0,0,0,1); glow.fill();
-        for (int row = 0; row < 4; row++) for (int col = 0; col < 4; col++) {
-            int x = 5 + col * 32, y = 5 + row * 32;
-            face.setColor(.16f,.20f,.23f,1); face.fillRectangle(x - 2, y - 2, 25, 25);
-            float reflection = .23f + random.nextFloat() * .16f;
-            face.setColor(reflection*.82f, reflection*.98f, reflection*1.14f,1); face.fillRectangle(x,y,21,21);
-            face.setColor(.53f,.58f,.6f,.6f); face.fillRectangle(x+1,y+2,18,2);
-            face.setColor(tint[0]*.65f,tint[1]*.65f,tint[2]*.65f,1); face.fillRectangle(x+10,y,1,21);
-            if (random.nextFloat() < .58f) {
-                glow.setColor(.65f + random.nextFloat() * .35f, .59f, .31f,1); glow.fillRectangle(x,y,21,21);
-                glow.setColor(0,0,0,1); glow.fillRectangle(x+10,y,1,21);
-            }
-        }
-        return new Texture[] {texture(face), texture(glow)};
-    }
-    private Texture texture(Pixmap image) {
-        Texture texture = new Texture(image, true); image.dispose();
-        texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
-        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat); textures.add(texture); return texture;
-    }
+    private Texture tiled(String path){Texture texture=assets.texture(path);texture.setWrap(Texture.TextureWrap.Repeat,Texture.TextureWrap.Repeat);return texture;}
+    private Texture asphalt(){return tiled("city/asphalt.png");}
+    private Texture[] facade(int family){return new Texture[]{tiled("city/facade-"+family+".png"),tiled("city/glow-"+family+".png")};}
     public void lighting(float night, float rain, Color water) {
         for (ColorAttribute glow : windows) glow.color.set(night * .95f, night * .68f, night * .31f, 1);
         ((ColorAttribute) road.get(ColorAttribute.Specular)).color.set(.12f + rain*.38f,.13f + rain*.38f,.15f + rain*.38f,1);
         ((ColorAttribute) sea.get(ColorAttribute.Diffuse)).color.set(water);
     }
-    @Override public void dispose() { model.dispose(); for (Texture texture : textures) texture.dispose(); }
+    @Override public void dispose() { model.dispose();assets.close(); }
 }

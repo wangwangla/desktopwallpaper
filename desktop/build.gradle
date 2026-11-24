@@ -274,6 +274,33 @@ task snapshotWallManager(type: JavaExec) {
     args '--snapshot', rootProject.file('desktop/build/wallpaper-manager-preview.png').absolutePath
 }
 
+task verifyStageInput(type: JavaExec) {
+    group = 'verification'
+    dependsOn testClasses
+    mainClass = 'kw.wallpaper.StageInputProbe'
+    classpath = sourceSets.test.runtimeClasspath
+    workingDir rootProject.file('assets')
+}
+
+task compileWallpaperArtwork(type: JavaCompile) {
+    group = 'artwork'
+    dependsOn classes
+    source rootProject.fileTree('tools/artwork/src') { include '**/*.java' }
+    classpath = sourceSets.main.runtimeClasspath
+    destinationDirectory = rootProject.layout.projectDirectory.dir('tools/artwork/build/classes')
+    options.encoding = 'UTF-8'
+}
+
+task bakeWallpaperAssets(type: JavaExec) {
+    group = 'artwork'
+    description = 'Explicit offline export; normal builds only load existing PNG/FNT assets.'
+    dependsOn compileWallpaperArtwork
+    mainClass = 'kw.artwork.BakeWallpaperAssets'
+    classpath = files(compileWallpaperArtwork.destinationDirectory) + sourceSets.main.runtimeClasspath
+    workingDir rootProject.projectDir
+    args rootProject.file('assets/wallpapers').absolutePath
+}
+
 task packageWallManager(type: Exec) {
     group = 'distribution'
     description = 'Build one portable controller and all three wallpaper launchers.'
