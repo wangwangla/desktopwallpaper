@@ -15,8 +15,16 @@ import javax.swing.SwingUtilities;
 
 import java.util.List;
 
-@WallpaperDefinition(id = "demo", title = "图标背景 Demo", description = "桌面图标背景 · 删除同步消失，移动缓动跟随", accent = 0x567fa4,
-        thumbnail = "wallpaper-previews/demo.png", sceneTitle = "Demo", controllerTitle = "图标背景 Demo · 控制器", executables = {"Demo.exe"})
+@WallpaperDefinition(
+        id = "demo",
+        title = "图标背景 Demo",
+        description = "桌面图标背景 · 删除同步消失，移动缓动跟随",
+        accent = 0x567fa4,
+        thumbnail = "wallpaper-previews/demo.png",
+        sceneTitle = "Demo",
+        controllerTitle = "图标背景 Demo · 控制器",
+        executables = {"Demo.exe"}
+)
 public class DemoLauncher {
     public static void main(String[] args) throws Exception {
         if (java.util.Arrays.asList(args).contains("--inspect-icons")) {
@@ -30,6 +38,7 @@ public class DemoLauncher {
         DesktopLaunchOptions options = new DesktopLaunchOptions(args);
         DesktopWallpaperHost host = new DesktopWallpaperHost("demo", 1200, 800, options.interactive(), options.wallpaper, options.quiet);
         int[] frames = {0}, lastCount = {-1};
+        MuyuDesktopMouse mouse = new MuyuDesktopMouse();
         host.run(options.window("Demo", 1200, 800, 60, false, false), DemoGame::new, game -> {
             if (options.interactive()) {
                 DesktopIconReader reader = new DesktopIconReader();
@@ -43,6 +52,7 @@ public class DemoLauncher {
             } else
                 host.iconSource(() -> new DesktopIconSnapshot(1200, 800, List.of(new DesktopIconSnapshot.Icon("a", "A", 50, 60, 86, 96), new DesktopIconSnapshot.Icon("b", "B", 50, 210, 86, 96), new DesktopIconSnapshot.Icon("c", "C", 230, 60, 86, 96)), true, "预览"));
         }, game -> {
+            mouse.poll(game, host.windowHandle(), host.isWallpaper());
             int count = ((DemoGame) game).wallpaperScreen().backgroundCount();
             if (options.interactive() && count != lastCount[0]) {
                 lastCount[0] = count;

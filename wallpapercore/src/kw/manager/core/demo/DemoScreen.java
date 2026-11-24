@@ -1,14 +1,19 @@
 package kw.manager.core.demo;
 
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.kw.gdx.asset.Asset;
+import com.kw.gdx.listener.OrdinaryButtonListener;
 import com.kw.gdx.screen.BaseScreen;
 
 import kw.manager.core.*;
 
 public class DemoScreen extends BaseScreen {
     private final DemoGame demo;
+    private  Image moveImg;
     private final WallpaperAssets assets = new WallpaperAssets();
     private final Image background = assets.image("muyu/background.png");
     private final IconBackdropLayer icons = new IconBackdropLayer(() -> {
@@ -45,6 +50,19 @@ public class DemoScreen extends BaseScreen {
         content.addActor(icons);
         content.addActor(status);
         stage.addActor(content);
+
+        stage.addListener(new OrdinaryButtonListener(1){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                System.out.println("-----------------");
+                if (moveImg == null) {
+                    moveImg = new Image(Asset.getAsset().getTexture("assets/wallpapers/ui/rounded.png"));
+                    addActor(moveImg);
+                }
+                moveImg.addAction(Actions.moveToAligned(x,y,Align.center,1));
+            }
+        });
     }
 
     public int backgroundCount() {

@@ -1,5 +1,6 @@
 package kw.manager.core;
 
+import com.badlogic.gdx.Screen;
 import com.kw.gdx.BaseGame;
 import com.kw.gdx.screen.BaseScreen;
 
@@ -20,6 +21,14 @@ public class DemoGame extends WallpaperGame<DemoScreen> {
     @Override
     protected void loadingView() {
         super.loadingView();
+    }
 
+    @Override
+    public void desktopTouch(int x, int y, boolean pressed) {
+        super.desktopTouch(x, y, pressed);
+        Screen screen = getScreen();
+        if (screen instanceof BaseScreen demo) {
+            demo.desktopTouch(x, y, pressed);
+        }
     }
 }

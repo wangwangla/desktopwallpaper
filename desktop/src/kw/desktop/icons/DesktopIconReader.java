@@ -19,13 +19,10 @@ import java.util.function.BooleanSupplier;
 public final class DesktopIconReader implements AutoCloseable {
     @Structure.FieldOrder({"mask", "iItem", "iSubItem", "state", "stateMask", "pszText", "cchTextMax", "iImage", "lParam", "iIndent", "iGroupId", "cColumns", "puColumns", "piColFmt", "iGroup"})
     public static class ListItem extends Structure {
-        public int mask, iItem, iSubItem, state, stateMask;
+        public int mask, iItem;
         public Pointer pszText;
-        public int cchTextMax, iImage;
+        public int cchTextMax;
         public Pointer lParam;
-        public int iIndent, iGroupId, cColumns;
-        public Pointer puColumns, piColFmt;
-        public int iGroup;
     }
 
     private interface Coordinates extends StdCallLibrary {
@@ -56,7 +53,12 @@ public final class DesktopIconReader implements AutoCloseable {
                 snapshot = read(wallpaper);
             } catch (Exception e) {
                 var old = snapshot;
-                snapshot = new DesktopIconSnapshot(old.width(), old.height(), old.icons(), false, "桌面图标暂时不可读：" + e.getMessage());
+                snapshot = new DesktopIconSnapshot(
+                        old.width(),
+                        old.height(),
+                        old.icons(),
+                        false,
+                        "桌面图标暂时不可读：" + e.getMessage());
             }
         }, 0, 180, TimeUnit.MILLISECONDS);
     }
