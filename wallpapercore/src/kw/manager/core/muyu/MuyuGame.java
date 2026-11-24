@@ -2,6 +2,7 @@ package kw.manager.core.muyu;
 
 import kw.manager.core.*;
 
+import com.kw.gdx.constant.Constant;
 import com.kw.gdx.resource.annotation.GameInfo;
 
 @GameInfo(width = 1200, height = 800)
@@ -19,7 +20,7 @@ public final class MuyuGame extends WallpaperGame<MuyuScreen> {
     @Override
     protected void gameInfoConfig() {
         super.gameInfoConfig();
-        com.kw.gdx.constant.Constant.viewColor.set(.96f, .94f, .9f, 1);
+        Constant.viewColor.set(.96f, .94f, .9f, 1);
     }
 
     @Override

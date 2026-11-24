@@ -1,6 +1,7 @@
 package wk.com.test;
 
 import com.badlogic.gdx.Gdx;
+import com.kw.gdx.BaseGame;
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.win32.W32APIOptions;
@@ -22,7 +23,7 @@ final class MuyuDesktopMouse {
     private boolean down;
     private boolean forwarded;
 
-    void poll(MuyuScreen scene, long glfwWindow, boolean attached) {
+    void poll(BaseGame scene, long glfwWindow, boolean attached) {
         boolean pressed = (User32.INSTANCE.GetAsyncKeyState(1) & 0x8000) != 0;
         boolean edge = pressed != down;
         down = pressed;

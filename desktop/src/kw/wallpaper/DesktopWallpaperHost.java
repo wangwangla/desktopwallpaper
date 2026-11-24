@@ -41,7 +41,10 @@ public final class DesktopWallpaperHost implements WallpaperPlatform {
         this.quiet = quiet;
     }
 
-    public void run(Lwjgl3ApplicationConfiguration configuration, Function<WallpaperPlatform, WallpaperGame<?>> factory, Consumer<WallpaperGame<?>> ready, Consumer<WallpaperGame<?>> frame) {
+    public void run(Lwjgl3ApplicationConfiguration configuration,
+                    Function<WallpaperPlatform, WallpaperGame<?>> factory,
+                    Consumer<WallpaperGame<?>> ready,
+                    Consumer<WallpaperGame<?>> frame) {
         onReady = ready;
         onFrame = frame;
         app = new Lwjgl3Application();

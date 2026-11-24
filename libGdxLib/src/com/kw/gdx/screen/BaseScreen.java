@@ -386,5 +386,14 @@ public class BaseScreen implements Screen {
     public void zhuanCEnd() {
         game.zhuancEnd();
     }
+
+    /**
+     * Desktop only translates Windows cursor positions; Stage performs hit detection and dispatch.
+     */
+    public void desktopTouch(int x, int y, boolean pressed) {
+        if (pressed) stage.touchDown(x, y, 0, Input.Buttons.LEFT);
+        else stage.touchUp(x, y, 0, Input.Buttons.LEFT);
+    }
+
 }
 

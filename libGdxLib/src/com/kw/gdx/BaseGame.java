@@ -279,5 +279,12 @@ public class BaseGame extends Game {
         }
     }
 
+    public void desktopTouch(int x, int y, boolean pressed){
+        if (screen != null) {
+            if (screen instanceof BaseScreen) {
+                ((BaseScreen) screen).desktopTouch(x,y,pressed);
+            }
+        }
+    }
 }
 

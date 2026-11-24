@@ -16,19 +16,17 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 
+import kw.manager.core.WallpaperAssets;
 import kw.manager.core.WallpaperPlatform;
 
 public final class MuyuScreen extends BaseScreen {
     private final WallpaperPlatform actions;
     public final MuyuProgress progress;
-    private final kw.manager.core.WallpaperAssets assets=new kw.manager.core.WallpaperAssets();
-    private final Texture background=assets.texture("muyu/background.png"),fish=assets.texture("muyu/fish.png"),stick=assets.texture("muyu/stick.png");
-    private final MuyuStroke stroke=new MuyuStroke();
+    private final WallpaperAssets assets = new WallpaperAssets();
+    private final Texture background = assets.texture("muyu/background.png"), fish = assets.texture("muyu/fish.png"), stick = assets.texture("muyu/stick.png");
+    private final MuyuStroke stroke = new MuyuStroke();
     private final WorkDashboard work;
-    private final Label title=assets.label("一 念",26,0x4f3d2b),caption=assets.label("累 计 功 德",16,0x94826c),
-        hint=assets.label("点击木鱼，或轻按空格",16,0x94826c),footer=assets.label("一声木鱼，片刻清静。",16,0x94826c),
-        desktopHint=assets.label("轻点木鱼 · 把烦恼放一放",16,0x94826c),
-        count=assets.label("0",88,0x43362a,true),today=assets.label("",17,0x94826c),sessionText=assets.label("",16,0x7a6750);
+    private final Label title = assets.label("一 念", 26, 0x4f3d2b), caption = assets.label("累 计 功 德", 16, 0x94826c), hint = assets.label("点击木鱼，或轻按空格", 16, 0x94826c), footer = assets.label("一声木鱼，片刻清静。", 16, 0x94826c), desktopHint = assets.label("轻点木鱼 · 把烦恼放一放", 16, 0x94826c), count = assets.label("0", 88, 0x43362a, true), today = assets.label("", 17, 0x94826c), sessionText = assets.label("", 16, 0x7a6750);
     private long shownTotal = -1, shownToday = -1, shownSession = -1;
     private volatile long session;
     private final Group content = new Group() {
@@ -40,8 +38,8 @@ public final class MuyuScreen extends BaseScreen {
         }
     };
     private Group workActors;
-    private Image backgroundActor,fishActor,stickActor;
-    private Label titleActor,captionActor,countActor,todayActor,hintActor,sessionActor,footerActor;
+    private Image backgroundActor, fishActor, stickActor;
+    private Label titleActor, captionActor, countActor, todayActor, hintActor, sessionActor, footerActor;
     private float hitAnimation, automaticElapsed, saveDelay = -1;
     private boolean automatic, wallpaper;
     private Sound sound;
@@ -52,7 +50,7 @@ public final class MuyuScreen extends BaseScreen {
         super(game);
         this.actions = game.platform();
         boolean interactive = game.interactive;
-        work = new WorkDashboard(interactive,assets);
+        work = new WorkDashboard(interactive, assets);
         progress = new MuyuProgress(interactive ? MuyuProgress.defaultFile() : Paths.get(System.getProperty("java.io.tmpdir"), "muyu-preview-unused.properties"));
         if (interactive) createSound();
     }
@@ -102,13 +100,6 @@ public final class MuyuScreen extends BaseScreen {
         return (stage.getViewport().getWorldHeight() - WorkDashboard.HEIGHT) / 2;
     }
 
-    /**
-     * Desktop only translates Windows cursor positions; Stage performs hit detection and dispatch.
-     */
-    public void desktopTouch(int x, int y, boolean pressed) {
-        if (pressed) stage.touchDown(x, y, 0, Input.Buttons.LEFT);
-        else stage.touchUp(x, y, 0, Input.Buttons.LEFT);
-    }
 
     public void hit() {
         long now = System.nanoTime();
@@ -121,9 +112,11 @@ public final class MuyuScreen extends BaseScreen {
         progress.hit(LocalDate.now());
         session++;
         hitAnimation = .14f;
-        Label feedback=assets.label("功德 +1",28,0x9d6b45);feedback.pack();
-        feedback.setPosition(woodCenter()-185-feedback.getWidth()/2,475+verticalOffset());
-        feedback.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0,90,1),Actions.fadeOut(1)),Actions.removeActor()));content.addActor(feedback);
+        Label feedback = assets.label("功德 +1", 28, 0x9d6b45);
+        feedback.pack();
+        feedback.setPosition(woodCenter() - 185 - feedback.getWidth() / 2, 475 + verticalOffset());
+        feedback.addAction(Actions.sequence(Actions.parallel(Actions.moveBy(0, 90, 1), Actions.fadeOut(1)), Actions.removeActor()));
+        content.addActor(feedback);
         if (saveDelay < 0) saveDelay = .5f;
         if (progress.sound && sound != null)
             sound.play(.7f, .96f + (float) Math.random() * .08f, 0);
@@ -187,11 +180,26 @@ public final class MuyuScreen extends BaseScreen {
     }
 
     private void updateLabels() {
-        if(shownTotal!=progress.total){count.setText(String.format(Locale.CHINA,"%,d",progress.total));shownTotal=progress.total;}
-        if(shownToday!=progress.today){today.setText("今日 "+progress.today+" 次 · 慢慢来，不着急");shownToday=progress.today;}
-        if(shownSession!=session){sessionText.setText("本次已敲 "+session+" 下");shownSession=session;}
+        if (shownTotal != progress.total) {
+            count.setText(String.format(Locale.CHINA, "%,d", progress.total));
+            shownTotal = progress.total;
+        }
+        if (shownToday != progress.today) {
+            today.setText("今日 " + progress.today + " 次 · 慢慢来，不着急");
+            shownToday = progress.today;
+        }
+        if (shownSession != session) {
+            sessionText.setText("本次已敲 " + session + " 下");
+            shownSession = session;
+        }
     }
-    private Label addLabel(Label label){content.addActor(label);label.pack();return label;}
+
+    private Label addLabel(Label label) {
+        content.addActor(label);
+        label.pack();
+        return label;
+    }
+
     private Image image(Texture texture) {
         Image actor = new Image(texture);
         actor.setTouchable(Touchable.disabled);
@@ -231,7 +239,8 @@ public final class MuyuScreen extends BaseScreen {
         hintActor = addLabel(hint);
         sessionActor = addLabel(sessionText);
         footerActor = addLabel(footer);
-        workActors=work.view(actions::showWorkControls,message->status=message);content.addActor(workActors);
+        workActors = work.view(actions::showWorkControls, message -> status = message);
+        content.addActor(workActors);
         stage.addActor(content);
         stage.addListener(new InputListener() {
             @Override
@@ -250,24 +259,31 @@ public final class MuyuScreen extends BaseScreen {
         layoutActors();
     }
 
-    private void centered(Label actor,float y){
-        if(actor==countActor){actor.setFontScale(1);float limit=work.visible()?590:640;if(actor.getPrefWidth()>limit)actor.setFontScale(limit/actor.getPrefWidth());}
-        float width=actor.getPrefWidth();actor.setBounds(woodCenter()-width/2,y+verticalOffset(),width,actor.getPrefHeight());
+    private void centered(Label actor, float y) {
+        if (actor == countActor) {
+            actor.setFontScale(1);
+            float limit = work.visible() ? 590 : 640;
+            if (actor.getPrefWidth() > limit) actor.setFontScale(limit / actor.getPrefWidth());
+        }
+        float width = actor.getPrefWidth();
+        actor.setBounds(woodCenter() - width / 2, y + verticalOffset(), width, actor.getPrefHeight());
     }
+
     private void layoutActors() {
         if (backgroundActor == null) return;
         backgroundActor.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
         titleActor.setPosition(45, stage.getViewport().getWorldHeight() - 70);
-        centered(captionActor,674);
-        centered(countActor,567);
-        centered(todayActor,547);
+        centered(captionActor, 674);
+        centered(countActor, 567);
+        centered(todayActor, 547);
         float reaction = hitAnimation / .14f, scale = 1 - .025f * reaction, w = 460 * scale, h = 337 * scale;
         fishActor.setBounds(woodCenter() - w / 2, 240 + verticalOffset() + (337 - h) / 2 - 3 * reaction, w, h);
         stickActor.setBounds(woodCenter() + stroke.headX() - 27, stroke.headY() + verticalOffset() - 30, 150, 60);
         stickActor.setRotation(stroke.rotation());
-        hintActor.setText((wallpaper?desktopHint:hint).getText());centered(hintActor,223);
-        centered(sessionActor,129);
-        centered(footerActor,87);
+        hintActor.setText((wallpaper ? desktopHint : hint).getText());
+        centered(hintActor, 223);
+        centered(sessionActor, 129);
+        centered(footerActor, 87);
         workActors.setVisible(work.visible());
         workActors.setBounds(cardX(), cardY(), WorkDashboard.WIDTH, WorkDashboard.HEIGHT);
 

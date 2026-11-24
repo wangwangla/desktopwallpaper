@@ -26,8 +26,7 @@ public final class MuyuLauncher {
                 host.controls(controls::show, controls::showWork, controls::dispose);
             });
         }, game -> {
-            MuyuScreen screen = ((MuyuGame) game).wallpaperScreen();
-            mouse.poll(screen, host.windowHandle(), host.isWallpaper());
+            mouse.poll(game, host.windowHandle(), host.isWallpaper());
             if (options.output == null) return;
             int n = ++frame[0];
             String name = null;
@@ -39,7 +38,7 @@ public final class MuyuLauncher {
             }
             if (name != null || (!options.stroke && n == 12))
                 DesktopLaunchOptions.capture(options.stroke ? options.output.resolve(name + ".png") : options.output);
-            if (options.stroke && n == 12) screen.hit();
+//            if (options.stroke && n == 12) game.hit();
             if (options.stroke ? n == 29 : n == 12) Gdx.app.exit();
         });
     }
