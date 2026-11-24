@@ -1,1 +1,1 @@
-include 'desktop','libGdx', ':wallpapercore',':libSpine','libGdxLib',"libGdxJnigenLoader","libGdxLib3D"
+include 'desktop','libGdx', ':wallpapercore',':libSpine','libGdxLib',"libGdxJnigenLoader","libGdxLib3D","android"

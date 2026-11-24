@@ -26,9 +26,7 @@ public class WeatherSettings {
     }
 
     public static File directory() {
-        String root = System.getenv("LOCALAPPDATA");
-        if (root == null || root.isEmpty()) root = System.getProperty("user.home");
-        File directory = new File(root, "DesktopWallpaper/weather-city");
+        File directory = new File(kw.manager.core.WallpaperStorage.root(), "DesktopWallpaper/weather-city");
         directory.mkdirs();
         return directory;
     }

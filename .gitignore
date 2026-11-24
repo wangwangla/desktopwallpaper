@@ -16,3 +16,6 @@ libCommon/build/
 libSpine/build/
 tools/artwork/build/
 libSpine/build/
+
+libGdxJnigenLoader/build/
+wallpapercore/build/

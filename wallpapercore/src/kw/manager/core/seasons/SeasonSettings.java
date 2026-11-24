@@ -12,8 +12,7 @@ public final class SeasonSettings extends WeatherSettings {
     public boolean showInfo = true;
 
     public static File folder() {
-        String root = System.getenv("LOCALAPPDATA");
-        File dir = new File(root == null ? System.getProperty("user.home") : root, "DesktopWallpaper/seasons");
+        File dir = new File(kw.manager.core.WallpaperStorage.root(), "DesktopWallpaper/seasons");
         dir.mkdirs();
         return dir;
     }

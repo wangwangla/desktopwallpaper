@@ -2,6 +2,7 @@ package kw.manager.core;
 
 /** Platform services are supplied by the host; core never imports desktop window APIs. */
 public interface WallpaperPlatform {
+    default java.io.File storageDirectory(){return null;}
     void wallpaper();
     void preview();
     void quit();

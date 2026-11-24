@@ -22,8 +22,7 @@ public final class MuyuProgress {
     }
 
     public static Path defaultFile() {
-        String root = System.getenv("LOCALAPPDATA");
-        return Paths.get(root == null ? System.getProperty("user.home") : root, "DesktopWallpaper", "muyu", "progress.properties");
+        return kw.manager.core.WallpaperStorage.root().toPath().resolve("DesktopWallpaper/muyu/progress.properties");
     }
 
     public void rollDay(LocalDate day) {

@@ -15,6 +15,7 @@ public abstract class WallpaperGame<T extends BaseScreen> extends BaseGame {
 
     protected WallpaperGame(WallpaperPlatform platform) {
         this.platform = platform;
+        WallpaperStorage.configure(platform);
     }
 
     public final WallpaperPlatform platform() {
