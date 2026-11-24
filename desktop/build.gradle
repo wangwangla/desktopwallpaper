@@ -85,7 +85,7 @@ task prepareManagerInput(type: Sync) {
     doLast {
         def launchers = file("$buildDir/manager-package/launchers")
         launchers.mkdirs()
-        ['Muyu':'MuyuLauncher', 'WeatherCity':'WeatherCityLauncher', 'SeasonsWallpaper':'SeasonsLauncher'].each { name, launcher ->
+        ['Muyu':'MuyuLauncher', 'WeatherCity':'WeatherCityLauncher', 'SeasonsWallpaper':'SeasonsLauncher', 'Demo':'DemoLauncher'].each { name, launcher ->
             new File(launchers, name + '.properties').text = "main-class=wk.com.test.${launcher}\nmain-jar=${exeJarName}\n"
         }
     }
@@ -112,7 +112,8 @@ task packageAppImage(type: Exec) {
             '--dest', "$buildDir/exe",
             '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
             '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
-            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
+            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties",
+            '--add-launcher', "Demo=$buildDir/manager-package/launchers/Demo.properties"
 }
 
 task packageExe(type: Exec) {
@@ -139,7 +140,8 @@ task packageExe(type: Exec) {
             '--win-shortcut',
             '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
             '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
-            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
+            '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties",
+            '--add-launcher', "Demo=$buildDir/manager-package/launchers/Demo.properties"
 }
 
 task printPackageHelp {
@@ -312,5 +314,34 @@ task packageWallManager(type: Exec) {
         '--java-options', '-Djava.net.preferIPv4Stack=true',
         '--add-launcher', "Muyu=$buildDir/manager-package/launchers/Muyu.properties",
         '--add-launcher', "WeatherCity=$buildDir/manager-package/launchers/WeatherCity.properties",
-        '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties"
+        '--add-launcher', "SeasonsWallpaper=$buildDir/manager-package/launchers/SeasonsWallpaper.properties",
+            '--add-launcher', "Demo=$buildDir/manager-package/launchers/Demo.properties"
+}
+
+
+task runDemo(type: JavaExec) {
+    group = 'application'
+    dependsOn classes
+    mainClass = 'wk.com.test.DemoLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    if (project.hasProperty('wallpaper')) args '--wallpaper'
+}
+
+task snapshotDemo(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.DemoLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--snapshot', rootProject.file('desktop/build/demo-icon-preview.png').absolutePath
+}
+
+task inspectDesktopIcons(type: JavaExec) {
+    group = 'verification'
+    dependsOn classes
+    mainClass = 'wk.com.test.DemoLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir rootProject.file('assets')
+    args '--inspect-icons'
 }

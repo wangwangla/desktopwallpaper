@@ -2,29 +2,40 @@ package kw.desktop.controls;
 
 import com.badlogic.gdx.Gdx;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+
+import java.awt.*;
 
 import kw.manager.core.WallpaperPlatform;
 
 public class DemoController {
-    private JFrame frame = new JFrame("Demo Controller");
-    public DemoController(WallpaperPlatform wallpaperPlatform) {
-        JPanel jPanel = new JPanel();
-        JButton setWallerButton = new JButton("Set Waller");
-        setWallerButton.addActionListener(e -> {});
-        JButton windowShow = new JButton("Set Waller 2");
-        windowShow.addActionListener(e -> {
-            wallpaperPlatform.preview();
-        });
-        setWallerButton.addActionListener(e -> {
-            wallpaperPlatform.wallpaper();
-        });
-        jPanel.add(setWallerButton);
-        jPanel.add(windowShow);
-        frame.setContentPane(jPanel);
-        frame.setSize(400, 200);
+    private final JFrame frame = new JFrame("图标背景 Demo · 控制器");
+
+    public DemoController(WallpaperPlatform platform) {
+        JPanel panel = new JPanel(new BorderLayout(0, 6));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.add(new JLabel("图标下方显示背景，移动后缓动跟随，删除后消失。"), BorderLayout.NORTH);
+        JPanel buttons = new JPanel(new GridLayout(1, 3, 8, 0));
+        JButton wall = new JButton("设为壁纸"), preview = new JButton("窗口预览"), quit = new JButton("退出 Demo");
+        buttons.add(wall);
+        buttons.add(preview);
+        buttons.add(quit);
+        panel.add(buttons);
+        wall.addActionListener(e -> Gdx.app.postRunnable(platform::wallpaper));
+        preview.addActionListener(e -> Gdx.app.postRunnable(platform::preview));
+        quit.addActionListener(e -> Gdx.app.postRunnable(platform::quit));
+        frame.setContentPane(panel);
+        frame.setSize(510, 180);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    }
+
+    public void show() {
         frame.setVisible(true);
+        frame.toFront();
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 }

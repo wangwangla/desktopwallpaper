@@ -7,6 +7,7 @@ public interface WallpaperPlatform {
     void quit();
     void showControls();
     default boolean isWallpaper(){return false;}
+    default DesktopIconSnapshot desktopIcons(){return DesktopIconSnapshot.empty();}
     default void showWorkControls(){showControls();}
     default void ready(WallpaperGame<?> game){}
     default void frame(WallpaperGame<?> game){}

@@ -4,15 +4,16 @@ import com.kw.gdx.BaseGame;
 import com.kw.gdx.screen.BaseScreen;
 
 import kw.manager.core.demo.DemoScreen;
-import kw.manager.core.muyu.MuyuScreen;
+import com.kw.gdx.resource.annotation.GameInfo;
 
-public class DemoGame extends WallpaperGame<BaseScreen> {
+@GameInfo(width=1200,height=800)
+public class DemoGame extends WallpaperGame<DemoScreen> {
     public DemoGame(WallpaperPlatform platform) {
         super(platform);
     }
 
     @Override
-    protected BaseScreen createScreen() {
+    protected DemoScreen createScreen() {
         return new DemoScreen(this);
     }
 

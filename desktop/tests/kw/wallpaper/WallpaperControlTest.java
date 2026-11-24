@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class WallpaperControlTest {
     @Test public void discoversOnlyActualWallpaperLaunchers()throws Exception {
         var entries=WallpaperCatalog.discover().stream().filter(WallpaperCatalog.Entry::builtIn).toList();
-        assertEquals(Set.of("muyu","seasons","weather-city"),new HashSet<>(entries.stream().map(WallpaperCatalog.Entry::id).toList()));
+        assertEquals(Set.of("muyu","seasons","weather-city","demo"),new HashSet<>(entries.stream().map(WallpaperCatalog.Entry::id).toList()));
         for(var entry:entries)assertNotNull(Class.forName(entry.mainClass()).getMethod("main",String[].class));
         assertFalse(entries.stream().anyMatch(e->e.mainClass().endsWith("WallManagerLauncher")));
     }

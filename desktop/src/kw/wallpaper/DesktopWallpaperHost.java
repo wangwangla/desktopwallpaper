@@ -31,6 +31,11 @@ public final class DesktopWallpaperHost implements WallpaperPlatform {
     private Consumer<WallpaperGame<?>> onReady = g -> {
     }, onFrame = g -> {
     };
+    private Supplier<DesktopIconSnapshot> icons=DesktopIconSnapshot::empty;
+    private Runnable release=()->{};
+    public void releaseWith(Runnable cleanup){release=cleanup;}
+    public void iconSource(Supplier<DesktopIconSnapshot> source){icons=source;}
+    @Override public DesktopIconSnapshot desktopIcons(){return icons.get();}
 
     public DesktopWallpaperHost(String id, int width, int height, boolean interactive, boolean initialWallpaper, boolean quiet) {
         this.id = id;
@@ -139,6 +144,7 @@ public final class DesktopWallpaperHost implements WallpaperPlatform {
     @Override
     public void disposed() {
         if (session != null) session.close();
+        release.run();
         if (attached) detach(false);
         SwingUtilities.invokeLater(() -> close.run());
     }
